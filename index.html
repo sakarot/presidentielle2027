@@ -151,9 +151,7 @@
   .stat-item { display: flex; flex-direction: column; gap: 4px; }
   .stat-lbl { font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.05em; }
   .stat-val { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; }
-  /* =========================================
-     OPTIMISATIONS MOBILE (Écrans < 768px)
-     ========================================= */
+  
   @media (max-width: 768px) {
    .container { 
       padding: 20px 16px; /* Remplace le 40px 24px initial */
@@ -265,244 +263,540 @@
     #community-leaderboard > div {
       justify-content: flex-start !important;
     }
- 
+}
+
+ /* =========================================
+     BARRE LATÉRALE COMMUNAUTÉ
+     ========================================= */
+  .page-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+  }
+  .main-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .community-sidebar {
+    width: 340px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .chat-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: #fff;
+  }
+  .chat-feed {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .chat-input-area {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .chat-input-area textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'DM Sans', sans-serif;
+    resize: none;
+    height: 60px;
+    font-size: 13px;
+  }
+  .chat-input-area input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: #fff;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 11px;
+  }
+  .post-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .post-pseudo { font-weight: bold; color: #fff; font-size: 13px; }
+  .post-time { color: var(--text-dim); font-family: 'Space Mono', monospace; font-size: 9px; }
+  .post-body { font-size: 13px; margin-bottom: 12px; word-break: break-word; line-height: 1.4; color: #ccc; }
+  .post-img { max-width: 100%; border-radius: 6px; margin-top: 8px; max-height: 200px; object-fit: cover; }
+  .post-actions {
+    display: flex;
+    gap: 16px;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+    padding-top: 8px;
+  }
+  .action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    transition: all 0.2s;
+    font-family: 'Space Mono', monospace;
+  }
+  .action-btn:hover { color: #fff; }
+  .action-btn.active-like { color: var(--EELV); }
+  .action-btn.active-dislike { color: var(--LFI); }
+  .action-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+/* Commentaires & Réponses infinies */
+  .comments-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .comment-card {
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .comment-thread-nested {
+    margin-top: 8px;
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255,255,255,0.1); /* Ligne verticale qui relie les réponses */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .comment-input-wrap { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .comment-input-wrap textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff;
+    border-radius: 6px; padding: 8px; font-family: 'DM Sans', sans-serif;
+    resize: none; height: 40px; font-size: 11px;
+  }
+  .comment-input-row { display: flex; gap: 6px; }
+  .comment-input-row input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    color: #fff; border-radius: 4px; padding: 6px; font-size: 10px;
+  }
+  .comment-input-row button { padding: 4px 12px; font-size: 10px; }
+  
+  @media (max-width: 1024px) {
+    .page-wrapper { flex-direction: column; }
+    .community-sidebar { width: 100%; height: 600px; border-left: none; border-top: 1px solid var(--border); }
+  }
+  
+  .btn-gif {
+    background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+    padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: bold; transition: all 0.2s;
+  }
+  .btn-gif:hover { background: rgba(255,255,255,0.05); color: #fff; }
+  .btn-gif svg { width: 16px; height: 16px; fill: currentColor; }
+  
+/* =========================================
+     SÉLECTEUR GIFS & ACTIONS (Mis à jour)
+     ========================================= */
+  .gif-picker-container { position: relative; display: inline-block; }
+
+  /* NOUVEAU : Bouton textuel minimaliste "GIF" */
+  .minimal-gif-btn {
+    background: transparent;
+    border: 1px solid var(--border); /* Petit liseré discret grisé */
+    color: var(--text-dim); /* Grisé par défaut */
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-weight: bold;
+    font-size: 10px;
+    padding: 2px 6px;
+    transition: all 0.2s;
+    opacity: 0.7;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .minimal-gif-btn:hover { color: #fff; opacity: 1; border-color: rgba(255,255,255,0.3); }
+  .minimal-gif-btn.active { color: var(--accent); border-color: var(--accent); opacity: 1; }
+
+  /* Le dropdown (inchangé mais important) */
+  .gif-dropdown {
+    display: none; position: absolute; bottom: calc(100% + 10px); left: 0;
+    width: 220px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; z-index: 1000; padding: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+  }
+  .gif-dropdown.show { display: flex; flex-direction: column; }
+  .gif-search-input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff;
+    padding: 6px 10px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 11px; margin-bottom: 8px;
+  }
+  .gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 180px; overflow-y: auto; }
+  .gif-grid img { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: opacity 0.1s; background: var(--bg); }
+  .gif-grid img:hover { opacity: 0.6; }
+
+  /* Prévisualisations (inchangé) */
+  .gif-preview-container { display: none; position: relative; margin-top: 8px; width: max-content; }
+  .gif-preview-container img { height: 60px; border-radius: 6px; border: 1px solid var(--border); }
+  .gif-preview-close { position: absolute; top: -6px; right: -6px; background: var(--LFI); border: none; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  /* NOUVEAU : Bouton Supprimer minimaliste */
+  .delete-btn {
+    background: transparent; border: none;
+    color: var(--text-dim); opacity: 0.5; /* Grisé minimaliste */
+    cursor: pointer; padding: 0 0 0 8px; /* Écart après le pseudo */
+    transition: all 0.2s;
+  }
+  .delete-btn:hover { color: var(--LFI); opacity: 1; } /* Rouge au survol */
+  .delete-btn svg { width: 14px; height: 14px; fill: currentColor; display: block; }
+  
+  /* =========================================
+     COULEURS PSEUDOS & SCROLL
+     ========================================= */
+  
+  /* Enlever la barre de scroll visuelle mais garder le défilement */
+  .chat-feed {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .chat-feed::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Couleurs pseudos selon le vote (classes ajoutées via JS) */
+  .post-pseudo { transition: color 0.2s; }
+  /* Les couleurs utilisent tes variables existantes */
+  .post-pseudo.p-LO { color: #ffcccc; } /* Arthaud (rouge très clair) */
+  .post-pseudo.p-PCF { color: #ffb3b3; } /* Roussel (rouge clair) */
+  .post-pseudo.p-LFI { color: var(--LFI); } /* Mélenchon */
+  .post-pseudo.p-EELV { color: var(--EELV); } /* Tondelier */
+  .post-pseudo.p-PS { color: var(--PS); } /* Glucksmann */
+  .post-pseudo.p-REN { color: var(--REN); } /* Attal */
+  .post-pseudo.p-HZ { color: var(--HZ); } /* Philippe */
+  .post-pseudo.p-LR { color: var(--LR); } /* Retailleau */
+  .post-pseudo.p-DLF { color: var(--DLF); } /* Dupont-Aignan */
+  .post-pseudo.p-RN { color: var(--RN); } /* Le Pen */
+  .post-pseudo.p-RQ { color: var(--RQ); } /* Zemmour */
+
+/* Pour Firefox */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface2) var(--bg);
+  }
+
+  /* Pour Chrome, Edge, Safari */
+  ::-webkit-scrollbar {
+    width: 8px; /* Barre très fine */
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg); /* Se fond dans le décor */
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--surface2); /* Un gris très discret */
+    border-radius: 10px;
+    border: 2px solid var(--bg); /* Donne un effet de marge autour du curseur */
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-dim); /* S'éclaire un peu quand on passe la souris */
+  }
 
 </style>
 </head>
 <body>
-<div class="container">
-
- <header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
-    <div class="header-left">
-      <h1>Présidentielles<br><em>2027</em></h1>
-      <div class="subtitle-wrap">
-        <span style="color: var(--text-dim)">s✰karot</span>
-        <span style="color: var(--border)">|</span>
-        <div class="social-links">
-          <a href="https://twitter.com/sakar0t" target="_blank" title="X (Twitter)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
-          <a href="https://twitch.tv/sakar0t" target="_blank" title="Twitch"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg></a>
-<a href="https://don.unicef.fr/urgence-gaza-sp/" target="_blank" class="flag" title="Soutenir Gaza" style="display: flex; align-items: center;">
-            <svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg" style="height: 16px; width: 24px; border-radius: 2px;">
-              <rect width="64" height="16" fill="#000"/><rect y="16" width="64" height="16" fill="#fff"/><rect y="32" width="64" height="16" fill="#007a3d"/><polygon points="0,0 32,24 0,48" fill="#ce1126"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="user-menu-container">
-      <button class="user-icon-btn" onclick="toggleUserMenu()" title="Mon compte">
-        <svg viewBox="0 0 24 24" fill="var(--text-dim)" width="20" height="20" style="transition: fill 0.2s;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-      </button>
-
-	<div id="user-dropdown" class="user-dropdown">
-        <div id="dropdown-logged-out" style="display: flex; flex-direction: column; gap: 8px;">
-          <span style="font-size: 12px; color: var(--text-dim);">Connectez-vous ou créez un compte :</span>
-          
-          <input type="text" id="reg-pseudo-input" placeholder="Pseudo (requis pour inscription)" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
-          
-          <input type="email" id="email-input" placeholder="Email" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
-          <input type="password" id="password-input" placeholder="Mot de passe" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
-          <button onclick="loginUser()" class="btn-sort active">Connexion</button>
-          <button onclick="registerUser()" class="btn-sort">Créer un compte</button>
-          
-          <div id="auth-msg" style="font-size: 12px; margin-top: 4px; display: none; text-align: center; font-weight: bold;"></div>
+<div class="page-wrapper">
+  
+  <div class="main-content">
+    <div class="container">
+      
+      <header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
+        <div class="header-left">
+          <h1>Présidentielles<br><em>2027</em></h1>
+          <div class="subtitle-wrap">
+            <span style="color: var(--text-dim)">s✰karot</span>
+            <span style="color: var(--border)">|</span>
+            <div class="social-links">
+              <a href="https://twitter.com/sakar0t" target="_blank" title="X (Twitter)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+              <a href="https://twitch.tv/sakar0t" target="_blank" title="Twitch"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg></a>
+              <a href="https://don.unicef.fr/urgence-gaza-sp/" target="_blank" class="flag" title="Soutenir Gaza" style="display: flex; align-items: center;">
+                <svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg" style="height: 16px; width: 24px; border-radius: 2px;">
+                  <rect width="64" height="16" fill="#000"/><rect y="16" width="64" height="16" fill="#fff"/><rect y="32" width="64" height="16" fill="#007a3d"/><polygon points="0,0 32,24 0,48" fill="#ce1126"/>
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
 
-		<div id="dropdown-logged-in" style="display: none; flex-direction: column; gap: 12px;">
-          <div style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
-            <span style="font-size: 11px; color: var(--text-dim);">Connecté en tant que</span>
-            
-            <div id="inline-edit-container" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 26px;">
-              
-              <strong id="dropdown-username" style="color: white; font-size: 14px;"></strong>
-              <button id="btn-edit-inline" class="edit-pseudo-btn" onclick="startInlineEdit()" title="Modifier le pseudo">✎</button>
-              
-              <input type="text" id="inline-pseudo-input" style="display: none; padding: 2px 6px; background: var(--surface2); color: white; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px; width: 130px; text-align: center;">
-              <button id="btn-save-inline" class="btn-sort" style="display: none; padding: 2px 8px; font-size: 11px; height: 24px;" onclick="confirmInlineEdit()">OK</button>
-              <button id="btn-cancel-inline" class="edit-pseudo-btn" style="display: none; font-size: 16px; padding: 0;" onclick="cancelInlineEdit()" title="Annuler">×</button>
+        <div class="user-menu-container">
+          <button class="user-icon-btn" onclick="toggleUserMenu()" title="Mon compte">
+            <svg viewBox="0 0 24 24" fill="var(--text-dim)" width="20" height="20" style="transition: fill 0.2s;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+          </button>
+
+          <div id="user-dropdown" class="user-dropdown">
+            <div id="dropdown-logged-out" style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-size: 12px; color: var(--text-dim);">Connectez-vous ou créez un compte :</span>
+              <input type="text" id="reg-pseudo-input" placeholder="Pseudo (requis pour inscription)" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
+              <input type="email" id="email-input" placeholder="Email" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
+              <input type="password" id="password-input" placeholder="Mot de passe" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
+              <button onclick="loginUser()" class="btn-sort active">Connexion</button>
+              <button onclick="registerUser()" class="btn-sort">Créer un compte</button>
+              <div id="auth-msg" style="font-size: 12px; margin-top: 4px; display: none; text-align: center; font-weight: bold;"></div>
             </div>
 
-            <div id="pseudo-msg" style="font-size: 11px; display: none; text-align: center; font-weight: bold; margin-top: 4px;"></div>
-            
+            <div id="dropdown-logged-in" style="display: none; flex-direction: column; gap: 12px;">
+              <div style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                <span style="font-size: 11px; color: var(--text-dim);">Connecté en tant que</span>
+                <div id="inline-edit-container" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 26px;">
+                  <strong id="dropdown-username" style="color: white; font-size: 14px;"></strong>
+                  <button id="btn-edit-inline" class="edit-pseudo-btn" onclick="startInlineEdit()" title="Modifier le pseudo">✎</button>
+                  <input type="text" id="inline-pseudo-input" style="display: none; padding: 2px 6px; background: var(--surface2); color: white; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px; width: 130px; text-align: center;">
+                  <button id="btn-save-inline" class="btn-sort" style="display: none; padding: 2px 8px; font-size: 11px; height: 24px;" onclick="confirmInlineEdit()">OK</button>
+                  <button id="btn-cancel-inline" class="edit-pseudo-btn" style="display: none; font-size: 16px; padding: 0;" onclick="cancelInlineEdit()" title="Annuler">×</button>
+                </div>
+                <div id="pseudo-msg" style="font-size: 11px; display: none; text-align: center; font-weight: bold; margin-top: 4px;"></div>
+              </div>
+              <button onclick="logoutUser()" class="btn-sort">Déconnexion</button>
+            </div>
           </div>
-          <button onclick="logoutUser()" class="btn-sort">Déconnexion</button>
+        </div>
+      </header>
+
+      <div class="vote-panel-container">
+        <div class="vote-panel-left">
+          <div id="voter-profile-view" style="display: none; align-items: center; gap: 12px;">
+            <div class="username-container" style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border);">
+              <span id="user-badge" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background 0.3s;"></span>
+              <strong id="user-display-name" style="font-size: 15px; color: #fff; transition: color 0.3s;"></strong>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <select id="vote-selector" class="btn-sort" style="background: var(--surface2); padding: 8px 12px; font-size: 13px; font-weight: bold; color: #fff;">
+                <option value="" style="color: var(--text-dim);">-- Choisissez un candidat --</option>
+                <option value="LO" style="color: #7a1020; font-weight: bold;">Arthaud (LO)</option>
+                <option value="PCF" style="color: #9b1010; font-weight: bold;">Roussel (PCF)</option>
+                <option value="LFI" style="color: #c0001a; font-weight: bold;">Mélenchon (LFI)</option>
+                <option value="EELV" style="color: #2ea05a; font-weight: bold;">Tondelier (EELV)</option>
+                <option value="PS" style="color: #e07080; font-weight: bold;">Glucksmann (PS)</option>
+                <option value="REN" style="color: #f0c030; font-weight: bold;">Attal (REN)</option>
+                <option value="HZ" style="color: #70c8f8; font-weight: bold;">Philippe (HZ)</option>
+                <option value="LR" style="color: #2c75ff; font-weight: bold;">Retailleau (LR)</option>
+                <option value="DF" style="color: #003870; font-weight: bold;">Dupont-Aignan (DLF)</option>
+                <option value="RN" style="color: #0d3890; font-weight: bold;">Le Pen (RN)</option>
+                <option value="RQ" style="color: #aaaaaa; font-weight: bold;">Zemmour (RQ)</option>
+              </select>
+              <button onclick="handleVoteClick()" class="btn-sort active" style="font-weight: bold; padding: 8px 16px;">Voter</button>
+            </div>
+            <div id="vote-msg" style="font-size: 13px; font-weight: bold; display: none; margin-left: 4px;"></div>
+          </div>
+        </div>
+
+        <div class="vote-panel-right">
+          <div style="margin-bottom: 8px;">
+            <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">Votes réels</span><br>
+            <strong id="community-counter" style="font-family: 'Space Mono', monospace; color: var(--accent); font-size: 20px; line-height: 1;">0</strong>
+          </div>
+          
+          <div id="community-leaderboard" style="display: flex; flex-direction: column; gap: 6px; max-height: 120px; overflow-y: auto; padding-right: 4px;">
+            <span style="font-size: 11px; color: var(--text-dim); font-style: italic;">Aucun vote pour l'instant...</span>
+          </div>
         </div>
       </div>
-    </div>
- </header>
 
-<div class="vote-panel-container">
-    
-    <div class="vote-panel-left">
-      <div id="voter-profile-view" style="display: none; align-items: center; gap: 12px;">
-        <div class="username-container" style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border);">
-          <span id="user-badge" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background 0.3s;"></span>
-          <strong id="user-display-name" style="font-size: 15px; color: #fff; transition: color 0.3s;"></strong>
-        </div>
-      </div>
-      
-	<div style="display: flex; flex-direction: column; gap: 6px;">
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <select id="vote-selector" class="btn-sort" style="background: var(--surface2); padding: 8px 12px; font-size: 13px; font-weight: bold; color: #fff;">
-            <option value="" style="color: var(--text-dim);">-- Choisissez un candidat --</option>
-            <option value="LO" style="color: #7a1020; font-weight: bold;">Arthaud (LO)</option>
-            <option value="PCF" style="color: #9b1010; font-weight: bold;">Roussel (PCF)</option>
-            <option value="LFI" style="color: #c0001a; font-weight: bold;">Mélenchon (LFI)</option>
-            <option value="EELV" style="color: #2ea05a; font-weight: bold;">Tondelier (EELV)</option>
-            <option value="PS" style="color: #e07080; font-weight: bold;">Glucksmann (PS)</option>
-            <option value="REN" style="color: #f0c030; font-weight: bold;">Attal (REN)</option>
-            <option value="HZ" style="color: #70c8f8; font-weight: bold;">Philippe (HZ)</option>
-            <option value="LR" style="color: #2c75ff; font-weight: bold;">Retailleau (LR)</option>
-            <option value="DF" style="color: #003870; font-weight: bold;">Dupont-Aignan (DLF)</option>
-            <option value="RN" style="color: #0d3890; font-weight: bold;">Le Pen (RN)</option>
-            <option value="RQ" style="color: #aaaaaa; font-weight: bold;">Zemmour (RQ)</option>
-          </select>
-          <button onclick="handleVoteClick()" class="btn-sort active" style="font-weight: bold; padding: 8px 16px;">Voter</button>
-        </div>
-        <div id="vote-msg" style="font-size: 13px; font-weight: bold; display: none; margin-left: 4px;"></div>
-      </div>
-    </div>
-
-    <div class="vote-panel-right">
-      <div style="margin-bottom: 8px;">
-        <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">Votes réels</span><br>
-        <strong id="community-counter" style="font-family: 'Space Mono', monospace; color: var(--accent); font-size: 20px; line-height: 1;">0</strong>
-      </div>
-      
-      <div id="community-leaderboard" style="display: flex; flex-direction: column; gap: 6px; max-height: 120px; overflow-y: auto; padding-right: 4px;">
-        <span style="font-size: 11px; color: var(--text-dim); font-style: italic;">Aucun vote pour l'instant...</span>
-      </div>
-    </div>
-    
-  </div>
-  <div class="controls-panel">
-    <div class="controls-header">
-      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-        <h3>Candidat du Centre :</h3>
-        <div class="candidate-selector">
-          <button id="btnAttal" class="selector-btn" onclick="setCenterCandidate('Attal')">Attal</button>
-          <button id="btnPhilippe" class="selector-btn active" onclick="setCenterCandidate('Philippe')">Philippe</button>
-        </div>
-      </div>
-      <button class="reset-btn" onclick="resetSliders()">↺ RESET</button>
-    </div>
-    
-    <p style="margin-bottom:16px; font-size:12px; color:var(--text-dim);"><strong style="color:#fff;">Reports du 2<sup>nd</sup> Tour :</strong> Déplacez les curseurs pour ajuster les transferts de voix vers LFI (Rouge), vers le RN (Bleu), ou l'Abstention/Blanc (Gris).</p>
-    
-    <div class="sliders-grid" id="sliders"></div>
-  </div>
-
-  <div class="main-grid">
-    <div class="chart-card">
-      <div class="card-title">1<sup>er</sup> Tour — Projection du modèle</div>
-      <canvas id="chartT1Bar"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="card-title">1<sup>er</sup> Tour — Hémicycle idéologique</div>
-      <canvas id="chartT1Donut"></canvas>
-    </div>
-  </div>
-
-  <div class="t2-card">
-    <div class="card-title">2<sup>nd</sup> Tour — Jean-Luc Mélenchon vs Marine Le Pen</div>
-    <div class="t2-bar-wrap">
-      <div class="t2-names">
-        <span style="color:var(--LFI)">Mélenchon <small style="opacity:0.6;font-size:11px">Union de la Gauche</small></span>
-        <span style="color:var(--RN)">Le Pen <small style="opacity:0.6;font-size:11px">RN & Alliés</small></span>
-      </div>
-      <div class="t2-bar">
-        <div class="t2-bar-left" id="t2Left" style="background:var(--LFI); width:50%">50.0%</div>
-        <div class="t2-bar-right" id="t2Right" style="background:var(--RN)">50.0%</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="data-table-card">
-    <div class="card-title" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-      <span style="margin: 0;">Détail par candidat / parti</span>
-      
-      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <div class="sort-buttons" style="margin:0;">
-          <button id="btnTableT1" class="btn-sort active" onclick="setTableTour('T1')">1<sup>er</sup> Tour</button>
-          <button id="btnTableT2" class="btn-sort" onclick="setTableTour('T2')">2<sup>nd</sup> Tour</button>
+      <div class="controls-panel">
+        <div class="controls-header">
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <h3>Candidat du Centre :</h3>
+            <div class="candidate-selector">
+              <button id="btnAttal" class="selector-btn" onclick="setCenterCandidate('Attal')">Attal</button>
+              <button id="btnPhilippe" class="selector-btn active" onclick="setCenterCandidate('Philippe')">Philippe</button>
+            </div>
+          </div>
+          <button class="reset-btn" onclick="resetSliders()">↺ RESET</button>
         </div>
         
-        <select id="selectTableYear" class="btn-sort" style="margin:0; background:var(--surface2); font-weight:bold; border-color:var(--border); color:#fff;" onchange="changeTableYear(this.value)">
-          <option value="2027" selected>2027</option>
-          <option value="2022">2022</option>
-          <option value="2017">2017</option>
-          <option value="2012">2012</option>
-          <option value="2007">2007</option>
-          <option value="2002">2002</option>
-          <option value="1995">1995</option>
-        </select>
+        <p style="margin-bottom:16px; font-size:12px; color:var(--text-dim);"><strong style="color:#fff;">Reports du 2<sup>nd</sup> Tour :</strong> Déplacez les curseurs pour ajuster les transferts de voix vers LFI (Rouge), vers le RN (Bleu), ou l'Abstention/Blanc (Gris).</p>
+        
+        <div class="sliders-grid" id="sliders"></div>
       </div>
-    </div>
-    
-    <div class="global-stats-row" id="globalStats"></div>
 
-    <div class="sort-buttons" id="tableSortWrap" style="margin-bottom: 20px;">
-      <button id="btnSortScore" class="btn-sort active" onclick="setSort('score')">Trier par Score (Décroissant)</button>
-      <button id="btnSortParti" class="btn-sort" onclick="setSort('parti')">Trier par Parti (EG ➔ ED)</button>
-    </div>
-    
-    <table id="mainTable">
-      <thead>
-        <tr>
-          <th>Candidat</th>
-          <th>Parti</th>
-          <th>Score</th>
-          <th>Voix</th>
-          <th class="pct-bar-cell">Volume</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-
-  <div class="maps-grid">
-    <div class="chart-card map-card" id="mapCardT1">
-      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 10px; z-index:2">
-        <div class="card-title" style="margin: 0;">Vainqueur du 1<sup>er</sup> Tour</div>
-        <div class="sort-buttons" style="margin: 0;">
-          <select class="btn-sort" onchange="switchMapT1(this.value)">
-            <option value="2027" selected>2027</option>
-            <option value="2022">2022</option>
-            <option value="2017">2017</option>
-            <option value="2012">2012</option>
-            <option value="2007">2007</option>
-            <option value="2002">2002</option>
-            <option value="1995">1995</option>
-          </select>
+      <div class="main-grid">
+        <div class="chart-card">
+          <div class="card-title">1<sup>er</sup> Tour — Projection du modèle</div>
+          <canvas id="chartT1Bar"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="card-title">1<sup>er</sup> Tour — Hémicycle idéologique</div>
+          <canvas id="chartT1Donut"></canvas>
         </div>
       </div>
-      <div class="map-container" id="mapT1"></div>
-      <div class="map-legend" id="mapLegendT1" style="z-index:2"></div>
-    </div>
 
-    <div class="chart-card map-card" id="mapCardT2">
-      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 10px; z-index:2">
-        <div class="card-title" style="margin: 0;">Vainqueur du 2<sup>nd</sup> Tour</div>
-        <div class="sort-buttons" style="margin: 0;">
-          <select class="btn-sort" onchange="switchMapT2(this.value)">
-            <option value="2027" selected>2027</option>
-            <option value="2022">2022</option>
-            <option value="2017">2017</option>
-            <option value="2012">2012</option>
-            <option value="2007">2007</option>
-            <option value="2002">2002</option>
-            <option value="1995">1995</option>
-          </select>
+      <div class="t2-card">
+        <div class="card-title">2<sup>nd</sup> Tour — Jean-Luc Mélenchon vs Marine Le Pen</div>
+        <div class="t2-bar-wrap">
+          <div class="t2-names">
+            <span style="color:var(--LFI)">Mélenchon <small style="opacity:0.6;font-size:11px">Union de la Gauche</small></span>
+            <span style="color:var(--RN)">Le Pen <small style="opacity:0.6;font-size:11px">RN & Alliés</small></span>
+          </div>
+          <div class="t2-bar">
+            <div class="t2-bar-left" id="t2Left" style="background:var(--LFI); width:50%">50.0%</div>
+            <div class="t2-bar-right" id="t2Right" style="background:var(--RN)">50.0%</div>
+          </div>
         </div>
       </div>
-      <div class="map-container" id="mapT2"></div>
-      <div class="map-legend" id="mapLegendT2" style="z-index:2"></div>
-    </div>
-  </div>
-</div>
 
-<div class="map-tooltip" id="globalTooltip"></div>
+      <div class="data-table-card">
+        <div class="card-title" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <span style="margin: 0;">Détail par candidat / parti</span>
+          
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div class="sort-buttons" style="margin:0;">
+              <button id="btnTableT1" class="btn-sort active" onclick="setTableTour('T1')">1<sup>er</sup> Tour</button>
+              <button id="btnTableT2" class="btn-sort" onclick="setTableTour('T2')">2<sup>nd</sup> Tour</button>
+            </div>
+            
+            <select id="selectTableYear" class="btn-sort" style="margin:0; background:var(--surface2); font-weight:bold; border-color:var(--border); color:#fff;" onchange="changeTableYear(this.value)">
+              <option value="2027" selected>2027</option>
+              <option value="2022">2022</option>
+              <option value="2017">2017</option>
+              <option value="2012">2012</option>
+              <option value="2007">2007</option>
+              <option value="2002">2002</option>
+              <option value="1995">1995</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="global-stats-row" id="globalStats"></div>
+
+        <div class="sort-buttons" id="tableSortWrap" style="margin-bottom: 20px;">
+          <button id="btnSortScore" class="btn-sort active" onclick="setSort('score')">Trier par Score (Décroissant)</button>
+          <button id="btnSortParti" class="btn-sort" onclick="setSort('parti')">Trier par Parti (EG ➔ ED)</button>
+        </div>
+        
+        <table id="mainTable">
+          <thead>
+            <tr>
+              <th>Candidat</th>
+              <th>Parti</th>
+              <th>Score</th>
+              <th>Voix</th>
+              <th class="pct-bar-cell">Volume</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="maps-grid">
+        <div class="chart-card map-card" id="mapCardT1">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 10px; z-index:2">
+            <div class="card-title" style="margin: 0;">Vainqueur du 1<sup>er</sup> Tour</div>
+            <div class="sort-buttons" style="margin: 0;">
+              <select class="btn-sort" onchange="switchMapT1(this.value)">
+                <option value="2027" selected>2027</option>
+                <option value="2022">2022</option>
+                <option value="2017">2017</option>
+                <option value="2012">2012</option>
+                <option value="2007">2007</option>
+                <option value="2002">2002</option>
+                <option value="1995">1995</option>
+              </select>
+            </div>
+          </div>
+          <div class="map-container" id="mapT1"></div>
+          <div class="map-legend" id="mapLegendT1" style="z-index:2"></div>
+        </div>
+
+        <div class="chart-card map-card" id="mapCardT2">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 10px; z-index:2">
+            <div class="card-title" style="margin: 0;">Vainqueur du 2<sup>nd</sup> Tour</div>
+            <div class="sort-buttons" style="margin: 0;">
+              <select class="btn-sort" onchange="switchMapT2(this.value)">
+                <option value="2027" selected>2027</option>
+                <option value="2022">2022</option>
+                <option value="2017">2017</option>
+                <option value="2012">2012</option>
+                <option value="2007">2007</option>
+                <option value="2002">2002</option>
+                <option value="1995">1995</option>
+              </select>
+            </div>
+          </div>
+          <div class="map-container" id="mapT2"></div>
+          <div class="map-legend" id="mapLegendT2" style="z-index:2"></div>
+        </div>
+      </div>
+
+    </div> </div> <aside class="community-sidebar">
+    <div class="chat-header">Communauté</div>
+    
+    <div class="chat-feed" id="chat-feed">
+      <div style="text-align:center; color:var(--text-dim); font-size: 12px; margin-top: 20px;">Chargement des posts...</div>
+    </div>
+
+    <div class="chat-input-area" id="chat-input-area">
+      <div id="chat-auth-msg" style="color: var(--text-dim); font-size: 12px; text-align: center;">Connectez-vous pour participer.</div>
+      
+	<div id="chat-form" style="display: none; flex-direction: column; gap: 8px;">
+        <textarea id="post-text" placeholder="Exprimez-vous sur l'élection..."></textarea>
+        
+        <div class="gif-preview-container" id="post-gif-preview-wrap">
+           <img id="post-gif-preview" src="">
+           <button class="gif-preview-close" onclick="removeSelectedGif('post')" title="Retirer le GIF">✖</button>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          
+          <div class="gif-picker-container" id="gif-picker-comment-${postId}">
+                <button class="minimal-gif-btn" id="gif-btn-comment-${postId}" onclick="toggleGifDropdown('comment-${postId}')" title="Ajouter un GIF">
+                    GIF
+                </button>
+            
+            <div class="gif-dropdown" id="gif-dropdown-post">
+              <input type="text" id="gif-search-post" class="gif-search-input" placeholder="Rechercher sur Tenor..." oninput="debounceGifSearch('post')">
+              <div id="gif-results-post" class="gif-grid"></div>
+            </div>
+          </div>
+
+          <button onclick="submitPost()" class="btn-sort active">Publier</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+
+ 
+</div> <div class="map-tooltip" id="globalTooltip"></div>
 
 <script>
 const DEP_META = {"01": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 333024, "inscrits": 438109, "abstentions": 97541, "blancs": 7544, "exprimes": 333024}, "02": {"region": "Hauts-de-France", "totalVotes": 265860, "inscrits": 373544, "abstentions": 101089, "blancs": 6595, "exprimes": 265860}, "03": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 185955, "inscrits": 249991, "abstentions": 58497, "blancs": 5539, "exprimes": 185955}, "04": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 96683, "inscrits": 128075, "abstentions": 29290, "blancs": 2102, "exprimes": 96683}, "05": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 86235, "inscrits": 113519, "abstentions": 25357, "blancs": 1927, "exprimes": 86235}, "06": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 558775, "inscrits": 778582, "abstentions": 208250, "blancs": 11557, "exprimes": 558775}, "07": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 196975, "inscrits": 255859, "abstentions": 54114, "blancs": 4770, "exprimes": 196975}, "08": {"region": "Grand Est", "totalVotes": 133936, "inscrits": 186197, "abstentions": 49368, "blancs": 2893, "exprimes": 133936}, "09": {"region": "Occitanie", "totalVotes": 91704, "inscrits": 119039, "abstentions": 25028, "blancs": 2307, "exprimes": 91704}, "10": {"region": "Grand Est", "totalVotes": 149670, "inscrits": 205551, "abstentions": 52384, "blancs": 3497, "exprimes": 149670}, "11": {"region": "Occitanie", "totalVotes": 212426, "inscrits": 279927, "abstentions": 62972, "blancs": 4529, "exprimes": 212426}, "12": {"region": "Occitanie", "totalVotes": 170902, "inscrits": 219468, "abstentions": 43833, "blancs": 4733, "exprimes": 170902}, "13": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 1008620, "inscrits": 1411184, "abstentions": 383816, "blancs": 18748, "exprimes": 1008620}, "14": {"region": "Normandie", "totalVotes": 386231, "inscrits": 512148, "abstentions": 117799, "blancs": 8118, "exprimes": 386231}, "15": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 88102, "inscrits": 115745, "abstentions": 25019, "blancs": 2624, "exprimes": 88102}, "16": {"region": "Nouvelle-Aquitaine", "totalVotes": 192666, "inscrits": 257608, "abstentions": 59909, "blancs": 5033, "exprimes": 192666}, "17": {"region": "Nouvelle-Aquitaine", "totalVotes": 394067, "inscrits": 519202, "abstentions": 116437, "blancs": 8698, "exprimes": 394067}, "18": {"region": "Centre-Val de Loire", "totalVotes": 160533, "inscrits": 224570, "abstentions": 59808, "blancs": 4229, "exprimes": 160533}, "19": {"region": "Nouvelle-Aquitaine", "totalVotes": 142600, "inscrits": 185032, "abstentions": 38430, "blancs": 4002, "exprimes": 142600}, "2A": {"region": "Corse", "totalVotes": 68861, "inscrits": 113918, "abstentions": 42366, "blancs": 2691, "exprimes": 68861}, "2B": {"region": "Corse", "totalVotes": 78511, "inscrits": 129114, "abstentions": 48263, "blancs": 2340, "exprimes": 78511}, "21": {"region": "Bourgogne-Franche-Comté", "totalVotes": 282745, "inscrits": 366859, "abstentions": 77886, "blancs": 6228, "exprimes": 282745}, "22": {"region": "Bretagne", "totalVotes": 366393, "inscrits": 471752, "abstentions": 96597, "blancs": 8762, "exprimes": 366393}, "23": {"region": "Nouvelle-Aquitaine", "totalVotes": 66848, "inscrits": 90946, "abstentions": 21967, "blancs": 2131, "exprimes": 66848}, "24": {"region": "Nouvelle-Aquitaine", "totalVotes": 246556, "inscrits": 318168, "abstentions": 64856, "blancs": 6756, "exprimes": 246556}, "25": {"region": "Bourgogne-Franche-Comté", "totalVotes": 277097, "inscrits": 368379, "abstentions": 84117, "blancs": 7165, "exprimes": 277097}, "26": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 291424, "inscrits": 382188, "abstentions": 84289, "blancs": 6475, "exprimes": 291424}, "27": {"region": "Normandie", "totalVotes": 318861, "inscrits": 432198, "abstentions": 106463, "blancs": 6874, "exprimes": 318861}, "28": {"region": "Centre-Val de Loire", "totalVotes": 220021, "inscrits": 303888, "abstentions": 78960, "blancs": 4907, "exprimes": 220021}, "29": {"region": "Bretagne", "totalVotes": 542919, "inscrits": 709701, "abstentions": 154870, "blancs": 11912, "exprimes": 542919}, "30": {"region": "Occitanie", "totalVotes": 413979, "inscrits": 555038, "abstentions": 132723, "blancs": 8336, "exprimes": 413979}, "31": {"region": "Occitanie", "totalVotes": 730979, "inscrits": 930321, "abstentions": 183366, "blancs": 15976, "exprimes": 730979}, "32": {"region": "Occitanie", "totalVotes": 116399, "inscrits": 147278, "abstentions": 28267, "blancs": 2612, "exprimes": 116399}, "33": {"region": "Nouvelle-Aquitaine", "totalVotes": 892020, "inscrits": 1158548, "abstentions": 249014, "blancs": 17514, "exprimes": 892020}, "34": {"region": "Occitanie", "totalVotes": 638728, "inscrits": 847365, "abstentions": 195766, "blancs": 12871, "exprimes": 638728}, "35": {"region": "Bretagne", "totalVotes": 596832, "inscrits": 771636, "abstentions": 161427, "blancs": 13377, "exprimes": 596832}, "36": {"region": "Centre-Val de Loire", "totalVotes": 120997, "inscrits": 166100, "abstentions": 41406, "blancs": 3697, "exprimes": 120997}, "37": {"region": "Centre-Val de Loire", "totalVotes": 327490, "inscrits": 440502, "abstentions": 105536, "blancs": 7476, "exprimes": 327490}, "38": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 672296, "inscrits": 885440, "abstentions": 198676, "blancs": 14468, "exprimes": 672296}, "39": {"region": "Bourgogne-Franche-Comté", "totalVotes": 145227, "inscrits": 190597, "abstentions": 41634, "blancs": 3736, "exprimes": 145227}, "40": {"region": "Nouvelle-Aquitaine", "totalVotes": 258050, "inscrits": 329337, "abstentions": 65654, "blancs": 5633, "exprimes": 258050}, "41": {"region": "Centre-Val de Loire", "totalVotes": 180810, "inscrits": 244718, "abstentions": 59350, "blancs": 4558, "exprimes": 180810}, "42": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 385938, "inscrits": 513794, "abstentions": 118592, "blancs": 9264, "exprimes": 385938}, "43": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 139655, "inscrits": 180706, "abstentions": 37000, "blancs": 4051, "exprimes": 139655}, "44": {"region": "Pays de la Loire", "totalVotes": 802422, "inscrits": 1056693, "abstentions": 236339, "blancs": 17932, "exprimes": 802422}, "45": {"region": "Centre-Val de Loire", "totalVotes": 335422, "inscrits": 457550, "abstentions": 114468, "blancs": 7660, "exprimes": 335422}, "46": {"region": "Occitanie", "totalVotes": 109390, "inscrits": 139278, "abstentions": 27164, "blancs": 2724, "exprimes": 109390}, "47": {"region": "Nouvelle-Aquitaine", "totalVotes": 184102, "inscrits": 241304, "abstentions": 52907, "blancs": 4295, "exprimes": 184102}, "48": {"region": "Occitanie", "totalVotes": 46996, "inscrits": 59812, "abstentions": 11680, "blancs": 1136, "exprimes": 46996}, "49": {"region": "Pays de la Loire", "totalVotes": 441342, "inscrits": 589263, "abstentions": 136866, "blancs": 11055, "exprimes": 441342}, "50": {"region": "Normandie", "totalVotes": 284458, "inscrits": 384613, "abstentions": 93460, "blancs": 6695, "exprimes": 284458}, "51": {"region": "Grand Est", "totalVotes": 274106, "inscrits": 380644, "abstentions": 101010, "blancs": 5528, "exprimes": 274106}, "52": {"region": "Grand Est", "totalVotes": 93808, "inscrits": 129389, "abstentions": 33273, "blancs": 2308, "exprimes": 93808}, "53": {"region": "Pays de la Loire", "totalVotes": 166908, "inscrits": 224722, "abstentions": 52812, "blancs": 5002, "exprimes": 166908}, "54": {"region": "Grand Est", "totalVotes": 353800, "inscrits": 492057, "abstentions": 130919, "blancs": 7338, "exprimes": 353800}, "55": {"region": "Grand Est", "totalVotes": 98513, "inscrits": 134805, "abstentions": 34092, "blancs": 2200, "exprimes": 98513}, "56": {"region": "Bretagne", "totalVotes": 467374, "inscrits": 608972, "abstentions": 130520, "blancs": 11078, "exprimes": 467374}, "57": {"region": "Grand Est", "totalVotes": 524319, "inscrits": 745914, "abstentions": 210299, "blancs": 11296, "exprimes": 524319}, "58": {"region": "Bourgogne-Franche-Comté", "totalVotes": 112441, "inscrits": 154186, "abstentions": 38850, "blancs": 2895, "exprimes": 112441}, "59": {"region": "Hauts-de-France", "totalVotes": 1274781, "inscrits": 1813906, "abstentions": 514033, "blancs": 25092, "exprimes": 1274781}, "60": {"region": "Hauts-de-France", "totalVotes": 411714, "inscrits": 564121, "abstentions": 142081, "blancs": 10326, "exprimes": 411714}, "61": {"region": "Normandie", "totalVotes": 150950, "inscrits": 205538, "abstentions": 50935, "blancs": 3653, "exprimes": 150950}, "62": {"region": "Hauts-de-France", "totalVotes": 790653, "inscrits": 1093723, "abstentions": 286319, "blancs": 16751, "exprimes": 790653}, "63": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 357587, "inscrits": 468103, "abstentions": 100869, "blancs": 9647, "exprimes": 357587}, "64": {"region": "Nouvelle-Aquitaine", "totalVotes": 401490, "inscrits": 519929, "abstentions": 110134, "blancs": 8305, "exprimes": 401490}, "65": {"region": "Occitanie", "totalVotes": 134888, "inscrits": 177443, "abstentions": 39595, "blancs": 2960, "exprimes": 134888}, "66": {"region": "Occitanie", "totalVotes": 268568, "inscrits": 362076, "abstentions": 87704, "blancs": 5804, "exprimes": 268568}, "67": {"region": "Grand Est", "totalVotes": 576719, "inscrits": 778712, "abstentions": 190224, "blancs": 11769, "exprimes": 576719}, "68": {"region": "Grand Est", "totalVotes": 385109, "inscrits": 531738, "abstentions": 137861, "blancs": 8768, "exprimes": 385109}, "69": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 909013, "inscrits": 1181226, "abstentions": 255580, "blancs": 16633, "exprimes": 909013}, "70": {"region": "Bourgogne-Franche-Comté", "totalVotes": 134739, "inscrits": 177715, "abstentions": 39039, "blancs": 3937, "exprimes": 134739}, "71": {"region": "Bourgogne-Franche-Comté", "totalVotes": 299300, "inscrits": 402992, "abstentions": 95369, "blancs": 8323, "exprimes": 299300}, "72": {"region": "Pays de la Loire", "totalVotes": 297062, "inscrits": 411308, "abstentions": 105454, "blancs": 8792, "exprimes": 297062}, "73": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 246358, "inscrits": 320709, "abstentions": 68929, "blancs": 5422, "exprimes": 246358}, "74": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 427139, "inscrits": 565665, "abstentions": 129384, "blancs": 9142, "exprimes": 427139}, "75": {"region": "Île-de-France", "totalVotes": 1055062, "inscrits": 1368025, "abstentions": 296668, "blancs": 16295, "exprimes": 1055062}, "76": {"region": "Normandie", "totalVotes": 642965, "inscrits": 879252, "abstentions": 222147, "blancs": 14140, "exprimes": 642965}, "77": {"region": "Île-de-France", "totalVotes": 660929, "inscrits": 899303, "abstentions": 223172, "blancs": 15202, "exprimes": 660929}, "78": {"region": "Île-de-France", "totalVotes": 736506, "inscrits": 961245, "abstentions": 211708, "blancs": 13031, "exprimes": 736506}, "79": {"region": "Nouvelle-Aquitaine", "totalVotes": 207804, "inscrits": 273214, "abstentions": 59403, "blancs": 6007, "exprimes": 207804}, "80": {"region": "Hauts-de-France", "totalVotes": 298918, "inscrits": 410056, "abstentions": 102687, "blancs": 8451, "exprimes": 298918}, "81": {"region": "Occitanie", "totalVotes": 229842, "inscrits": 298178, "abstentions": 62818, "blancs": 5518, "exprimes": 229842}, "82": {"region": "Occitanie", "totalVotes": 145820, "inscrits": 188706, "abstentions": 39625, "blancs": 3261, "exprimes": 145820}, "83": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 598730, "inscrits": 820904, "abstentions": 211212, "blancs": 10962, "exprimes": 598730}, "84": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 303865, "inscrits": 411607, "abstentions": 101650, "blancs": 6092, "exprimes": 303865}, "85": {"region": "Pays de la Loire", "totalVotes": 419709, "inscrits": 550963, "abstentions": 120547, "blancs": 10707, "exprimes": 419709}, "86": {"region": "Nouvelle-Aquitaine", "totalVotes": 231652, "inscrits": 306011, "abstentions": 68304, "blancs": 6055, "exprimes": 231652}, "87": {"region": "Nouvelle-Aquitaine", "totalVotes": 202118, "inscrits": 263742, "abstentions": 55484, "blancs": 6140, "exprimes": 202118}, "88": {"region": "Grand Est", "totalVotes": 203694, "inscrits": 277913, "abstentions": 68914, "blancs": 5305, "exprimes": 203694}, "89": {"region": "Bourgogne-Franche-Comté", "totalVotes": 176511, "inscrits": 237957, "abstentions": 57549, "blancs": 3897, "exprimes": 176511}, "90": {"region": "Bourgogne-Franche-Comté", "totalVotes": 69654, "inscrits": 93724, "abstentions": 22238, "blancs": 1832, "exprimes": 69654}, "91": {"region": "Île-de-France", "totalVotes": 594941, "inscrits": 799500, "abstentions": 192200, "blancs": 12359, "exprimes": 594941}, "92": {"region": "Île-de-France", "totalVotes": 774742, "inscrits": 997667, "abstentions": 208790, "blancs": 14135, "exprimes": 774742}, "93": {"region": "Île-de-France", "totalVotes": 543151, "inscrits": 793929, "abstentions": 239927, "blancs": 10851, "exprimes": 543151}, "94": {"region": "Île-de-France", "totalVotes": 589058, "inscrits": 796086, "abstentions": 195409, "blancs": 11619, "exprimes": 589058}, "95": {"region": "Île-de-France", "totalVotes": 529585, "inscrits": 733529, "abstentions": 192853, "blancs": 11091, "exprimes": 529585}, "971": {"region": "Guadeloupe", "totalVotes": 135085, "inscrits": 316023, "abstentions": 174592, "blancs": 6346, "exprimes": 135085}, "972": {"region": "Martinique", "totalVotes": 122949, "inscrits": 304594, "abstentions": 174588, "blancs": 7057, "exprimes": 122949}, "973": {"region": "Guyane", "totalVotes": 35861, "inscrits": 102993, "abstentions": 65754, "blancs": 1378, "exprimes": 35861}, "974": {"region": "La Réunion", "totalVotes": 346766, "inscrits": 675539, "abstentions": 313159, "blancs": 15614, "exprimes": 346766}, "976": {"region": "Mayotte", "totalVotes": 35050, "inscrits": 92187, "abstentions": 55024, "blancs": 2113, "exprimes": 35050}};
@@ -1722,6 +2016,561 @@ db.collection("votes").onSnapshot(snapshot => {
   // Force la mise à jour des grands graphiques si nécessaire
   if(typeof update === "function") update(); 
 });
+
+function getRelativeTime(timestamp) {
+  if (!timestamp) return "à l'instant";
+  const now = new Date();
+  const past = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const diffSec = Math.floor((now - past) / 1000);
+
+  if (diffSec < 60) return `il y a ${diffSec} sec`;
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `il y a ${diffMin} min`;
+  const diffHeures = Math.floor(diffMin / 60);
+  if (diffHeures < 24) return `il y a ${diffHeures} h`;
+  const diffJours = Math.floor(diffHeures / 24);
+  if (diffJours < 7) return `il y a ${diffJours} jrs`;
+  const diffSem = Math.floor(diffJours / 7);
+  if (diffJours < 30) return `il y a ${diffSem} sem`;
+  const diffMois = Math.floor(diffJours / 30);
+  if (diffMois < 12) return `il y a ${diffMois} mois`;
+  const diffAns = Math.floor(diffJours / 365);
+  return `il y a ${diffAns} ans`;
+}
+
+// Icones minimalistes SVG
+const ICON_LIKE = `<svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>`;
+const ICON_DISLIKE = `<svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>`;
+const ICON_COMMENT = `<svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>`;
+// Icône poubelle minimaliste SVG
+const ICON_TRASH = `<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
+// Mise à jour de l'UI quand l'utilisateur se connecte/déconnecte (à ajouter dans ton auth.onAuthStateChanged existant, ou laisser ce bout ici qui écoutera aussi)
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('chat-auth-msg').style.display = 'none';
+    document.getElementById('chat-form').style.display = 'flex';
+  } else {
+    document.getElementById('chat-auth-msg').style.display = 'block';
+    document.getElementById('chat-form').style.display = 'none';
+  }
+});
+
+// Publier un nouveau post
+function submitPost() {
+  if (!currentUser) return;
+  const text = document.getElementById('post-text').value.trim();
+  const gif = document.getElementById('post-gif').value.trim();
+  
+  if (!text && !gif) return;
+
+  db.collection("posts").add({
+    uid: currentUser.uid,
+    pseudo: currentUser.displayName || currentUser.email.split('@')[0],
+    text: text,
+    gifUrl: gif,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: [],
+    dislikes: []
+  }).then(() => {
+    document.getElementById('post-text').value = '';
+    document.getElementById('post-gif').value = '';
+  });
+}
+
+// Gérer les likes et dislikes (Basculement intelligent)
+function toggleReaction(postId, type) {
+  if (!currentUser) return alert("Connectez-vous pour réagir.");
+  
+  const postRef = db.collection("posts").doc(postId);
+  
+  db.runTransaction(transaction => {
+    return transaction.get(postRef).then(doc => {
+      if (!doc.exists) throw "Post introuvable";
+      
+      let data = doc.data();
+      let likes = data.likes || [];
+      let dislikes = data.dislikes || [];
+      let uid = currentUser.uid;
+
+      if (type === 'like') {
+        if (likes.includes(uid)) {
+          likes = likes.filter(id => id !== uid); // Retire le like
+        } else {
+          likes.push(uid); // Ajoute le like
+          dislikes = dislikes.filter(id => id !== uid); // Enlève le dislike s'il y était
+        }
+      } else if (type === 'dislike') {
+        if (dislikes.includes(uid)) {
+          dislikes = dislikes.filter(id => id !== uid); // Retire le dislike
+        } else {
+          dislikes.push(uid); // Ajoute le dislike
+          likes = likes.filter(id => id !== uid); // Enlève le like s'il y était
+        }
+      }
+      transaction.update(postRef, { likes, dislikes });
+    });
+  });
+}
+
+// ==========================================
+// GESTION DES COMMENTAIRES (RÉPONSES INFINIES)
+// ==========================================
+
+window.commentListeners = {};
+window.currentReplyTarget = {}; // Garde en mémoire à qui on répond { postId: { commentId, pseudo } }
+
+window.commentListeners = {};
+window.commentCache = {}; // MÉMOIRE : Sauvegarde les conversations
+window.openComments = {}; // MÉMOIRE : Sauvegarde l'état ouvert/fermé
+window.currentReplyTarget = {}; // Garde en mémoire à qui on répond
+
+// Fonction magique pour créer l'arbre de commentaires à l'infini (INCHANGÉE)
+function buildCommentTree(comments, parentId = null, isRoot = true) {
+  const children = comments.filter(c => (c.parentId || null) === parentId);
+  if (children.length === 0) return '';
+  let html = '';
+  children.forEach(c => {
+    let hasLiked = currentUser ? (c.likes || []).includes(currentUser.uid) : false;
+    let hasDisliked = currentUser ? (c.dislikes || []).includes(currentUser.uid) : false;
+    let imgHtml = c.gifUrl ? `<img src="${c.gifUrl}" class="post-img" style="max-height: 120px;" onerror="this.style.display='none'">` : '';
+    let textHtml = c.text ? `<div class="post-body" style="font-size:11px; margin-bottom: 6px;">${c.text.replace(/\n/g, '<br>')}</div>` : '';
+    const pc = c.partyClass || '';
+    let deleteBtnHtml = '';
+    if (currentUser && currentUser.uid === c.uid) {
+      deleteBtnHtml = `<button class="delete-btn" style="font-size:12px; padding-left:4px;" onclick="deleteComment('${c.postId}', '${c.id}')" title="Supprimer">${ICON_TRASH}</button>`;
+    }
+    const childrenHtml = buildCommentTree(comments, c.id, false);
+    const threadHtml = childrenHtml ? `<div class="comment-thread-nested">${childrenHtml}</div>` : '';
+
+    html += `
+    <div class="${isRoot ? 'comment-card' : ''}" style="${!isRoot ? 'margin-bottom: 4px;' : ''}">
+      <div class="post-header" style="margin-bottom: 4px;">
+        <div style="display:flex; align-items:center;">
+            <span class="post-pseudo ${pc}" style="font-size:11px;">${c.pseudo}</span>
+            ${deleteBtnHtml}
+        </div>
+        <span class="post-time" style="font-size:9px;">${getRelativeTime(c.timestamp)}</span>
+      </div>
+      ${textHtml}
+      ${imgHtml}
+      <div class="post-actions" style="padding-top: 4px; gap: 12px; border-top:none;">
+        <button class="action-btn ${hasLiked ? 'active-like' : ''}" style="font-size: 10px;" onclick="toggleCommentReaction('${c.postId}', '${c.id}', 'like')">
+          ${ICON_LIKE} ${(c.likes || []).length}
+        </button>
+        <button class="action-btn ${hasDisliked ? 'active-dislike' : ''}" style="font-size: 10px;" onclick="toggleCommentReaction('${c.postId}', '${c.id}', 'dislike')">
+          ${ICON_DISLIKE} ${(c.dislikes || []).length}
+        </button>
+        <button class="action-btn" style="font-size: 10px;" onclick="prepareReply('${c.postId}', '${c.id}', '${c.pseudo}')">
+          ${ICON_COMMENT} Répondre
+        </button>
+      </div>
+      ${threadHtml}
+    </div>
+    `;
+  });
+  return html;
+}
+
+// Cible une personne pour lui répondre (INCHANGÉE)
+function prepareReply(postId, commentId, pseudo) {
+  window.currentReplyTarget[postId] = { commentId, pseudo };
+  const textarea = document.getElementById(`comment-text-${postId}`);
+  const badge = document.getElementById(`reply-badge-${postId}`);
+  textarea.placeholder = `En réponse à ${pseudo}...`;
+  textarea.focus();
+  badge.innerHTML = `<span>En réponse à <strong>${pseudo}</strong></span> <button onclick="cancelReply('${postId}')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;">✖</button>`;
+  badge.style.display = 'flex';
+}
+
+function cancelReply(postId) {
+  window.currentReplyTarget[postId] = null;
+  document.getElementById(`comment-text-${postId}`).placeholder = `Écrire un commentaire...`;
+  document.getElementById(`reply-badge-${postId}`).style.display = 'none';
+}
+
+// Afficher / Masquer les commentaires (MISE À JOUR AVEC CACHE)
+function toggleComments(postId) {
+  const el = document.getElementById(`comments-container-${postId}`);
+  const isHidden = el.style.display === 'none' || el.style.display === '';
+
+  if (isHidden) {
+    el.style.display = 'flex';
+    window.openComments[postId] = true; // On mémorise que c'est ouvert
+
+    if (!window.commentListeners[postId]) {
+      const listEl = document.getElementById(`comments-list-${postId}`);
+      listEl.innerHTML = '<div style="font-size:10px; color:var(--text-dim); text-align:center;">Chargement...</div>';
+
+      window.commentListeners[postId] = db.collection("posts").doc(postId).collection("comments")
+        .orderBy("timestamp", "asc")
+        .onSnapshot(snap => {
+          let newHtml = '';
+          if(snap.empty) {
+            newHtml = '<div style="font-size:10px; color:var(--text-dim); font-style:italic;">Aucun commentaire pour le moment.</div>';
+          } else {
+            let allComments = [];
+            snap.forEach(doc => allComments.push({ id: doc.id, postId: postId, ...doc.data() }));
+            newHtml = buildCommentTree(allComments, null, true);
+          }
+          
+          // On sauvegarde la conversation dans notre cache
+          window.commentCache[postId] = newHtml;
+          
+          // On met à jour l'élément HTML (s'il est visible à l'écran)
+          const currentListEl = document.getElementById(`comments-list-${postId}`);
+          if (currentListEl) currentListEl.innerHTML = newHtml;
+        });
+    }
+  } else {
+    el.style.display = 'none';
+    window.openComments[postId] = false; // On mémorise que c'est fermé
+  }
+}
+
+// Envoyer un commentaire (Normal ou Réponse)
+function submitComment(postId) {
+  if (!currentUser) return alert("Connectez-vous pour commenter.");
+  const textEl = document.getElementById(`comment-text-${postId}`);
+  const gifEl = document.getElementById(`comment-gif-${postId}`);
+  const text = textEl.value.trim();
+  const gif = gifEl.value.trim();
+
+  if (!text && !gif) return;
+
+  // On vérifie si on est en train de répondre à un commentaire précis
+  let target = window.currentReplyTarget[postId];
+  let parentId = target ? target.commentId : null;
+
+  db.collection("posts").doc(postId).collection("comments").add({
+    uid: currentUser.uid,
+    pseudo: currentUser.displayName || currentUser.email.split('@')[0],
+    text: text,
+    gifUrl: gif,
+    parentId: parentId, // Magie : on lie ce commentaire à son parent
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: [],
+    dislikes: []
+  }).then(() => {
+    textEl.value = '';
+    gifEl.value = '';
+    cancelReply(postId); // On réinitialise la cible
+  });
+}
+
+// Likes/Dislikes sur les commentaires
+function toggleCommentReaction(postId, commentId, type) {
+  if (!currentUser) return alert("Connectez-vous pour réagir.");
+  const commentRef = db.collection("posts").doc(postId).collection("comments").doc(commentId);
+
+  db.runTransaction(transaction => {
+    return transaction.get(commentRef).then(doc => {
+      if (!doc.exists) throw "Commentaire introuvable";
+      let data = doc.data();
+      let likes = data.likes || [];
+      let dislikes = data.dislikes || [];
+      let uid = currentUser.uid;
+
+      if (type === 'like') {
+        if (likes.includes(uid)) { likes = likes.filter(id => id !== uid); }
+        else { likes.push(uid); dislikes = dislikes.filter(id => id !== uid); }
+      } else {
+        if (dislikes.includes(uid)) { dislikes = dislikes.filter(id => id !== uid); }
+        else { dislikes.push(uid); likes = likes.filter(id => id !== uid); }
+      }
+      transaction.update(commentRef, { likes, dislikes });
+    });
+  });
+}
+
+// Écoute en direct des POSTS depuis Firebase
+db.collection("posts").orderBy("timestamp", "desc").limit(50).onSnapshot(snapshot => {
+  const feed = document.getElementById('chat-feed');
+  
+  // ASTUCE : On sauvegarde le texte que les utilisateurs sont en train de taper !
+  const savedTexts = {};
+  document.querySelectorAll('textarea[id^="comment-text-"]').forEach(ta => {
+    if (ta.value.trim() !== '') savedTexts[ta.id] = ta.value;
+  });
+
+  feed.innerHTML = '';
+  
+  if (snapshot.empty) {
+    feed.innerHTML = `<div style="text-align:center; color:var(--text-dim); font-size: 12px; margin-top: 20px;">Aucun post pour le moment. Soyez le premier !</div>`;
+    return;
+  }
+
+  snapshot.forEach(doc => {
+    const post = doc.data();
+    const postId = doc.id;
+    
+    let hasLiked = currentUser ? (post.likes || []).includes(currentUser.uid) : false;
+    let hasDisliked = currentUser ? (post.dislikes || []).includes(currentUser.uid) : false;
+    
+    let imgHtml = post.gifUrl ? `<img src="${post.gifUrl}" class="post-img" onerror="this.style.display='none'" alt="GIF/Image">` : '';
+    let textHtml = post.text ? `<div class="post-body">${post.text.replace(/\n/g, '<br>')}</div>` : '';
+
+    const postEl = document.createElement('div');
+    postEl.className = 'post-card';
+
+    const pc = post.partyClass || ''; 
+    let deleteBtnHtml = '';
+    if (currentUser && currentUser.uid === post.uid) {
+      deleteBtnHtml = `<button class="delete-btn" onclick="deletePost('${postId}')" title="Supprimer">${ICON_TRASH}</button>`;
+    }
+
+    // RÉCUPÉRATION DU CACHE : Était-ce ouvert ? Y a-t-il des commentaires déjà chargés ?
+    const isCommentOpen = window.openComments[postId] ? 'flex' : 'none';
+    const cachedCommentsHtml = window.commentCache[postId] || '';
+
+    postEl.innerHTML = `
+      <div class="post-header">
+        <div style="display:flex; align-items:center;">
+            <span class="post-pseudo ${pc}">${post.pseudo}</span>
+            ${deleteBtnHtml}
+        </div>
+        <span class="post-time">${getRelativeTime(post.timestamp)}</span>
+      </div>
+      ${textHtml}
+      ${imgHtml}
+      <div class="post-actions">
+        <button class="action-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction('${postId}', 'like')">
+          ${ICON_LIKE} ${(post.likes || []).length}
+        </button>
+        <button class="action-btn ${hasDisliked ? 'active-dislike' : ''}" onclick="toggleReaction('${postId}', 'dislike')">
+          ${ICON_DISLIKE} ${(post.dislikes || []).length}
+        </button>
+        <button class="action-btn" onclick="toggleComments('${postId}')">
+          ${ICON_COMMENT} Discuter
+        </button>
+      </div>
+      
+      <div class="comments-section" id="comments-container-${postId}" style="display: ${isCommentOpen};">
+        <div id="comments-list-${postId}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;">
+           ${cachedCommentsHtml}
+        </div>
+        
+        <div class="comment-input-wrap">
+          <div id="reply-badge-${postId}" style="display:none; font-size:10px; background:var(--surface2); padding:4px 8px; border-radius:4px; margin-bottom:4px; color:var(--text-dim); align-items:center; justify-content:space-between; border: 1px solid var(--border);"></div>
+          <textarea id="comment-text-${postId}" placeholder="Écrire un commentaire..."></textarea>
+          
+          <div class="gif-preview-container" id="comment-gif-preview-wrap-${postId}">
+             <img id="comment-gif-preview-${postId}" src="">
+             <button class="gif-preview-close" onclick="removeSelectedGif('comment-${postId}')" title="Retirer">✖</button>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 4px;">
+            <div class="gif-picker-container" id="gif-picker-comment-${postId}">
+                <button class="minimal-gif-btn" id="gif-btn-comment-${postId}" onclick="toggleGifDropdown('comment-${postId}')" title="Ajouter un GIF">
+                    GIF
+                </button>
+                <div class="gif-dropdown" id="gif-dropdown-comment-${postId}">
+                    <input type="text" id="gif-search-comment-${postId}" class="gif-search-input" placeholder="Rechercher..." oninput="debounceGifSearch('comment-${postId}')">
+                    <div id="gif-results-comment-${postId}" class="gif-grid"></div>
+                </div>
+            </div>
+            <button onclick="submitComment('${postId}')" class="btn-sort active">Envoyer</button>
+          </div>
+        </div>
+      </div>
+    `;
+    feed.appendChild(postEl);
+  });
+
+  // RESTAURATION : On remet le texte que l'utilisateur était en train de taper !
+  Object.keys(savedTexts).forEach(id => {
+    const ta = document.getElementById(id);
+    if (ta) ta.value = savedTexts[id];
+  });
+});
+
+let selectedGifs = {}; // Mémoire temporaire des GIFs sélectionnés par targetId
+let gifSearchTimeout = null;
+
+// Gérer l'ouverture/fermeture d'un DROPDOWN précis
+function toggleGifDropdown(targetId) {
+  const dropdown = document.getElementById(`gif-dropdown-${targetId}`);
+  const btn = document.getElementById(`gif-btn-${targetId}`);
+  const searchInput = document.getElementById(`gif-search-${targetId}`);
+  
+  // Si on ouvre, on charge les tendances par défaut
+  if (!dropdown.classList.contains('show')) {
+    searchInput.value = '';
+    searchGifs('trending', targetId);
+    searchInput.focus(); // On met le focus sur la recherche
+  }
+
+  // Active/Désactive l'état visuel du logo minimaliste
+  btn.classList.toggle('active');
+  dropdown.classList.toggle('show');
+}
+
+// Pour la recherche : attend 400ms après la frappe
+function debounceGifSearch(targetId) {
+  clearTimeout(gifSearchTimeout);
+  gifSearchTimeout = setTimeout(() => {
+    let query = document.getElementById(`gif-search-${targetId}`).value.trim();
+    searchGifs(query || 'trending', targetId);
+  }, 400);
+}
+
+// Recherche sur TENOR
+function searchGifs(query, targetId) {
+  const resultsDiv = document.getElementById(`gif-results-${targetId}`);
+  resultsDiv.innerHTML = '<div style="grid-column: span 2; text-align:center; color:var(--text-dim); font-size:9px;">...</div>';
+  
+  // Utilisation de la clé de test publique Tenor V1 (LIVDSRZULELA)
+  let url = `https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=LIVDSRZULELA&limit=10&locale=fr_FR&tiny_gif_formats=tinygif`;
+  if (query === 'trending') {
+    url = `https://g.tenor.com/v1/trending?key=LIVDSRZULELA&limit=10&locale=fr_FR&tiny_gif_formats=tinygif`;
+  }
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      resultsDiv.innerHTML = '';
+      if (!data.results || data.results.length === 0) {
+        resultsDiv.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#e07080; font-size:10px;">Aucun résultat</div>';
+        return;
+      }
+      data.results.forEach(gif => {
+        // Version légère pour la grille (tinygif)
+        const previewUrl = gif.media[0].tinygif.url; 
+        // Version HD pour le post final
+        const fullUrl = gif.media[0].gif.url;        
+        
+        const img = document.createElement('img');
+        img.src = previewUrl;
+        img.onclick = () => selectGif(fullUrl, targetId);
+        resultsDiv.appendChild(img);
+      });
+    })
+    .catch(err => {
+      resultsDiv.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#ff4444; font-size:10px;">Erreur</div>';
+    });
+}
+
+function selectGif(url, targetId) {
+  selectedGifs[targetId] = url; // Mémorise l'URL
+  
+  // Affiche la prévisualisation dans la zone d'input
+  let previewWrap = document.getElementById(targetId === 'post' ? 'post-gif-preview-wrap' : `comment-gif-preview-wrap-${targetId.replace('comment-', '')}`);
+  let previewImg = document.getElementById(targetId === 'post' ? 'post-gif-preview' : `comment-gif-preview-${targetId.replace('comment-', '')}`);
+  
+  if (previewWrap && previewImg) {
+    previewImg.src = url;
+    previewWrap.style.display = 'block';
+  }
+  
+  // Ferme le dropdown et désactive le logo
+  toggleGifDropdown(targetId);
+}
+
+function removeSelectedGif(targetId) {
+  selectedGifs[targetId] = null;
+  let previewWrap = document.getElementById(targetId === 'post' ? 'post-gif-preview-wrap' : `comment-gif-preview-wrap-${targetId.replace('comment-', '')}`);
+  if (previewWrap) previewWrap.style.display = 'none';
+}
+
+// Bonus : Fermer les dropdowns si on clique n'importe où ailleurs sur la page
+window.addEventListener('click', function(e) {
+  // Si le clic n'est pas dans un gif-picker-container
+  if (!e.target.closest('.gif-picker-container')) {
+    // Fermer tous les dropdowns ouverts
+    document.querySelectorAll('.gif-dropdown.show').forEach(el => {
+      const targetId = el.id.replace('gif-dropdown-', '');
+      toggleGifDropdown(targetId); // ferme
+    });
+  }
+});
+
+// Utilitaire asynchrone pour obtenir la classe de couleur basée sur le vote
+async function getUserPartyClass(uid) {
+  if (!uid) return '';
+  try {
+    const voteDoc = await db.collection("votes").doc(uid).get();
+    // On utilise bien .parti ici !
+    if (voteDoc.exists && voteDoc.data().parti) {
+      return 'p-' + voteDoc.data().parti;
+    }
+  } catch (e) { console.error("Erreur lors de la récupération du vote", e); }
+  return ''; // Pas de vote = couleur par défaut
+}
+
+// MISE À JOUR : submitPost (Enregistre le parti)
+async function submitPost() {
+  if (!currentUser) return alert("Connectez-vous pour participer.");
+  const textEl = document.getElementById('post-text');
+  const text = textEl.value.trim();
+  const gifUrl = selectedGifs['post'] || "";
+  if (!text && !gifUrl) return;
+
+  // NEW : Récupère le parti au moment de l'envoi
+  const partyClass = await getUserPartyClass(currentUser.uid);
+
+  db.collection("posts").add({
+    uid: currentUser.uid,
+    pseudo: currentUser.displayName || currentUser.email.split('@')[0],
+    partyClass: partyClass, // STOCKÉ DANS FIRESTORE
+    text: text,
+    gifUrl: gifUrl,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: [],
+    dislikes: []
+  }).then(() => {
+    textEl.value = '';
+    removeSelectedGif('post'); // Nettoie la prévisualisation
+  });
+}
+
+// MISE À JOUR : submitComment (Enregistre le parti)
+async function submitComment(postId) {
+  if (!currentUser) return alert("Connectez-vous pour commenter.");
+  const textEl = document.getElementById(`comment-text-${postId}`);
+  const text = textEl.value.trim();
+  const gifUrl = selectedGifs[`comment-${postId}`] || "";
+  if (!text && !gifUrl) return;
+
+  let target = window.currentReplyTarget[postId];
+  let parentId = target ? target.commentId : null;
+
+  // NEW : Récupère le parti au moment de l'envoi
+  const partyClass = await getUserPartyClass(currentUser.uid);
+
+  db.collection("posts").doc(postId).collection("comments").add({
+    uid: currentUser.uid,
+    pseudo: currentUser.displayName || currentUser.email.split('@')[0],
+    partyClass: partyClass, // STOCKÉ DANS FIRESTORE
+    text: text,
+    gifUrl: gifUrl,
+    parentId: parentId,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: [],
+    dislikes: []
+  }).then(() => {
+    textEl.value = '';
+    removeSelectedGif(`comment-${postId}`);
+    cancelReply(postId);
+  });
+}
+
+// Supprimer son propre Post principal
+function deletePost(postId) {
+  if (!currentUser) return;
+
+  db.collection("posts").doc(postId).delete()
+  .then(() => console.log("Post supprimé"))
+  .catch(e => { alert("Erreur lors de la suppression."); console.error(e); });
+}
+
+// Supprimer son propre Commentaire/Réponse
+function deleteComment(postId, commentId) {
+  if (!currentUser) return;
+
+  db.collection("posts").doc(postId).collection("comments").doc(commentId).delete()
+  .then(() => console.log("Commentaire supprimé"))
+  .catch(e => { alert("Erreur lors de la suppression."); console.error(e); });
+}
+
 </script>
 </body>
 </html>
