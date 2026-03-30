@@ -607,10 +607,11 @@ function buildSliders() {
   });
 }
 
+let updateTimeout = null; // On crée une variable pour stocker notre minuteur
+
 function onDualSlider(parti, type, value) {
   let val = parseInt(value);
   let params = sliderParams[parti];
-  
   if (type === 'lfi') {
       if (val > 100 - params.rn) {
           params.rn = 100 - val;
@@ -627,6 +628,8 @@ function onDualSlider(parti, type, value) {
   }
 
   const valAbst = 100 - params.lfi - params.rn;
+  
+  // Mise à jour visuelle du slider (Instantanée)
   document.getElementById(`lbl_${parti}`).innerHTML = `
       <span style="color:var(--LFI)">${params.lfi}%</span>
       <span style="color:var(--text-dim); margin:0 4px;">|</span>
@@ -637,8 +640,15 @@ function onDualSlider(parti, type, value) {
   document.getElementById(`fill_lfi_${parti}`).style.width = params.lfi + '%';
   document.getElementById(`fill_rn_${parti}`).style.width = params.rn + '%';
   
-  update(); 
+  // Lancement différé des calculs lourds (Fluidifie l'UI)
+  if (updateTimeout) {
+    clearTimeout(updateTimeout); // Annule le calcul précédent si on bouge encore
+  }
+  updateTimeout = setTimeout(() => {
+    update(); // Se lance uniquement quand le doigt s'arrête pendant 50ms
+  }, 50); 
 }
+
 
 function resetSliders() { 
   sliderParams = JSON.parse(JSON.stringify(currentCenterCandidate === 'Attal' ? DEFAULT_PARAMS_ATTAL : DEFAULT_PARAMS_PHILIPPE));
