@@ -183,28 +183,26 @@
     }
   }
 
-          /* infobulles (Tooltips) sur mobile */
+       /* infobulles (Tooltips) sur mobile - Force brute (Viewport) */
     .map-tooltip {
-      /* On écrase la position verticale du JS */
+      position: fixed !important;
       top: auto !important; 
       bottom: 20px !important;
       
-      /* LA SOLUTION MAGIQUE : on ancre à 16px des deux côtés */
-      left: 16px !important;
-      right: 16px !important;
+      /* Positionnement absolu basé sur l'écran physique */
+      left: 5vw !important;
+      right: auto !important;
+      width: 90vw !important; 
       
-      /* On force la largeur à s'adapter entre ces deux ancres */
-      width: auto !important; 
+      /* Nettoyage intensif des règles de base */
       min-width: 0 !important;
       max-width: none !important;
-      
-      /* On supprime tout ce qui pourrait décaler la boîte */
       margin: 0 !important;
-      transform: none !important; 
+      transform: none !important;
       
       /* Cosmétique */
       font-size: 14px;
-      padding: 16px 20px;
+      padding: 16px !important;
       box-sizing: border-box !important;
     }
     
