@@ -183,30 +183,28 @@
     }
   }
 
-    /* infobulles (Tooltips) sur mobile */
+        /* Optimisation des infobulles (Tooltips) sur mobile (Correction) */
     .map-tooltip {
-      /* On écrase le positionnement JavaScript (qui suit la souris) */
-      top: auto !important; 
-      left: 50% !important;
+      /* Annule le positionnement de la souris */
+      top: auto !important;
       bottom: 20px !important;
-      transform: translateX(-50%) !important;
       
-      /* On lui donne une bonne largeur et on l'empêche de déborder */
-      width: calc(100% - 32px) !important; 
-      min-width: auto;
-      max-width: 400px;
+      /* Ancrage fixe à gauche et à droite pour garantir qu'elle ne déborde pas horizontalement */
+      left: 16px !important;
+      right: 16px !important;
+      transform: none !important;
+      width: auto !important;
+      min-width: 0 !important;
       
-      /* On augmente un peu la taille du texte pour la lisibilité */
+      /* Empêche le débordement vertical si la liste des candidats est très longue */
+      max-height: 40vh !important; /* Ne prendra jamais plus de 40% de la hauteur de l'écran */
+      overflow-y: auto !important; /* Ajoute un scroll interne si nécessaire */
+      
+      /* Amélioration de la lisibilité */
       font-size: 14px;
-      padding: 16px 20px;
+      padding: 16px;
+      box-sizing: border-box !important;
     }
-    
-    .tt-header { font-size: 17px; }
-    .tt-region { font-size: 10px; margin-bottom: 12px; }
-    .tt-winner { font-size: 14px; }
-    .tt-row { font-size: 13px; margin-bottom: 8px; }
-    .tt-stats { font-size: 12px; gap: 6px; }
-
 
 </style>
 </head>
