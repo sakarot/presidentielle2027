@@ -208,34 +208,64 @@
     }
   }
 
-       /* infobulles (Tooltips) sur mobile - Force brute (Viewport) */
+ /*Infobulles : Tailles réduites pour mobile (sans casser le JavaScript) */
     .map-tooltip {
-      position: fixed !important;
-      top: auto !important; 
-      bottom: 20px !important;
-      
-      /* Positionnement absolu basé sur l'écran physique */
-      left: 5vw !important;
-      right: auto !important;
-      width: 90vw !important; 
-      
-      /* Nettoyage intensif des règles de base */
-      min-width: 0 !important;
-      max-width: none !important;
-      margin: 0 !important;
-      transform: none !important;
-      
-      /* Cosmétique */
-      font-size: 14px;
-      padding: 16px !important;
-      box-sizing: border-box !important;
+      width: 220px !important; /* Largeur fixe adaptée aux petits écrans */
+      min-width: 200px !important;
+      white-space: normal !important; /* Force le texte à aller à la ligne s'il est trop long */
+      padding: 10px !important; /* Marges réduites */
     }
-    
-    .tt-header { font-size: 17px; }
-    .tt-region { font-size: 10px; margin-bottom: 12px; }
-    .tt-winner { font-size: 14px; }
-    .tt-row { font-size: 13px; margin-bottom: 8px; }
-    .tt-stats { font-size: 12px; gap: 6px; }
+    .tt-row { margin-bottom: 2px; }
+    .tt-stats { margin-top: 4px; padding-top: 4px; }
+
+
+  .vote-panel-container {
+    margin-bottom: 32px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .vote-panel-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    flex: 1; /* Prend tout l'espace disponible à gauche */
+  }
+
+  .vote-panel-right {
+    text-align: right;
+    border-left: 1px solid var(--border);
+    padding-left: 20px;
+    width: 220px; /* Largeur fixe stricte */
+    flex-shrink: 0; /* Interdit formellement au navigateur de l'écraser ou de le passer à la ligne */
+  }
+
+  /* Adaptation parfaite pour le mobile */
+  @media (max-width: 768px) {
+    .vote-panel-container {
+      flex-direction: column; /* Force l'empilement vertical */
+      align-items: stretch;
+    }
+    .vote-panel-right {
+      text-align: left;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding-left: 0;
+      padding-top: 16px;
+      width: 100%;
+    }
+    /* Aligne les barres de classement à gauche sur mobile */
+    #community-leaderboard > div {
+      justify-content: flex-start !important;
+    }
+ 
 
 </style>
 </head>
@@ -290,20 +320,17 @@
     </div>
  </header>
 
-  <div class="vote-panel" style="margin-bottom: 32px; padding: 16px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;">
+<div class="vote-panel-container">
     
-    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex: 1;">
+    <div class="vote-panel-left">
       <div id="voter-profile-view" style="display: none; align-items: center; gap: 12px;">
-        <div class="username-container">
-          <strong id="user-display-name" style="font-size: 15px;"></strong>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border);">
-          <span id="user-badge" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: transparent;"></span>
-          <span id="user-vote-text" style="font-size: 11px; font-family: 'Space Mono', monospace;">Aucun vote</span>
+        <div class="username-container" style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border);">
+          <span id="user-badge" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background 0.3s;"></span>
+          <strong id="user-display-name" style="font-size: 15px; color: #fff; transition: color 0.3s;"></strong>
         </div>
       </div>
       
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <select id="vote-selector" class="btn-sort" style="background: var(--surface2); padding: 8px 12px; font-size: 13px; font-weight: bold; color: #fff;">
           <option value="" style="color: var(--text-dim);">-- Choisissez un candidat --</option>
           <option value="LO" style="color: #7a1020; font-weight: bold;">Arthaud (LO)</option>
@@ -322,7 +349,7 @@
       </div>
     </div>
 
-   <div style="text-align: right; border-left: 1px solid var(--border); padding-left: 20px; min-width: 200px;">
+    <div class="vote-panel-right">
       <div style="margin-bottom: 8px;">
         <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">Votes réels</span><br>
         <strong id="community-counter" style="font-family: 'Space Mono', monospace; color: var(--accent); font-size: 20px; line-height: 1;">0</strong>
@@ -332,6 +359,8 @@
         <span style="font-size: 11px; color: var(--text-dim); font-style: italic;">Aucun vote pour l'instant...</span>
       </div>
     </div>
+    
+  </div>
   <div class="controls-panel">
     <div class="controls-header">
       <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
@@ -1363,18 +1392,43 @@ function toggleUserMenu() {
   document.getElementById('user-dropdown').classList.toggle('show');
 }
 
-// Fonction appelée quand on clique sur le petit crayon ✏️
+// Fonction appelée quand on clique sur le petit crayon ✎
 function editUsernamePrompt() {
   if (!currentUser) return;
+  
   const currentName = document.getElementById('user-display-name').innerText;
   const newName = prompt("Entrez votre nouveau pseudo :", currentName);
   
   if (newName !== null && newName.trim() !== "") {
-    currentUser.updateProfile({ displayName: newName.trim() }).then(() => {
-      document.getElementById('user-display-name').innerText = newName.trim();
-      document.getElementById('dropdown-username').innerText = newName.trim();
-      alert("Pseudo mis à jour !");
-    }).catch(err => alert("Erreur : " + err.message));
+    const cleanName = newName.trim();
+    const lowerName = cleanName.toLowerCase(); 
+    const oldLowerName = currentName.toLowerCase();
+
+    if (lowerName === oldLowerName) return; // Si c'est exactement le même nom, on annule
+
+    // 1. On vérifie si le NOUVEAU pseudo est pris
+    db.collection("usernames").doc(lowerName).get().then((doc) => {
+      if (doc.exists && doc.data().uid !== currentUser.uid) {
+        alert("Désolé, ce pseudo est déjà pris ! Veuillez en choisir un autre.");
+      } else {
+        // 2. Il est libre : on le verrouille à notre nom
+        db.collection("usernames").doc(lowerName).set({ uid: currentUser.uid }).then(() => {
+          
+          // 3. On met à jour le profil
+          currentUser.updateProfile({ displayName: cleanName }).then(() => {
+            document.getElementById('user-display-name').innerText = cleanName;
+            document.getElementById('dropdown-username').innerText = cleanName;
+            alert("Votre pseudo a bien été mis à jour !");
+            
+            // 4. On supprime l'ANCIEN pseudo du registre pour le rendre disponible
+            // (On s'assure de ne pas supprimer l'email par défaut si c'est un vieux compte)
+            if (oldLowerName && !oldLowerName.includes('@')) {
+              db.collection("usernames").doc(oldLowerName).delete();
+            }
+          });
+        });
+      }
+    }).catch(err => alert("Erreur de vérification : " + err.message));
   }
 }
 
@@ -1397,9 +1451,36 @@ function registerUser() {
   const email = document.getElementById('email-input').value;
   const pass = document.getElementById('password-input').value;
   if(!email || !pass) return alert("Veuillez remplir l'email et le mot de passe.");
-  auth.createUserWithEmailAndPassword(email, pass).then(() => {
-    alert("Compte créé avec succès ! Vous pouvez maintenant voter.");
-  }).catch(err => alert("Erreur : " + err.message));
+
+  // On demande le pseudo avant même de créer le compte
+  const pseudo = prompt("Choisissez un pseudo unique pour le classement :");
+  if (!pseudo || pseudo.trim() === "") return alert("Inscription annulée : le pseudo est obligatoire.");
+  
+  const cleanName = pseudo.trim();
+  const lowerName = cleanName.toLowerCase(); // Pour vérifier sans tenir compte des majuscules
+
+  // 1. On vérifie d'abord si le pseudo est libre dans la base de données
+  db.collection("usernames").doc(lowerName).get().then(doc => {
+    if (doc.exists) {
+      alert("Désolé, ce pseudo est déjà pris ! Veuillez réessayer avec un autre.");
+    } else {
+      // 2. Le pseudo est libre, on crée le compte Firebase
+      auth.createUserWithEmailAndPassword(email, pass).then((userCredential) => {
+        const user = userCredential.user;
+        
+        // 3. On verrouille le pseudo dans le registre
+        db.collection("usernames").doc(lowerName).set({ uid: user.uid });
+        
+        // 4. On l'attache au profil de l'utilisateur
+        user.updateProfile({ displayName: cleanName }).then(() => {
+            document.getElementById('user-display-name').innerText = cleanName;
+            document.getElementById('dropdown-username').innerText = cleanName;
+        });
+        
+        alert("Compte créé avec succès ! Vous pouvez maintenant voter.");
+      }).catch(err => alert("Erreur lors de la création : " + err.message));
+    }
+  }).catch(err => alert("Erreur de connexion : " + err.message));
 }
 
 function loginUser() {
@@ -1410,8 +1491,18 @@ function loginUser() {
 }
 
 function logoutUser() { 
+  // On coupe l'écouteur du compte avant de se déconnecter
+  if (myVoteListener) {
+    myVoteListener();
+    myVoteListener = null;
+  }
+  
   auth.signOut(); 
-  document.getElementById('vote-selector').value = ""; // Réinitialise le select
+  document.getElementById('vote-selector').value = ""; 
+  
+  // Remise à zéro visuelle (gris/blanc)
+  document.getElementById('user-badge').style.background = 'transparent';
+  document.getElementById('user-display-name').style.color = '#fff';
 }
 
 function handleVoteClick() {
@@ -1433,16 +1524,29 @@ function handleVoteClick() {
 }
 
 // Récupère et affiche le badge de l'utilisateur
+let myVoteListener = null;
+
 function fetchMyVote() {
-  db.collection("votes").doc(currentUser.uid).onSnapshot(doc => {
+  // 1. Si on écoutait déjà un autre compte, on coupe la connexion !
+  if (myVoteListener) {
+    myVoteListener();
+  }
+
+  // 2. On écoute le nouveau compte
+  myVoteListener = db.collection("votes").doc(currentUser.uid).onSnapshot(doc => {
     if (doc.exists) {
       const monVote = doc.data().parti;
       document.getElementById('vote-selector').value = monVote;
       
-      // Met à jour le badge visuel
-      document.getElementById('user-badge').style.background = COULEURS[monVote] || '#666';
-      document.getElementById('user-vote-text').innerText = CANDIDATS[monVote] || monVote;
-      document.getElementById('user-vote-text').style.color = COULEURS[monVote] || '#fff';
+      // On colorie la pastille ET le pseudo
+      const couleurCandidat = COULEURS[monVote] || '#fff';
+      document.getElementById('user-badge').style.background = couleurCandidat;
+      document.getElementById('user-display-name').style.color = couleurCandidat;
+    } else {
+      // Si le compte n'a pas encore voté
+      document.getElementById('vote-selector').value = "";
+      document.getElementById('user-badge').style.background = 'transparent';
+      document.getElementById('user-display-name').style.color = '#fff';
     }
   });
 }
