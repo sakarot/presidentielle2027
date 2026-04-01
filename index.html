@@ -2,15 +2,15 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L'araignée</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>L'Araignée</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
 :root {
-    --bg: #0D1B2A; 
+    --bg: #0D1B2A;
     --surface: #1B263B; 
     --surface2: #1B263B;
     --border: rgba(255,255,255,0.08); 
@@ -19,16 +19,17 @@
     --accent: #778DA9; 
     
     --LO: #7a1020; --PCF: #9b1010; --LFI: #c0001a; 
-    --EELV: #2ea05a; --PS: #e07080; --REN: #f0c030;
+    --EELV: #2ea05a;
+    --PS: #e07080; --REN: #f0c030;
     --HZ: #70c8f8; --LR: #2c75ff; --DF: #003870; --RN: #0d3890; --RQ: #555555;
-  }
+}
 
   /* BARRE DE NAVIGATION BASSE (MOBILE) */
   .bottom-nav {
-    display: none; /* Caché sur PC */
+    display: none;
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    background: rgba(30, 15, 48, 0.95);
+    background: rgba(13, 27, 42, 0.95);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--border);
     z-index: 1000;
@@ -36,61 +37,72 @@
   }
   .bottom-nav button {
     flex: 1; padding: 12px; background: none; border: none;
-    color: var(--text-dim); font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace; font-size: 11px;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     transition: color 0.2s; cursor: pointer;
   }
   .bottom-nav button.active {
     color: var(--accent); font-weight: bold;
   }
-  .bottom-nav button svg { fill: currentColor; width: 20px; height: 20px; }
+  .bottom-nav button svg { fill: currentColor;
+    width: 20px; height: 20px; }
 
   @media (max-width: 1024px) {
     .bottom-nav { display: flex; }
     /* Sur mobile, on cache la barre latérale par défaut */
-    .community-sidebar { display: none !important; width: 100%; border-left: none; }
+    .community-sidebar { display: none !important;
+    width: 100%; border-left: none; }
     .main-content { display: block; }
     /* Si l'onglet communauté est actif, on inverse */
-    body.show-community .community-sidebar { display: flex !important; }
+    body.show-community .community-sidebar { display: flex !important; margin-right: 0 !important; }
     body.show-community .main-content { display: none !important; }
     
     .page-wrapper { padding-bottom: 60px; /* Place pour la barre du bas */ }
     .community-footer { bottom: 60px; /* Remonte la zone de texte */ }
   }
+  
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: var(--bg); color: var(--text);
     font-family: 'DM Sans', sans-serif; font-size: 14px;
-    min-height: 100vh; overflow-x: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
   body::before {
     content: ''; position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.5; pointer-events: none; z-index: 0;
+    opacity: 0.5; pointer-events: none;
+    z-index: 0;
   }
   .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; position: relative; z-index: 1; }
   
   header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 48px; flex-wrap: wrap; }
   .header-left h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 52px); line-height: 1.05; letter-spacing: -0.02em; }
   .header-left h1 em { font-style: italic; color: var(--accent); }
-  .header-left .subtitle-wrap { margin-top: 10px; display: flex; align-items: center; gap: 16px; font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.05em; }
+  .header-left .subtitle-wrap { margin-top: 10px; display: flex;
+  align-items: center; gap: 16px; font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.05em; }
   .social-links { display: flex; align-items: center; gap: 12px; }
   .social-links svg { fill: var(--text-dim); height: 16px; width: auto; transition: fill 0.2s; display: block; }
   .social-links a:hover svg { fill: var(--accent); }
-  .social-links .flag { font-size: 16px; text-decoration: none; opacity: 0.8; transition: opacity 0.2s; display: block;}
+  .social-links .flag { font-size: 16px; text-decoration: none; opacity: 0.8;
+  transition: opacity 0.2s; display: block;}
   .social-links .flag:hover { opacity: 1; }
 
   /* CONTROLS PANEL */
-  .controls-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+  .controls-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+  margin-bottom: 32px; }
   .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
   .controls-header h3 { font-family: 'DM Serif Display', serif; font-size: 16px; font-weight: 400; }
   .candidate-selector { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-  .selector-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; padding: 8px 20px; border: none; background: var(--surface2); color: var(--text-dim); cursor: pointer; transition: all 0.2s; border-right: 1px solid var(--border); }
+  .selector-btn { font-family: 'DM Sans', sans-serif; font-size: 12px;
+  font-weight: 600; padding: 8px 20px; border: none; background: var(--surface2); color: var(--text-dim); cursor: pointer; transition: all 0.2s; border-right: 1px solid var(--border); }
   .selector-btn:last-child { border-right: none; }
   .selector-btn.active#btnAttal { background: var(--REN); color: #111; }
   .selector-btn.active#btnPhilippe { background: var(--HZ); color: #111; }
   .selector-btn:hover:not(.active) { background: rgba(255,255,255,0.03); color: #fff;}
-  .reset-btn { font-family: 'Space Mono', monospace; font-size: 10px; padding: 5px 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 4px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.2s; }
+  .reset-btn { font-family: 'Space Mono', monospace; font-size: 10px;
+  padding: 5px 12px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 4px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.2s; }
   .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
   
   /* SLIDERS */
@@ -120,16 +132,16 @@
   .edit-pseudo-btn { 
     background: transparent; 
     border: none; 
-    color: var(--text-dim); /* Utilise votre gris par défaut */
+    color: var(--text-dim);
     cursor: pointer; 
     font-size: 14px; 
     padding: 0 4px;
-    transition: color 0.2s; 
+    transition: color 0.2s;
     display: flex;
     align-items: center;
   }
   .edit-pseudo-btn:hover, .edit-pseudo-btn:active { 
-    color: #ffffff; /* Devient blanc au survol */
+    color: #ffffff;
   }
 
   /* GRIDS */
@@ -194,136 +206,49 @@
   .stat-val { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; }
   
   @media (max-width: 768px) {
-   .container { 
-      padding: 20px 16px; /* Remplace le 40px 24px initial */
-    }
-    header { 
-      margin-bottom: 24px; 
-      gap: 16px;
-    }
-     /* La règle initiale minmax(320px, 1fr) force une largeur trop grande pour les petits écrans */
-    .sliders-grid { 
-      grid-template-columns: 1fr; 
-      gap: 24px;
-    }
-  
-   .controls-header { 
-      flex-direction: column; 
-      align-items: stretch; 
-      gap: 16px; 
-    }
-    .candidate-selector { 
-      width: 100%; 
-    }
-    .selector-btn { 
-      flex: 1; /* Les boutons prennent 50% de la largeur chacun */
-      text-align: center;
-    }
-    
-  th, td { 
-      padding: 8px; /* Remplace le padding initial de 9px 12px */
-      font-size: 11px; /* Réduit la taille de la police du tableau */
-    }
-    .pct-bar-cell { 
-      width: 80px; /* Réduit la largeur de la barre de volume */
-    }
-
-    .map-container { 
-      height: 320px; /* Réduit la hauteur pour ne pas prendre tout l'écran (initial 420px) */
-    }
-    .drom-com-container {
-      bottom: 0px; 
-      left: 0px;
-      transform: scale(0.85); /* Réduit un peu la taille des îles pour éviter qu'elles ne masquent la métropole */
-      transform-origin: bottom left;
-    }
-    
-    .global-stats-row {
-      gap: 12px;
-      padding: 10px;
-    }
-    .stat-val {
-      font-size: 11px; /* Taille plus adaptée */
-    }
+   .container { padding: 20px 16px; }
+    header { margin-bottom: 24px; gap: 16px; }
+    .sliders-grid { grid-template-columns: 1fr; gap: 24px; }
+    .controls-header { flex-direction: column; align-items: stretch; gap: 16px; }
+    .candidate-selector { width: 100%; }
+    .selector-btn { flex: 1; text-align: center; }
+    th, td { padding: 8px; font-size: 11px; }
+    .pct-bar-cell { width: 80px; }
+    .map-container { height: 320px; }
+    .drom-com-container { bottom: 0px; left: 0px; transform: scale(0.85); transform-origin: bottom left; }
+    .global-stats-row { gap: 12px; padding: 10px; }
+    .stat-val { font-size: 11px; }
+    .vote-panel-container { flex-direction: column; align-items: stretch; }
+    .vote-panel-right { text-align: left; border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 16px; width: 100%; }
+    #community-leaderboard > div { justify-content: flex-start !important; }
   }
 
  /*Infobulles : Tailles réduites pour mobile (sans casser le JavaScript) */
-    .map-tooltip {
-      width: 220px !important; /* Largeur fixe adaptée aux petits écrans */
-      min-width: 200px !important;
-      white-space: normal !important; /* Force le texte à aller à la ligne s'il est trop long */
-      padding: 10px !important; /* Marges réduites */
-    }
+    .map-tooltip { width: 220px !important; min-width: 200px !important; white-space: normal !important; padding: 10px !important; }
     .tt-row { margin-bottom: 2px; }
     .tt-stats { margin-top: 4px; padding-top: 4px; }
 
-
-  .vote-panel-container {
-    margin-bottom: 32px;
-    padding: 16px 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  
-  .vote-panel-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    flex: 1; /* Prend tout l'espace disponible à gauche */
-  }
-
-  .vote-panel-right {
-    text-align: right;
-    border-left: 1px solid var(--border);
-    padding-left: 20px;
-    width: 220px; /* Largeur fixe stricte */
-    flex-shrink: 0; /* Interdit formellement au navigateur de l'écraser ou de le passer à la ligne */
-  }
-
-  /* Adaptation parfaite pour le mobile */
-  @media (max-width: 768px) {
-    .vote-panel-container {
-      flex-direction: column; /* Force l'empilement vertical */
-      align-items: stretch;
-    }
-    .vote-panel-right {
-      text-align: left;
-      border-left: none;
-      border-top: 1px solid var(--border);
-      padding-left: 0;
-      padding-top: 16px;
-      width: 100%;
-    }
-    /* Aligne les barres de classement à gauche sur mobile */
-    #community-leaderboard > div {
-      justify-content: flex-start !important;
-    }
-}
+  .vote-panel-container { margin-bottom: 32px; padding: 16px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .vote-panel-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex: 1; }
+  .vote-panel-right { text-align: right; border-left: 1px solid var(--border); padding-left: 20px; width: 220px; flex-shrink: 0; }
 
  /* =========================================
      BARRE LATÉRALE COMMUNAUTÉ
      ========================================= */
-.community-sidebar {
+  .community-sidebar {
     width: 340px;
     flex-shrink: 0;
     background: var(--surface);
     border-left: 1px solid var(--border);
-    position: relative; /* Nécessaire pour l'animation de fermeture > */
+    position: relative;
     transition: margin-right 0.3s ease;
     z-index: 10;
     overflow-y: auto;
-    overscroll-behavior: contain; /* empêche le scroll de déborder sur la page */
-
+    overscroll-behavior: contain;
   }
   .page-wrapper {
     display: flex;
-    align-items: stretch; /* Aligne la hauteur de la barre avec le reste du site */
+    align-items: stretch;
     min-height: 100vh;
   }
 
@@ -333,7 +258,6 @@
     overflow-y: auto;
     height: 100vh;
     overscroll-behavior: contain;
-
   }
   .chat-header {
     padding: 24px;
@@ -342,125 +266,50 @@
     font-size: 20px;
     color: #fff;
   }
-.chat-feed {
+  .chat-feed {
     padding: 16px;
     padding-bottom: 240px; 
     display: flex;
     flex-direction: column;
     gap: 16px;
-    -ms-overflow-style: none;  
+    -ms-overflow-style: none;
     scrollbar-width: none;  
     overflow-y: auto;
     max-height: calc(100vh - 180px);
     overscroll-behavior: contain;
-}
-
   }
-  .chat-feed::-webkit-scrollbar {
-    display: none; 
-  }
+  .chat-feed::-webkit-scrollbar { display: none; }
   
-  .chat-input-area input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: #fff;
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 11px;
-  }
-  .post-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-  }
-  .post-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    align-items: center;
-  }
-  .post-pseudo { font-weight: bold; color: #fff; font-size: 13px; }
+  .chat-input-area input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 8px; font-size: 11px; }
+  .post-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; }
+  .post-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
+  .post-pseudo { font-weight: bold; color: #fff; font-size: 13px; transition: color 0.2s; }
   .post-time { color: var(--text-dim); font-family: 'Space Mono', monospace; font-size: 9px; }
   .post-body { font-size: 13px; margin-bottom: 12px; word-break: break-word; line-height: 1.4; color: #ccc; }
   .post-img { max-width: 100%; border-radius: 6px; margin-top: 8px; max-height: 200px; object-fit: cover; }
-  .post-actions {
-    display: flex;
-    gap: 16px;
-    border-top: 1px dashed rgba(255,255,255,0.1);
-    padding-top: 8px;
-  }
-  .action-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    transition: all 0.2s;
-    font-family: 'Space Mono', monospace;
-  }
+  .post-actions { display: flex; gap: 16px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; }
+  .action-btn { background: transparent; border: none; color: var(--text-dim); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 11px; transition: all 0.2s; font-family: 'Space Mono', monospace; }
   .action-btn:hover { color: #fff; }
   .action-btn.active-like { color: var(--EELV); }
   .action-btn.active-dislike { color: var(--LFI); }
   .action-btn svg { width: 14px; height: 14px; fill: currentColor; }
 
 /* Commentaires & Réponses infinies */
-  .comments-section {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .comment-card {
-    background: rgba(255,255,255,0.02);
-    border-radius: 6px;
-    padding: 10px;
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-  .comment-thread-nested {
-    margin-top: 8px;
-    margin-left: 12px;
-    padding-left: 12px;
-    border-left: 1px solid rgba(255,255,255,0.1); /* Ligne verticale qui relie les réponses */
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  .comments-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: none; flex-direction: column; gap: 10px; }
+  .comment-card { background: rgba(255,255,255,0.02); border-radius: 6px; padding: 10px; border: 1px solid rgba(255,255,255,0.03); }
+  .comment-thread-nested { margin-top: 8px; margin-left: 12px; padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 8px; }
   .comment-input-wrap { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-  .comment-input-wrap textarea {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff;
-    border-radius: 6px; padding: 8px; font-family: 'DM Sans', sans-serif;
-    resize: none; height: 40px; font-size: 11px;
-  }
+  .comment-input-wrap textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 8px; font-family: 'DM Sans', sans-serif; resize: none; height: 40px; font-size: 11px; }
   .comment-input-row { display: flex; gap: 6px; }
-  .comment-input-row input {
-    flex: 1; background: var(--bg); border: 1px solid var(--border);
-    color: #fff; border-radius: 4px; padding: 6px; font-size: 10px;
-  }
+  .comment-input-row input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 6px; font-size: 10px; }
   .comment-input-row button { padding: 4px 12px; font-size: 10px; }
   
-@media (max-width: 1024px) {
+  @media (max-width: 1024px) {
     .page-wrapper { flex-direction: column; }
-    .community-sidebar { 
-      width: 100%; 
-      border-left: none; 
-      border-top: 1px solid var(--border); 
-    }
+    .community-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); }
   }
   
-  .btn-gif {
-    background: transparent; border: 1px solid var(--border); color: var(--text-dim);
-    padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;
-    font-size: 11px; font-weight: bold; transition: all 0.2s;
-  }
+  .btn-gif { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; transition: all 0.2s; }
   .btn-gif:hover { background: rgba(255,255,255,0.05); color: #fff; }
   .btn-gif svg { width: 16px; height: 16px; fill: currentColor; }
   
@@ -470,467 +319,108 @@
   .gif-picker-container { position: relative; display: inline-block; }
 
   /* NOUVEAU : Bouton textuel minimaliste "GIF" */
-  .minimal-gif-btn {
-    background: transparent;
-    border: 1px solid var(--border); /* Petit liseré discret grisé */
-    color: var(--text-dim); /* Grisé par défaut */
-    cursor: pointer;
-    border-radius: 4px;
-    font-family: 'Space Mono', monospace;
-    font-weight: bold;
-    font-size: 10px;
-    padding: 2px 6px;
-    transition: all 0.2s;
-    opacity: 0.7;
-    text-transform: uppercase;
-    line-height: 1;
-  }
-
-.minimal-gif-btn2 {
-    background: var(--accent);
-    border: 1px solid var(--border); /* Petit liseré discret grisé */
-    color: var(--bg); /* Grisé par défaut */
-    cursor: pointer;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif; font-size: 12px;
-    padding: 4px 6px;
-    transition: all 0.2s;
-    opacity: 1;
-    line-height: 1;
-  }
-
-.minimal-gif-btn3 {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--accent); 
-    cursor: pointer;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif; font-size: 12px;
-    padding: 4px 6px;
-    transition: all 0.2s;
-    opacity: 1;
-    line-height: 1;
-  }
-
-.minimal-gif-btn4 {
-    background: transparent;
-    border: 1px solid var(--border); 
-    color: var(--accent);
-    cursor: pointer;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif; font-size: 12px;
-    padding: 4px 6px;
-    transition: all 0.2s;
-    opacity: 1;
-    line-height: 1;
-  }
-
-
-.minimal-gif-btn4 option {
-    background: var(--surface) !important;
-    color: var(--text);
-    padding: 6px;
-}
-
-
-.minimal-gif-btn4:focus,
-.minimal-gif-btn4:focus-visible,
-.minimal-gif-btn4:active {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-
-  .minimal-gif-btn4:not(.active):hover {  background: #fff; color: var(--bg); opacity: 1; border-color: rgba(255,255,255,0.3); }
+  .minimal-gif-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; border-radius: 4px; font-family: 'Space Mono', monospace; font-weight: bold; font-size: 10px; padding: 2px 6px; transition: all 0.2s; opacity: 0.7; text-transform: uppercase; line-height: 1; }
+  .minimal-gif-btn2 { background: var(--accent); border: 1px solid var(--border); color: var(--bg); cursor: pointer; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 4px 6px; transition: all 0.2s; opacity: 1; line-height: 1; }
+  .minimal-gif-btn3 { background: transparent; border: 1px solid var(--border); color: var(--accent); cursor: pointer; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 4px 6px; transition: all 0.2s; opacity: 1; line-height: 1; }
+  .minimal-gif-btn4 { background: transparent; border: 1px solid var(--border); color: var(--accent); cursor: pointer; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 4px 6px; transition: all 0.2s; opacity: 1; line-height: 1; }
+  .minimal-gif-btn4 option { background: var(--surface) !important; color: var(--text); padding: 6px; }
+  .minimal-gif-btn4:focus, .minimal-gif-btn4:focus-visible, .minimal-gif-btn4:active { outline: none !important; box-shadow: none !important; }
+  .minimal-gif-btn4:not(.active):hover { background: #fff; color: var(--bg); opacity: 1; border-color: rgba(255,255,255,0.3); }
   .minimal-gif-btn4.active { background: var(--accent) ; color: var(--bg) ; opacity: 1; }
-
   .minimal-gif-btn3:not(.active) {color: var(--accent) }
-  .minimal-gif-btn3:not(.active):hover {  background: #fff; color: var(--bg); opacity: 1; border-color: rgba(255,255,255,0.3); }
+  .minimal-gif-btn3:not(.active):hover { background: #fff; color: var(--bg); opacity: 1; border-color: rgba(255,255,255,0.3); }
   .minimal-gif-btn3.active { background: var(--accent) ; color: var(--bg) ; opacity: 1; }
-
-  .minimal-gif-btn2:hover {  background: #fff; opacity: 1; border-color: rgba(255,255,255,0.3); }
+  .minimal-gif-btn2:hover { background: #fff; opacity: 1; border-color: rgba(255,255,255,0.3); }
   .minimal-gif-btn2.active { background: --bg; color: var(--accent); border-color: var(--accent); opacity: 1; }
-
   .minimal-gif-btn:hover { color: #fff; opacity: 1; border-color: rgba(255,255,255,0.3); }
   .minimal-gif-btn.active { color: var(--accent); border-color: var(--accent); opacity: 1; }
   
-  /* --- MENU DÉROULANT PERSONNALISÉ (Remplace le select natif) --- */
-.custom-select-wrapper {
-  position: relative;
-  display: inline-block;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-}
+  /* --- MENU DÉROULANT PERSONNALISÉ --- */
+  .custom-select-wrapper { position: relative; display: inline-block; font-family: 'DM Sans', sans-serif; font-size: 12px; }
+  .custom-select-trigger { background: transparent; border: 1px solid var(--border); color: var(--accent); cursor: pointer; border-radius: 4px; padding: 6px 12px; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; gap: 12px; user-select: none; line-height: 1; }
+  .custom-select-trigger:hover { background: #fff; color: var(--bg); border-color: rgba(255,255,255,0.3); }
+  .custom-options { position: absolute; display: none; top: 100%; left: 0; min-width: 100%; width: max-content; margin-top: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; z-index: 1000; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.6); }
+  .custom-options.open { display: block; }
+  .custom-option { padding: 8px 12px; color: var(--text); cursor: pointer; transition: all 0.1s; white-space: nowrap; }
+  .custom-option:hover { background: var(--text); color: var(--bg); }
 
-/* Le bouton visible qui remplace le select */
-.custom-select-trigger {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--accent);
-  cursor: pointer;
-  border-radius: 4px;
-  padding: 6px 12px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  user-select: none;
-  line-height: 1;
-}
-
-.custom-select-trigger:hover {
-  background: #fff; 
-  color: var(--bg); 
-  border-color: rgba(255,255,255,0.3);
-}
-
-/* La liste déroulante (cachée par défaut) */
-.custom-options {
-  position: absolute;
-  display: none;
-  top: 100%;
-  left: 0;
-  min-width: 100%;
-  width: max-content;
-  margin-top: 4px;
-  background: var(--surface2); /* Fond de la liste */
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  z-index: 1000;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-}
-
-.custom-options.open {
-  display: block;
-}
-
-/* Chaque option à l'intérieur de la liste */
-.custom-option {
-  padding: 8px 12px;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.1s;
-  white-space: nowrap;
-}
-
-/* LA CONDITION TANT ATTENDUE : Inversion des couleurs au survol ! */
-.custom-option:hover {
-  background: var(--text);
-  color: var(--bg);
-}
-
-  /* Le dropdown (inchangé mais important) */
-  .gif-dropdown {
-    display: none; position: absolute; bottom: calc(100% + 10px); left: 0;
-    width: 220px; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; z-index: 1000; padding: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-  }
+  /* Le dropdown GIF */
+  .gif-dropdown { display: none; position: absolute; bottom: calc(100% + 10px); left: 0; width: 220px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; z-index: 1000; padding: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
   .gif-dropdown.show { display: flex; flex-direction: column; }
-  .gif-search-input {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff;
-    padding: 6px 10px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 11px; margin-bottom: 8px;
-  }
+  .gif-search-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 11px; margin-bottom: 8px; }
   .gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 180px; overflow-y: auto; }
   .gif-grid img { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: opacity 0.1s; background: var(--bg); }
   .gif-grid img:hover { opacity: 0.6; }
 
-  /* Prévisualisations (inchangé) */
+  /* Prévisualisations */
   .gif-preview-container { display: none; position: relative; margin-top: 8px; width: max-content; }
   .gif-preview-container img { height: 60px; border-radius: 6px; border: 1px solid var(--border); }
   .gif-preview-close { position: absolute; top: -6px; right: -6px; background: var(--LFI); border: none; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
   /* NOUVEAU : Bouton Supprimer minimaliste */
-  .delete-btn {
-    background: transparent; border: none;
-    color: var(--text-dim); opacity: 0.5; /* Grisé minimaliste */
-    cursor: pointer; padding: 0 0 0 8px; /* Écart après le pseudo */
-    transition: all 0.2s;
-  }
-  .delete-btn:hover { color: var(--LFI); opacity: 1; } /* Rouge au survol */
+  .delete-btn { background: transparent; border: none; color: var(--text-dim); opacity: 0.5; cursor: pointer; padding: 0 0 0 8px; transition: all 0.2s; }
+  .delete-btn:hover { color: var(--LFI); opacity: 1; } 
   .delete-btn svg { width: 14px; height: 14px; fill: currentColor; display: block; }
   
-  /* Enlever la barre de scroll visuelle mais garder le défilement */
-  .chat-feed {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  .chat-feed::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
-  }
+  /* Couleurs pseudos selon le vote */
+  .post-pseudo.p-LO { color: #ffcccc; } 
+  .post-pseudo.p-PCF { color: #ffb3b3; } 
+  .post-pseudo.p-LFI { color: var(--LFI); } 
+  .post-pseudo.p-EELV { color: var(--EELV); } 
+  .post-pseudo.p-PS { color: var(--PS); } 
+  .post-pseudo.p-REN { color: var(--REN); } 
+  .post-pseudo.p-HZ { color: var(--HZ); } 
+  .post-pseudo.p-LR { color: var(--LR); } 
+  .post-pseudo.p-DLF { color: var(--DF); } 
+  .post-pseudo.p-RN { color: var(--RN); } 
+  .post-pseudo.p-RQ { color: var(--RQ); } 
 
-  /* Couleurs pseudos selon le vote (classes ajoutées via JS) */
-  .post-pseudo { transition: color 0.2s; }
-  /* Les couleurs utilisent tes variables existantes */
-  .post-pseudo.p-LO { color: #ffcccc; } /* Arthaud (rouge très clair) */
-  .post-pseudo.p-PCF { color: #ffb3b3; } /* Roussel (rouge clair) */
-  .post-pseudo.p-LFI { color: var(--LFI); } /* Mélenchon */
-  .post-pseudo.p-EELV { color: var(--EELV); } /* Tondelier */
-  .post-pseudo.p-PS { color: var(--PS); } /* Glucksmann */
-  .post-pseudo.p-REN { color: var(--REN); } /* Attal */
-  .post-pseudo.p-HZ { color: var(--HZ); } /* Philippe */
-  .post-pseudo.p-LR { color: var(--LR); } /* Retailleau */
-  .post-pseudo.p-DLF { color: var(--DLF); } /* Dupont-Aignan */
-  .post-pseudo.p-RN { color: var(--RN); } /* Le Pen */
-  .post-pseudo.p-RQ { color: var(--RQ); } /* Zemmour */
-
-/* Pour Firefox */
-  html {
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface2) var(--bg);
-  }
-
-  /* Pour Chrome, Edge, Safari */
-  ::-webkit-scrollbar {
-    width: 8px; /* Barre très fine */
-    height: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--bg); /* Se fond dans le décor */
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--surface2); /* Un gris très discret */
-    border-radius: 10px;
-    border: 2px solid var(--bg); /* Donne un effet de marge autour du curseur */
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-dim); /* S'éclaire un peu quand on passe la souris */
-  }
+  /* Scrollbars */
+  html { scrollbar-width: thin; scrollbar-color: var(--surface2) var(--bg); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 10px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
   
-  /* Menu des amis (Dropdown) */
-  .friends-dropdown {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 16px;
-    width: 260px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    z-index: 1000;
-    padding: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.8);
-    flex-direction: column;
-    gap: 12px;
-  }
+  /* Menu des amis */
+  .friends-dropdown { display: none; position: absolute; top: 60px; right: 16px; width: 260px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; z-index: 1000; padding: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.8); flex-direction: column; gap: 12px; }
   .friends-dropdown.show { display: flex; }
-  .friend-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 8px;
-    background: rgba(255,255,255,0.02);
-    border-radius: 4px;
-    font-size: 13px;
-    border: 1px solid rgba(255,255,255,0.02);
-  }
-  /* Interactivité de la liste d'amis */
+  .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: rgba(255,255,255,0.02); border-radius: 4px; font-size: 13px; border: 1px solid rgba(255,255,255,0.02); }
   .friend-item.clickable { cursor: pointer; transition: all 0.2s; }
   .friend-item.clickable:hover { background: rgba(255,255,255,0.05); }
   .friend-item.active-filter { border-color: var(--accent); background: rgba(201, 185, 122, 0.1); }
   
-  /* Bouton 'Tous mes amis' */
-  .btn-filter-all {
-    width: 100%; padding: 8px; margin-top: 8px;
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-dim); border-radius: 4px;
-    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: bold; cursor: pointer;
-    transition: all 0.2s; text-transform: uppercase;
-  }
+  .btn-filter-all { width: 100%; padding: 8px; margin-top: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 4px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: bold; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
   .btn-filter-all:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
   .btn-filter-all.active { color: var(--accent); border-color: var(--accent); background: rgba(201, 185, 122, 0.1); }
   .add-friend-row { display: flex; gap: 6px; }
   .add-friend-row input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 6px; border-radius: 4px; font-size: 11px; }
 
-.sticky-chat-footer {
-    position: fixed; /* Force le bloc à rester collé à l'écran */
-    bottom: 0;
-    right: 0;
-    width: 340px; /* Même largeur que ta barre latérale */
-    z-index: 100; /* Par-dessus tout le reste */
-    background: var(--surface2);
-    border-top: 1px solid var(--border);
-    border-left: 1px solid var(--border);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
-    transition: right 0.3s ease; /* Suit l'animation de fermeture > */
-    
-    /* TRÈS IMPORTANT : Permet au bouton onglet d'être absolu par rapport à CE bloc */
-    position: relative; 
-  }
+  .sticky-chat-footer { position: relative; bottom: 0; right: 0; width: 340px; z-index: 100; background: var(--surface2); border-top: 1px solid var(--border); border-left: 1px solid var(--border); box-shadow: 0 -4px 20px rgba(0,0,0,0.6); transition: right 0.3s ease; }
 
-.community-footer {
-    position: fixed; /* Reste collé en bas à droite de l'écran */
-    bottom: 0;
-    right: 0;
-    width: 340px; /* Même largeur que la barre latérale */
-    z-index: 100; /* Par-dessus tout le reste */
-    background: var(--surface2);
-    border-top: 1px solid var(--border);
-    border-left: 1px solid var(--border);
-    box-shadow: 0 -4px 30px rgba(0,0,0,0.6);
-    transition: right 0.3s ease; /* Suit l'animation de fermeture > */
-  }
-
-  /* Cache le bloc quand on masque la barre latérale avec > */
-  body.sidebar-closed .community-footer {
-    right: -340px;
-  }
-
-  /* Responsive : Prend 100% de large sur mobile */
+  .community-footer { position: fixed; bottom: 0; right: 0; width: 340px; z-index: 100; background: var(--surface2); border-top: 1px solid var(--border); border-left: 1px solid var(--border); box-shadow: 0 -4px 30px rgba(0,0,0,0.6); transition: right 0.3s ease; }
+  body.sidebar-closed .community-footer { right: -340px; }
   @media (max-width: 1024px) {
-    .community-footer {
-      width: 100%;
-      border-left: none;
-    }
+    .community-footer { width: 100%; border-left: none; }
   }
 
-  /* Le petit onglet flèche (Absolu par rapport au community-footer) */
-  .hashtag-toggle-btn {
-    position: absolute;
-    top: -20px; /* Sort de 20px au-dessus de la boîte */
-    right: 24px;
-    width: 40px;
-    height: 20px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    color:  var(--text-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 25;
-    transition: all 0.2s;
-  }
-  .hashtag-toggle-btn:hover {
-    color: #fff;
-    background: var(--surface);
-  }
+  .hashtag-toggle-btn { position: absolute; top: -20px; right: 24px; width: 40px; height: 20px; background: var(--surface2); border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; color:  var(--text-dim); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 25; transition: all 0.2s; }
+  .hashtag-toggle-btn:hover { color: #fff; background: var(--surface); }
 
-  /* Barre des hashtags (Animation d'ouverture/fermeture) */
-  .hashtag-bar {
-    padding: 10px 16px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap; 
-    max-height: 85px; 
-    overflow-y: auto; 
-    align-items: flex-start;
-    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.2) transparent;
-  }
-  
-  .hashtag-bar.closed {
-    max-height: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    opacity: 0;
-    border-top: none;
-    margin: 0;
-    overflow: hidden;
-  }
-
-  /* Mini scrollbar pour Chrome/Safari/Edge */
+  .hashtag-bar { padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; max-height: 85px; overflow-y: auto; align-items: flex-start; transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.2s ease; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; }
+  .hashtag-bar.closed { max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; opacity: 0; border-top: none; margin: 0; overflow: hidden; }
   .hashtag-bar::-webkit-scrollbar { width: 4px; }
   .hashtag-bar::-webkit-scrollbar-track { background: transparent; }
   .hashtag-bar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
   .hashtag-bar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
-  /* Zone de saisie allégée */
-  .chat-input-area {
-    padding: 12px 16px 16px 16px;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    border-top: 1px dashed rgba(255,255,255,0.05);
-  }
+  .chat-input-area { padding: 12px 16px 16px 16px; background: transparent; display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed rgba(255,255,255,0.05); }
+  .chat-input-area textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 8px; padding: 10px; font-family: 'DM Sans', sans-serif; resize: none; height: 60px; font-size: 13px; }
   
-  .chat-input-area textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: #fff;
-    border-radius: 8px;
-    padding: 10px;
-    font-family: 'DM Sans', sans-serif;
-    resize: none;
-    height: 60px;
-    font-size: 13px;
-  }
-
-  /* Cache le bloc quand on masque la barre avec > */
-  body.sidebar-closed .community-footer {
-    right: -340px;
-  }
-
-  /* Responsive : 100% de large sur mobile */
-  @media (max-width: 1024px) {
-    .community-footer {
-      width: 100%;
-      border-left: none;
-    }
-  }
+  .hashtag-pill { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: bold; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
+  .hashtag-count { background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 10px; font-size: 9px; }
   
-  .chat-input-area textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: #fff;
-    border-radius: 8px;
-    padding: 10px;
-    font-family: 'DM Sans', sans-serif;
-    resize: none;
-    height: 60px;
-    font-size: 13px;
-  }
-  
-  /* Mini scrollbar pour Chrome/Edge/Safari */
-  .hashtag-bar::-webkit-scrollbar {
-    width: 4px;
-  }
-  .hashtag-bar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .hashtag-bar::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
-    border-radius: 4px;
-  }
-  .hashtag-bar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.4);
-  }
-  
-  .hashtag-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 16px;
-    font-size: 11px;
-    font-weight: bold;
-    font-family: 'Space Mono', monospace;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    white-space: nowrap;
-  }
-  .hashtag-count {
-    background: rgba(0,0,0,0.4);
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-size: 9px;
-  }
-  
-  .hashtag-link {
-    color: #E0E1DD; 
-    cursor: pointer;
-    font-weight: bold;
-    font-family: 'Space Mono', monospace;
-    transition: all 0.2s;
-  }
-  /* Couleurs au survol */
+  .hashtag-link { color: #E0E1DD; cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace; transition: all 0.2s; }
   .hashtag-link.h-LO:hover { color: #ffcccc; text-shadow: 0 0 8px rgba(255,204,204,0.4); }
   .hashtag-link.h-PCF:hover { color: #ffb3b3; text-shadow: 0 0 8px rgba(255,179,179,0.4); }
   .hashtag-link.h-LFI:hover { color: var(--LFI); text-shadow: 0 0 8px var(--LFI); }
@@ -943,158 +433,47 @@
   .hashtag-link.h-RN:hover { color: var(--RN); text-shadow: 0 0 8px var(--RN); }
   .hashtag-link.h-RQ:hover { color: var(--RQ); text-shadow: 0 0 8px var(--RQ); }
   
-  .hashtag-pill.active-filter {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: #fff !important;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-}
+  .hashtag-pill.active-filter { background: rgba(255, 255, 255, 0.2) !important; border-color: #fff !important; box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
 
-body {
-    overflow-x: hidden;   }
-  
-  .community-sidebar {
-    transition: margin-right 0.3s ease; /* Animation fluide */
-  }
-  
-  /* Classe ajoutée par Javascript quand on masque */
-  body.sidebar-closed .community-sidebar {
-    margin-right: -340px; /* Cache la barre sur la droite */
-  }
+  .community-sidebar { transition: margin-right 0.3s ease; }
+  body.sidebar-closed .community-sidebar { margin-right: -340px; }
 
-  .sidebar-toggle-btn {
-    position: fixed; /* Reste figé à l'écran pendant le scroll */
-    top: 50%;
-    right: 340px; /* S'aligne parfaitement avec le bord de la barre */
-    transform: translateY(-50%);
-    width: 24px;
-    height: 50px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-right: none;
-    border-radius: 8px 0 0 8px;
-    color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 100;
-    transition: right 0.3s ease, background 0.2s, color 0.2s; /* Suit l'animation de fermeture */
-  }
-  
-  .sidebar-toggle-btn:hover {
-    color: #fff;
-    background: var(--surface2);
-  }
+  .sidebar-toggle-btn { position: fixed; top: 50%; right: 340px; transform: translateY(-50%); width: 24px; height: 50px; background: var(--surface); border: 1px solid var(--border); border-right: none; border-radius: 8px 0 0 8px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: right 0.3s ease, background 0.2s, color 0.2s; }
+  .sidebar-toggle-btn:hover { color: #fff; background: var(--surface2); }
+  body.sidebar-closed .sidebar-toggle-btn { right: 0px; }
+  @media (max-width: 1024px) { .sidebar-toggle-btn { display: none; } }
 
-  /* Quand la barre est fermée, le bouton se colle à droite de l'écran */
-  body.sidebar-closed .sidebar-toggle-btn {
-    right: 0px;
-  }
+  /* HEADER GLOBAL */
+  .site-header { display: flex; justify-content: space-between; align-items: flex-end; background: var(--surface2); padding: 18px 28px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 32px; }
+  .logo-wrapper { display: flex; align-items: center; gap: 18px; }
+  .title-block h1 { font-family: "Choplin", sans-serif; font-size: 48px; font-weight: 600; margin: 0; line-height: 1.1; color: #fff; }
+  .subtitle-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .subtitle { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--text-dim); }
+  .separator { color: var(--text-dim); font-size: 16px; margin-bottom: -2px; }
+  .social-links.small a svg { width: 15px; height: 15px; opacity: 0.7; transition: opacity .2s; }
+  .social-links.small a:hover svg { opacity: 1; }
+  .header-right { display: flex; align-items: flex-end; align-self: center; position: relative; }
 
-  /* Sur mobile, on cache ce bouton car la barre s'empile en bas */
-  @media (max-width: 1024px) {
-    .sidebar-toggle-btn { display: none; }
-  }
-
-/* HEADER GLOBAL */
-.site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;       /* ✅ aligne vers le bas */
-    background: var(--surface2);
-    padding: 18px 28px;          /* ✅ indentation propre */
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    margin-bottom: 32px;
-}
-
-/* LOGO + TITRE */
-.logo-wrapper {
-    display: flex;
-    align-items: flex-end;
-    gap: 18px;
-}
-
-/* Titre bien aligné à gauche */
-.title-block h1 {
-    font-family: "Choplin", sans-serif;
-    font-size: 48px;
-    font-weight: 600;
-    margin: 0;
-    line-height: 1.1;
-    color: #fff; /* Ajuste ici la couleur */
-}
-
-/* Ligne sous-titre + réseaux */
-.subtitle-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 4px;
-}
-
-/* Sous-titre */
-.subtitle {
-    font-family: 'Space Mono', monospace;
-    font-size: 14px;
-    color: var(--text-dim);
-}
-
-/* Séparateur entre “s✰karot” et les réseaux */
-.separator {
-    color: var(--text-dim);
-    font-size: 16px;
-    margin-bottom: -2px;
-}
-
-/* Réseaux en petit format */
-.social-links.small a svg {
-    width: 15px;
-    height: 15px;
-    opacity: 0.7;
-    transition: opacity .2s;
-}
-.social-links.small a:hover svg {
-    opacity: 1;
-}
-
-/* Bouton utilisateur à droite */
-.header-right {
-    display: flex;
-    align-items: flex-end;
-	align-self: center;
-    position: relative;
-}
-
-@font-face {
-    font-family: "Choplin";
-    src: url("choplin-semi-bold.otf") format("opentype");
-    font-weight: semi-bold;
-}
+  @font-face { font-family: "Choplin"; src: url("choplin-semi-bold.otf") format("opentype"); font-weight: semi-bold; }
  
-/* --- SONDAGES --- */
-.poll-creator { display: none; flex-direction: column; gap: 8px; margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; }
-.poll-option-input-wrap { display: flex; gap: 6px; align-items: center; }
-.poll-option-input-wrap input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 6px; font-size: 11px; }
-.poll-color-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; flex-shrink: 0; }
+  /* --- SONDAGES --- */
+  .poll-creator { display: none; flex-direction: column; gap: 8px; margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; }
+  .poll-option-input-wrap { display: flex; gap: 6px; align-items: center; }
+  .poll-option-input-wrap input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 6px; font-size: 11px; }
+  .poll-color-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; flex-shrink: 0; }
+  .poll-palette { display: none; position: absolute; background: var(--surface2); padding: 6px; border-radius: 6px; gap: 4px; width: max-content; z-index: 1000; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  .poll-palette.show { display: flex; }
+  .palette-color { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; transition: transform 0.1s; }
+  .palette-color:hover { transform: scale(1.2); }
+  .poll-container { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; margin-bottom: 4px; }
+  .poll-option { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 12px; cursor: pointer; position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+  .poll-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .poll-bar-fill { position: absolute; top: 0; left: 0; bottom: 0; opacity: 0.35; transition: width 0.6s cubic-bezier(0.23,1,0.32,1); z-index: 0; }
+  .poll-option-content { position: relative; z-index: 1; font-size: 12px; font-weight: bold; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
 
-/* Palette moderne */
-.poll-palette { display: none; position: absolute; background: var(--surface2); padding: 6px; border-radius: 6px; gap: 4px; width: max-content; z-index: 1000; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-.poll-palette.show { display: flex; }
-.palette-color { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; transition: transform 0.1s; }
-.palette-color:hover { transform: scale(1.2); }
-
-/* Affichage du sondage dans les posts */
-.poll-container { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; margin-bottom: 4px; }
-.poll-option { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 12px; cursor: pointer; position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-.poll-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-.poll-bar-fill { position: absolute; top: 0; left: 0; bottom: 0; opacity: 0.35; transition: width 0.6s cubic-bezier(0.23,1,0.32,1); z-index: 0; }
-.poll-option-content { position: relative; z-index: 1; font-size: 12px; font-weight: bold; width: 100%; display: flex; justify-content: space-between; pointer-events: none; }
-
-/* Tooltip (Stats au survol) */
-.poll-tooltip { position: fixed; background: rgba(20, 20, 26, 0.98); backdrop-filter: blur(8px); border: 1px solid var(--accent); padding: 12px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 11px; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 8px 30px rgba(0,0,0,0.8); z-index: 9999; min-width: 200px; color: #fff; }
-.poll-tooltip-title { font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; font-family: 'DM Serif Display', serif; font-size: 14px;}
- 
+  /* Tooltip (Stats au survol) */
+  .poll-tooltip { position: fixed; background: rgba(20, 20, 26, 0.98); backdrop-filter: blur(8px); border: 1px solid var(--accent); padding: 12px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 11px; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 8px 30px rgba(0,0,0,0.8); z-index: 9999; min-width: 200px; color: #fff; }
+  .poll-tooltip-title { font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; font-family: 'DM Serif Display', serif; font-size: 14px;}
 </style>
 </head>
 <body>
@@ -1103,78 +482,75 @@ body {
     document.body.classList.add('sidebar-closed');
   }
 </script>
+
+<div class="bottom-nav" id="bottomNav">
+  <button id="navSimulateur" class="active" onclick="switchMobileView('simulateur')">
+    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+    Simulateur
+  </button>
+  <button id="navCommunaute" onclick="switchMobileView('communaute')">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>
+    Communauté
+  </button>
+</div>
+
 <div class="page-wrapper">
   
-  <div class="main-content">
+  <div class="main-content" id="mainContent">
     <div class="container">
       
-    
-<header class="site-header">
-    <div class="header-left">
-        <div class="logo-wrapper">
-<svg width="60" height="60" viewBox="0 0 100 100" fill="none">
-  <circle cx="50" cy="50" r="40" fill="#FFFFFF"/>
-
-
-  <path d="M35 38 Q20 28 12 18" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-  <path d="M34 50 Q18 47 10 40" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-
-  <path d="M34 63 Q20 63 12 73" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-  <path d="M40 73 Q32 82 29 90" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-
-  <path d="M65 38 Q80 28 88 18" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-  <path d="M66 50 Q82 47 90 40" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-
-  <path d="M66 63 Q80 63 88 73" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-  <path d="M60 73 Q68 82 71 90" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
-
-
-  <ellipse cx="50" cy="38" rx="20" ry="22" fill="#1B263B"/>
-  <ellipse cx="50" cy="65" rx="15" ry="16" fill="#1B263B"/>
-
-  <circle cx="44" cy="67" r="4" fill="#FFFFFF"/>
-  <circle cx="56" cy="67" r="4" fill="#FFFFFF"/>
-</svg>
-	<div class="title-block">
-          <h1>L'araignée</h1>
-	
-          <div class="subtitle-row"">       
+    <header class="site-header">
+        <div class="header-left">
+            <div class="logo-wrapper">
+    <svg width="60" height="60" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="40" fill="#FFFFFF"/>
+      <path d="M35 38 Q20 28 12 18" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M34 50 Q18 47 10 40" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M34 63 Q20 63 12 73" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M40 73 Q32 82 29 90" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M65 38 Q80 28 88 18" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M66 50 Q82 47 90 40" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M66 63 Q80 63 88 73" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <path d="M60 73 Q68 82 71 90" stroke="#1B263B" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="50" cy="38" rx="20" ry="22" fill="#1B263B"/>
+      <ellipse cx="50" cy="65" rx="15" ry="16" fill="#1B263B"/>
+      <circle cx="44" cy="67" r="4" fill="#FFFFFF"/>
+      <circle cx="56" cy="67" r="4" fill="#FFFFFF"/>
+    </svg>
+        <div class="title-block">
+              <h1>L'Araignée</h1>
+              <div class="subtitle-row">       
                   <span class="subtitle">s✰karot</span>
                   <span class="separator">•</span>
-	<div class="social-links small">
-
-              <a href="https://twitter.com/sakar0t" target="_blank" title="X (Twitter)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
-              <a href="https://twitch.tv/sakar0t" target="_blank" title="Twitch"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg></a>
-              <a href="https://don.unicef.fr/urgence-gaza-sp/" target="_blank" class="flag" title="Soutenir Gaza" style="display: flex; align-items: center;">
-                <svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg" style="height: 16px; width: 24px; border-radius: 2px;">
-                  <rect width="64" height="16" fill="#000"/><rect y="16" width="64" height="16" fill="#fff"/><rect y="32" width="64" height="16" fill="#007a3d"/><polygon points="0,0 32,24 0,48" fill="#ce1126"/>
-                </svg>
-              </a>
+        <div class="social-links small">
+                  <a href="https://twitter.com/sakar0t" target="_blank" title="X (Twitter)"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+                  <a href="https://twitch.tv/sakar0t" target="_blank" title="Twitch"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg></a>
+                  <a href="https://don.unicef.fr/urgence-gaza-sp/" target="_blank" class="flag" title="Soutenir Gaza" style="display: flex; align-items: center;">
+                    <svg viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg" style="height: 16px; width: 24px; border-radius: 2px;">
+                      <rect width="64" height="16" fill="#000"/><rect y="16" width="64" height="16" fill="#fff"/><rect y="32" width="64" height="16" fill="#007a3d"/><polygon points="0,0 32,24 0,48" fill="#ce1126"/>
+                    </svg>
+                  </a>
+             </div>
          </div>
-     </div>
-  </div>
-</div>
-</div>
+      </div>
+    </div>
+    </div>
         <div class="header-right">
-<button class="minimal-gif-btn" id="user-icon-btn" onclick="toggleUserMenu()" title="Mon compte">
-  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="transition: fill 0.2s;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-</button>
+    <button class="minimal-gif-btn" id="user-icon-btn" onclick="toggleUserMenu()" title="Mon compte">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="transition: fill 0.2s;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+    </button>
 
           <div id="user-dropdown" class="user-dropdown">
             <div id="dropdown-logged-out" style="display: flex; flex-direction: column; gap: 8px;">
-  <span id="auth-title" style="font-size: 12px; color: var(--text-dim);">Connectez-vous :</span>
-  
-  <input type="text" id="reg-pseudo-input" placeholder="Pseudo" style="display: none; padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
-  
-  <input type="text" id="email-input" placeholder="Email ou Pseudo" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
-  <input type="password" id="password-input" placeholder="Mot de passe" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
-  
-  <button id="btn-login-action" class="minimal-gif-btn2" onclick="loginUser()">Connexion</button>
-  <button id="btn-register-action" class="minimal-gif-btn2" onclick="showRegisterForm()" style="background: transparent; border-color: var(--border); color: var(--text-dim);">Créer un compte</button>
-  <button id="btn-back-login" class="minimal-gif-btn2" onclick="showLoginForm()" style="display: none; background: transparent; border-color: transparent; color: var(--text-dim); text-decoration: underline;">Annuler</button>
-  
-  <div id="auth-msg" style="font-size: 12px; margin-top: 4px; display: none; text-align: center; font-weight: bold;"></div>
-</div>
+              <span id="auth-title" style="font-size: 12px; color: var(--text-dim);">Connectez-vous :</span>
+              <input type="text" id="reg-pseudo-input" placeholder="Pseudo" style="display: none; padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
+              <input type="text" id="email-input" placeholder="Email ou Pseudo" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
+              <input type="password" id="password-input" placeholder="Mot de passe" style="padding: 8px; background: var(--bg); color: white; border: 1px solid var(--border); border-radius: 4px;">
+              <button id="btn-login-action" class="minimal-gif-btn2" onclick="loginUser()">Connexion</button>
+              <button id="btn-register-action" class="minimal-gif-btn2" onclick="showRegisterForm()" style="background: transparent; border-color: var(--border); color: var(--text-dim);">Créer un compte</button>
+              <button id="btn-back-login" class="minimal-gif-btn2" onclick="showLoginForm()" style="display: none; background: transparent; border-color: transparent; color: var(--text-dim); text-decoration: underline;">Annuler</button>
+              <div id="auth-msg" style="font-size: 12px; margin-top: 4px; display: none; text-align: center; font-weight: bold;"></div>
+            </div>
 
             <div id="dropdown-logged-in" style="display: none; flex-direction: column; gap: 12px;">
               <div style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
@@ -1290,23 +666,23 @@ body {
             </div>
             
             <select  class="minimal-gif-btn4" id="selectTableYear" onchange="changeTableYear(this.value)">
-              <option value="2027" selected>2027</option>
+               <option value="2027" selected>2027</option>
               <option value="2022">2022</option>
               <option value="2017">2017</option>
               <option value="2012">2012</option>
               <option value="2007">2007</option>
               <option value="2002">2002</option>
               <option value="1995">1995</option>
-            </select>
+             </select>
           </div>
         </div>
         
         <div class="global-stats-row" id="globalStats"></div>
 
-        <div class="class="minimal-gif-btn3" id="tableSortWrap" style="margin-bottom: 20px;">
-          <button id="btnSortScore" class="minimal-gif-btn3" onclick="setSort('score')">Trier par Score (Décroissant)</button>
+        <div class="minimal-gif-btn3" id="tableSortWrap" style="margin-bottom: 20px; background: transparent; border: none; padding: 0;">
+          <button id="btnSortScore" class="minimal-gif-btn3 active" onclick="setSort('score')">Trier par Score (Décroissant)</button>
           <button id="btnSortParti" class="minimal-gif-btn3" onclick="setSort('parti')">Trier par Parti (EG ➔ ED)</button>
-        </div>
+         </div>
         
         <table id="mainTable">
           <thead>
@@ -1359,9 +735,9 @@ body {
       </div>
 
     </div> 
-</div> 
+  </div> 
 	
-	<aside class="community-sidebar" style="position:relative;">
+  <aside class="community-sidebar" id="communitySidebar">
       
       <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()" title="Masquer le fil">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
@@ -1388,11 +764,13 @@ body {
         </div>
       </div>
       
- <div class="chat-feed" id="chat-feed">
+      <div class="chat-feed" id="chat-feed">
         <div style="text-align:center; color:var(--text-dim); font-size: 12px; margin-top: 20px;">Chargement des posts...</div>
       </div>
       
-    </aside> <div class="community-footer">
+    </aside> 
+    
+    <div class="community-footer" id="communityFooter">
       
 	<button class="hashtag-toggle-btn" id="hashtagToggleBtn" onclick="toggleHashtags()" title="Afficher les tendances">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>
@@ -1406,18 +784,18 @@ body {
         <div id="chat-auth-msg" style="color: var(--text-dim); font-size: 12px; text-align: center;">Connectez-vous pour participer.</div>
         
         <div id="chat-form" style="display: none; flex-direction: column; gap: 8px;">
-  <div id="main-reply-badge" style="display:none; font-size:10px; background:var(--surface2); padding:4px 8px; border-radius:4px; margin-bottom:4px; color:var(--text-dim); align-items:center; justify-content:space-between; border: 1px solid var(--border);"></div>
-  
-  <textarea id="post-text" placeholder="Exprimez-vous sur l'élection..."></textarea>
-  
-<div class="poll-creator" id="poll-creator-box">
+          <div id="main-reply-badge" style="display:none; font-size:10px; background:var(--surface2); padding:4px 8px; border-radius:4px; margin-bottom:4px; color:var(--text-dim); align-items:center; justify-content:space-between; border: 1px solid var(--border);"></div>
+          
+          <textarea id="post-text" placeholder="Exprimez-vous sur l'élection..."></textarea>
+          
+        <div class="poll-creator" id="poll-creator-box">
            <div id="poll-options-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
            
            <div id="poll-error-msg" style="color: #ff4444; font-size: 11px; display: none; margin-top: 4px; font-weight: bold;"></div>
            
            <button class="minimal-gif-btn" onclick="addPollOption()" style="align-self: flex-start; margin-top: 4px;">+ Choix</button>
         </div>
-<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px;">
           
           <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
             
@@ -1444,13 +822,29 @@ body {
         </div>
       </div>
 
-    </div> </div> <div class="map-tooltip" id="globalTooltip"></div>
-	<div class="poll-tooltip" id="globalPollTooltip"></div>
-
+    </div> 
+</div> 
+<div class="map-tooltip" id="globalTooltip"></div>
+<div class="poll-tooltip" id="globalPollTooltip"></div>
 <script>
+// =================== NOUVEAU : GESTION VUE MOBILE ===================
+function switchMobileView(view) {
+  const btnSimu = document.getElementById('navSimulateur');
+  const btnComm = document.getElementById('navCommunaute');
+  
+  if (view === 'simulateur') {
+    document.body.classList.remove('show-community');
+    btnSimu.classList.add('active');
+    btnComm.classList.remove('active');
+  } else {
+    document.body.classList.add('show-community');
+    btnComm.classList.add('active');
+    btnSimu.classList.remove('active');
+  }
+}
+// ====================================================================
 
 const DEP_META = {"01": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 333024, "inscrits": 438109, "abstentions": 97541, "blancs": 7544, "exprimes": 333024}, "02": {"region": "Hauts-de-France", "totalVotes": 265860, "inscrits": 373544, "abstentions": 101089, "blancs": 6595, "exprimes": 265860}, "03": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 185955, "inscrits": 249991, "abstentions": 58497, "blancs": 5539, "exprimes": 185955}, "04": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 96683, "inscrits": 128075, "abstentions": 29290, "blancs": 2102, "exprimes": 96683}, "05": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 86235, "inscrits": 113519, "abstentions": 25357, "blancs": 1927, "exprimes": 86235}, "06": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 558775, "inscrits": 778582, "abstentions": 208250, "blancs": 11557, "exprimes": 558775}, "07": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 196975, "inscrits": 255859, "abstentions": 54114, "blancs": 4770, "exprimes": 196975}, "08": {"region": "Grand Est", "totalVotes": 133936, "inscrits": 186197, "abstentions": 49368, "blancs": 2893, "exprimes": 133936}, "09": {"region": "Occitanie", "totalVotes": 91704, "inscrits": 119039, "abstentions": 25028, "blancs": 2307, "exprimes": 91704}, "10": {"region": "Grand Est", "totalVotes": 149670, "inscrits": 205551, "abstentions": 52384, "blancs": 3497, "exprimes": 149670}, "11": {"region": "Occitanie", "totalVotes": 212426, "inscrits": 279927, "abstentions": 62972, "blancs": 4529, "exprimes": 212426}, "12": {"region": "Occitanie", "totalVotes": 170902, "inscrits": 219468, "abstentions": 43833, "blancs": 4733, "exprimes": 170902}, "13": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 1008620, "inscrits": 1411184, "abstentions": 383816, "blancs": 18748, "exprimes": 1008620}, "14": {"region": "Normandie", "totalVotes": 386231, "inscrits": 512148, "abstentions": 117799, "blancs": 8118, "exprimes": 386231}, "15": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 88102, "inscrits": 115745, "abstentions": 25019, "blancs": 2624, "exprimes": 88102}, "16": {"region": "Nouvelle-Aquitaine", "totalVotes": 192666, "inscrits": 257608, "abstentions": 59909, "blancs": 5033, "exprimes": 192666}, "17": {"region": "Nouvelle-Aquitaine", "totalVotes": 394067, "inscrits": 519202, "abstentions": 116437, "blancs": 8698, "exprimes": 394067}, "18": {"region": "Centre-Val de Loire", "totalVotes": 160533, "inscrits": 224570, "abstentions": 59808, "blancs": 4229, "exprimes": 160533}, "19": {"region": "Nouvelle-Aquitaine", "totalVotes": 142600, "inscrits": 185032, "abstentions": 38430, "blancs": 4002, "exprimes": 142600}, "2A": {"region": "Corse", "totalVotes": 68861, "inscrits": 113918, "abstentions": 42366, "blancs": 2691, "exprimes": 68861}, "2B": {"region": "Corse", "totalVotes": 78511, "inscrits": 129114, "abstentions": 48263, "blancs": 2340, "exprimes": 78511}, "21": {"region": "Bourgogne-Franche-Comté", "totalVotes": 282745, "inscrits": 366859, "abstentions": 77886, "blancs": 6228, "exprimes": 282745}, "22": {"region": "Bretagne", "totalVotes": 366393, "inscrits": 471752, "abstentions": 96597, "blancs": 8762, "exprimes": 366393}, "23": {"region": "Nouvelle-Aquitaine", "totalVotes": 66848, "inscrits": 90946, "abstentions": 21967, "blancs": 2131, "exprimes": 66848}, "24": {"region": "Nouvelle-Aquitaine", "totalVotes": 246556, "inscrits": 318168, "abstentions": 64856, "blancs": 6756, "exprimes": 246556}, "25": {"region": "Bourgogne-Franche-Comté", "totalVotes": 277097, "inscrits": 368379, "abstentions": 84117, "blancs": 7165, "exprimes": 277097}, "26": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 291424, "inscrits": 382188, "abstentions": 84289, "blancs": 6475, "exprimes": 291424}, "27": {"region": "Normandie", "totalVotes": 318861, "inscrits": 432198, "abstentions": 106463, "blancs": 6874, "exprimes": 318861}, "28": {"region": "Centre-Val de Loire", "totalVotes": 220021, "inscrits": 303888, "abstentions": 78960, "blancs": 4907, "exprimes": 220021}, "29": {"region": "Bretagne", "totalVotes": 542919, "inscrits": 709701, "abstentions": 154870, "blancs": 11912, "exprimes": 542919}, "30": {"region": "Occitanie", "totalVotes": 413979, "inscrits": 555038, "abstentions": 132723, "blancs": 8336, "exprimes": 413979}, "31": {"region": "Occitanie", "totalVotes": 730979, "inscrits": 930321, "abstentions": 183366, "blancs": 15976, "exprimes": 730979}, "32": {"region": "Occitanie", "totalVotes": 116399, "inscrits": 147278, "abstentions": 28267, "blancs": 2612, "exprimes": 116399}, "33": {"region": "Nouvelle-Aquitaine", "totalVotes": 892020, "inscrits": 1158548, "abstentions": 249014, "blancs": 17514, "exprimes": 892020}, "34": {"region": "Occitanie", "totalVotes": 638728, "inscrits": 847365, "abstentions": 195766, "blancs": 12871, "exprimes": 638728}, "35": {"region": "Bretagne", "totalVotes": 596832, "inscrits": 771636, "abstentions": 161427, "blancs": 13377, "exprimes": 596832}, "36": {"region": "Centre-Val de Loire", "totalVotes": 120997, "inscrits": 166100, "abstentions": 41406, "blancs": 3697, "exprimes": 120997}, "37": {"region": "Centre-Val de Loire", "totalVotes": 327490, "inscrits": 440502, "abstentions": 105536, "blancs": 7476, "exprimes": 327490}, "38": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 672296, "inscrits": 885440, "abstentions": 198676, "blancs": 14468, "exprimes": 672296}, "39": {"region": "Bourgogne-Franche-Comté", "totalVotes": 145227, "inscrits": 190597, "abstentions": 41634, "blancs": 3736, "exprimes": 145227}, "40": {"region": "Nouvelle-Aquitaine", "totalVotes": 258050, "inscrits": 329337, "abstentions": 65654, "blancs": 5633, "exprimes": 258050}, "41": {"region": "Centre-Val de Loire", "totalVotes": 180810, "inscrits": 244718, "abstentions": 59350, "blancs": 4558, "exprimes": 180810}, "42": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 385938, "inscrits": 513794, "abstentions": 118592, "blancs": 9264, "exprimes": 385938}, "43": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 139655, "inscrits": 180706, "abstentions": 37000, "blancs": 4051, "exprimes": 139655}, "44": {"region": "Pays de la Loire", "totalVotes": 802422, "inscrits": 1056693, "abstentions": 236339, "blancs": 17932, "exprimes": 802422}, "45": {"region": "Centre-Val de Loire", "totalVotes": 335422, "inscrits": 457550, "abstentions": 114468, "blancs": 7660, "exprimes": 335422}, "46": {"region": "Occitanie", "totalVotes": 109390, "inscrits": 139278, "abstentions": 27164, "blancs": 2724, "exprimes": 109390}, "47": {"region": "Nouvelle-Aquitaine", "totalVotes": 184102, "inscrits": 241304, "abstentions": 52907, "blancs": 4295, "exprimes": 184102}, "48": {"region": "Occitanie", "totalVotes": 46996, "inscrits": 59812, "abstentions": 11680, "blancs": 1136, "exprimes": 46996}, "49": {"region": "Pays de la Loire", "totalVotes": 441342, "inscrits": 589263, "abstentions": 136866, "blancs": 11055, "exprimes": 441342}, "50": {"region": "Normandie", "totalVotes": 284458, "inscrits": 384613, "abstentions": 93460, "blancs": 6695, "exprimes": 284458}, "51": {"region": "Grand Est", "totalVotes": 274106, "inscrits": 380644, "abstentions": 101010, "blancs": 5528, "exprimes": 274106}, "52": {"region": "Grand Est", "totalVotes": 93808, "inscrits": 129389, "abstentions": 33273, "blancs": 2308, "exprimes": 93808}, "53": {"region": "Pays de la Loire", "totalVotes": 166908, "inscrits": 224722, "abstentions": 52812, "blancs": 5002, "exprimes": 166908}, "54": {"region": "Grand Est", "totalVotes": 353800, "inscrits": 492057, "abstentions": 130919, "blancs": 7338, "exprimes": 353800}, "55": {"region": "Grand Est", "totalVotes": 98513, "inscrits": 134805, "abstentions": 34092, "blancs": 2200, "exprimes": 98513}, "56": {"region": "Bretagne", "totalVotes": 467374, "inscrits": 608972, "abstentions": 130520, "blancs": 11078, "exprimes": 467374}, "57": {"region": "Grand Est", "totalVotes": 524319, "inscrits": 745914, "abstentions": 210299, "blancs": 11296, "exprimes": 524319}, "58": {"region": "Bourgogne-Franche-Comté", "totalVotes": 112441, "inscrits": 154186, "abstentions": 38850, "blancs": 2895, "exprimes": 112441}, "59": {"region": "Hauts-de-France", "totalVotes": 1274781, "inscrits": 1813906, "abstentions": 514033, "blancs": 25092, "exprimes": 1274781}, "60": {"region": "Hauts-de-France", "totalVotes": 411714, "inscrits": 564121, "abstentions": 142081, "blancs": 10326, "exprimes": 411714}, "61": {"region": "Normandie", "totalVotes": 150950, "inscrits": 205538, "abstentions": 50935, "blancs": 3653, "exprimes": 150950}, "62": {"region": "Hauts-de-France", "totalVotes": 790653, "inscrits": 1093723, "abstentions": 286319, "blancs": 16751, "exprimes": 790653}, "63": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 357587, "inscrits": 468103, "abstentions": 100869, "blancs": 9647, "exprimes": 357587}, "64": {"region": "Nouvelle-Aquitaine", "totalVotes": 401490, "inscrits": 519929, "abstentions": 110134, "blancs": 8305, "exprimes": 401490}, "65": {"region": "Occitanie", "totalVotes": 134888, "inscrits": 177443, "abstentions": 39595, "blancs": 2960, "exprimes": 134888}, "66": {"region": "Occitanie", "totalVotes": 268568, "inscrits": 362076, "abstentions": 87704, "blancs": 5804, "exprimes": 268568}, "67": {"region": "Grand Est", "totalVotes": 576719, "inscrits": 778712, "abstentions": 190224, "blancs": 11769, "exprimes": 576719}, "68": {"region": "Grand Est", "totalVotes": 385109, "inscrits": 531738, "abstentions": 137861, "blancs": 8768, "exprimes": 385109}, "69": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 909013, "inscrits": 1181226, "abstentions": 255580, "blancs": 16633, "exprimes": 909013}, "70": {"region": "Bourgogne-Franche-Comté", "totalVotes": 134739, "inscrits": 177715, "abstentions": 39039, "blancs": 3937, "exprimes": 134739}, "71": {"region": "Bourgogne-Franche-Comté", "totalVotes": 299300, "inscrits": 402992, "abstentions": 95369, "blancs": 8323, "exprimes": 299300}, "72": {"region": "Pays de la Loire", "totalVotes": 297062, "inscrits": 411308, "abstentions": 105454, "blancs": 8792, "exprimes": 297062}, "73": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 246358, "inscrits": 320709, "abstentions": 68929, "blancs": 5422, "exprimes": 246358}, "74": {"region": "Auvergne-Rhône-Alpes", "totalVotes": 427139, "inscrits": 565665, "abstentions": 129384, "blancs": 9142, "exprimes": 427139}, "75": {"region": "Île-de-France", "totalVotes": 1055062, "inscrits": 1368025, "abstentions": 296668, "blancs": 16295, "exprimes": 1055062}, "76": {"region": "Normandie", "totalVotes": 642965, "inscrits": 879252, "abstentions": 222147, "blancs": 14140, "exprimes": 642965}, "77": {"region": "Île-de-France", "totalVotes": 660929, "inscrits": 899303, "abstentions": 223172, "blancs": 15202, "exprimes": 660929}, "78": {"region": "Île-de-France", "totalVotes": 736506, "inscrits": 961245, "abstentions": 211708, "blancs": 13031, "exprimes": 736506}, "79": {"region": "Nouvelle-Aquitaine", "totalVotes": 207804, "inscrits": 273214, "abstentions": 59403, "blancs": 6007, "exprimes": 207804}, "80": {"region": "Hauts-de-France", "totalVotes": 298918, "inscrits": 410056, "abstentions": 102687, "blancs": 8451, "exprimes": 298918}, "81": {"region": "Occitanie", "totalVotes": 229842, "inscrits": 298178, "abstentions": 62818, "blancs": 5518, "exprimes": 229842}, "82": {"region": "Occitanie", "totalVotes": 145820, "inscrits": 188706, "abstentions": 39625, "blancs": 3261, "exprimes": 145820}, "83": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 598730, "inscrits": 820904, "abstentions": 211212, "blancs": 10962, "exprimes": 598730}, "84": {"region": "Provence-Alpes-Côte d'Azur", "totalVotes": 303865, "inscrits": 411607, "abstentions": 101650, "blancs": 6092, "exprimes": 303865}, "85": {"region": "Pays de la Loire", "totalVotes": 419709, "inscrits": 550963, "abstentions": 120547, "blancs": 10707, "exprimes": 419709}, "86": {"region": "Nouvelle-Aquitaine", "totalVotes": 231652, "inscrits": 306011, "abstentions": 68304, "blancs": 6055, "exprimes": 231652}, "87": {"region": "Nouvelle-Aquitaine", "totalVotes": 202118, "inscrits": 263742, "abstentions": 55484, "blancs": 6140, "exprimes": 202118}, "88": {"region": "Grand Est", "totalVotes": 203694, "inscrits": 277913, "abstentions": 68914, "blancs": 5305, "exprimes": 203694}, "89": {"region": "Bourgogne-Franche-Comté", "totalVotes": 176511, "inscrits": 237957, "abstentions": 57549, "blancs": 3897, "exprimes": 176511}, "90": {"region": "Bourgogne-Franche-Comté", "totalVotes": 69654, "inscrits": 93724, "abstentions": 22238, "blancs": 1832, "exprimes": 69654}, "91": {"region": "Île-de-France", "totalVotes": 594941, "inscrits": 799500, "abstentions": 192200, "blancs": 12359, "exprimes": 594941}, "92": {"region": "Île-de-France", "totalVotes": 774742, "inscrits": 997667, "abstentions": 208790, "blancs": 14135, "exprimes": 774742}, "93": {"region": "Île-de-France", "totalVotes": 543151, "inscrits": 793929, "abstentions": 239927, "blancs": 10851, "exprimes": 543151}, "94": {"region": "Île-de-France", "totalVotes": 589058, "inscrits": 796086, "abstentions": 195409, "blancs": 11619, "exprimes": 589058}, "95": {"region": "Île-de-France", "totalVotes": 529585, "inscrits": 733529, "abstentions": 192853, "blancs": 11091, "exprimes": 529585}, "971": {"region": "Guadeloupe", "totalVotes": 135085, "inscrits": 316023, "abstentions": 174592, "blancs": 6346, "exprimes": 135085}, "972": {"region": "Martinique", "totalVotes": 122949, "inscrits": 304594, "abstentions": 174588, "blancs": 7057, "exprimes": 122949}, "973": {"region": "Guyane", "totalVotes": 35861, "inscrits": 102993, "abstentions": 65754, "blancs": 1378, "exprimes": 35861}, "974": {"region": "La Réunion", "totalVotes": 346766, "inscrits": 675539, "abstentions": 313159, "blancs": 15614, "exprimes": 346766}, "976": {"region": "Mayotte", "totalVotes": 35050, "inscrits": 92187, "abstentions": 55024, "blancs": 2113, "exprimes": 35050}};
-
 const BASE_NATIONAL_SCORES = { "LO": 0.64, "LFI": 23.09, "PCF": 1.09, "EELV": 2.72, "PS": 3.50, "REN": 28.87, "HZ": 0.0, "LR": 6.79, "DF": 2.53, "RN": 27.37, "RQ": 3.39 };
 const CANDIDATS = { LO: 'Arthaud', LFI: 'Mélenchon', PCF: 'Roussel', EELV: 'Tondelier', PS: 'Glucksmann', REN: 'Attal', HZ: 'Philippe', LR: 'Retailleau', DF: 'Dupont-Aignan', RN: 'Le Pen', RQ: 'Zemmour' };
 const PARTIS = { LO: 'Lutte Ouvrière', LFI: 'La France Insoumise', PCF: 'Parti Communiste Français', EELV: 'Les Écologistes', PS: 'Parti Socialiste', REN: 'Renaissance', HZ: 'Horizons', LR: 'Les Républicains', DF: 'Debout la France', RN: 'Rassemblement National', RQ: 'Reconquête' };
@@ -1482,7 +876,6 @@ function getPartyShortName(code, year) {
 
 // =================== GÉNÉRATION DONNÉES HISTORIQUES ===================
 const ALL_DEPTS = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","2A","2B","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","971","972","973","974","976"];
-
 function buildMap(defaultWinner, exceptions) {
     let map = {};
     ALL_DEPTS.forEach(d => map[d] = defaultWinner);
@@ -1635,11 +1028,9 @@ let chartBar, chartDonut;
 
 // =================== GESTION LOGIQUE ===================
 function computeFirstRoundScores() {
-  // 1. Calculer les pourcentages de base du modèle (avec transferts Centre)
   const baseScores = {...BASE_NATIONAL_SCORES};
   const macronBase = baseScores.REN + baseScores.HZ;
   baseScores.REN = 0; baseScores.HZ = 0;
-  
   if (currentCenterCandidate === 'Attal') {
     baseScores.REN = macronBase * 0.30;
     baseScores.PS += macronBase * 0.40;
@@ -1650,34 +1041,24 @@ function computeFirstRoundScores() {
     baseScores.LR += macronBase * 0.05;
   }
 
-  // Normaliser les scores de base pour s'assurer que la somme fait 100%
   const totalBase = Object.values(baseScores).reduce((a, b) => a + b, 0);
   for (const party in baseScores) {
     baseScores[party] = (baseScores[party] / totalBase) * 100;
   }
 
-  // 2. CALCUL DU REMPLACEMENT EXACT (1 vraie voix = 1 voix simulée retirée)
-  const TOTAL_VOTES = TOTAL_EXPRIMES_T1; // Les ~35 millions de suffrages exprimés
-  
+  const TOTAL_VOTES = TOTAL_EXPRIMES_T1;
   let communityTotal = 0;
   if (typeof communityVotes !== 'undefined') {
     communityTotal = Object.values(communityVotes).reduce((a, b) => a + b, 0);
   }
 
-  // Le modèle mathématique ne s'applique plus qu'aux voix "restantes" (Total - Votes réels)
   const modelVotes = Math.max(0, TOTAL_VOTES - communityTotal);
-
   const finalScores = {};
   for (const party in baseScores) {
-    // Voix attribuées par le modèle : (Pourcentage du modèle / 100) * Voix restantes
     let partyVotes = (baseScores[party] / 100) * modelVotes;
-    
-    // On ajoute les VRAIES voix uniques de la base de données Firebase
     if (typeof communityVotes !== 'undefined' && communityVotes[party]) {
       partyVotes += communityVotes[party];
     }
-
-    // On reconvertit en pourcentage pur pour l'affichage dans les graphiques
     finalScores[party] = (partyVotes / TOTAL_VOTES) * 100;
   }
 
@@ -1696,7 +1077,6 @@ function setCenterCandidate(candidateName) {
   currentCenterCandidate = candidateName;
   document.getElementById('btnAttal').classList.toggle('active', candidateName === 'Attal');
   document.getElementById('btnPhilippe').classList.toggle('active', candidateName === 'Philippe');
-  
   if (candidateName === 'Attal') {
     let newParams = JSON.parse(JSON.stringify(DEFAULT_PARAMS_ATTAL));
     if(sliderParams.EELV) newParams.EELV = sliderParams.EELV;
@@ -1747,7 +1127,7 @@ function buildSliders() {
   });
 }
 
-let updateTimeout = null; // On crée une variable pour stocker notre minuteur
+let updateTimeout = null; 
 
 function onDualSlider(parti, type, value) {
   let val = parseInt(value);
@@ -1768,8 +1148,6 @@ function onDualSlider(parti, type, value) {
   }
 
   const valAbst = 100 - params.lfi - params.rn;
-  
-  // Mise à jour visuelle du slider (Instantanée)
   document.getElementById(`lbl_${parti}`).innerHTML = `
       <span style="color:var(--LFI)">${params.lfi}%</span>
       <span style="color:var(--text-dim); margin:0 4px;">|</span>
@@ -1780,19 +1158,13 @@ function onDualSlider(parti, type, value) {
   document.getElementById(`fill_lfi_${parti}`).style.width = params.lfi + '%';
   document.getElementById(`fill_rn_${parti}`).style.width = params.rn + '%';
   
-  // Lancement différé des calculs lourds (Fluidifie l'UI)
-  if (updateTimeout) {
-    clearTimeout(updateTimeout); // Annule le calcul précédent si on bouge encore
-  }
-  updateTimeout = setTimeout(() => {
-    update(); // Se lance uniquement quand le doigt s'arrête pendant 50ms
-  }, 10); 
+  if (updateTimeout) clearTimeout(updateTimeout);
+  updateTimeout = setTimeout(() => { update(); }, 10);
 }
-
 
 function resetSliders() { 
   sliderParams = JSON.parse(JSON.stringify(currentCenterCandidate === 'Attal' ? DEFAULT_PARAMS_ATTAL : DEFAULT_PARAMS_PHILIPPE));
-  buildSliders(); update(); 
+  buildSliders(); update();
 }
 
 // =================== TABLE ET CHARTS ===================
@@ -1800,7 +1172,6 @@ function setTableTour(tour) {
   currentTableTour = tour;
   document.getElementById('btnTableT1').classList.toggle('active', tour === 'T1');
   document.getElementById('btnTableT2').classList.toggle('active', tour === 'T2');
-  
   const isSortActive = (currentTableTour === 'T1');
   document.getElementById('tableSortWrap').style.display = isSortActive ? 'flex' : 'none';
   update();
@@ -1826,7 +1197,6 @@ function getLocalScoresApproximation(depCode, mode, globalScores, winner) {
   
   let local = {};
   let totalWeights = 0;
-
   order.forEach(p => {
     let s = globalScores[p] || 0;
     
@@ -1858,7 +1228,6 @@ function getLocalScoresApproximation(depCode, mode, globalScores, winner) {
     const voix = Math.round(pct * meta.exprimes);
     results.push({ p, pct: pct * 100, voix });
   });
-  
   return results.sort((a,b) => b.pct - a.pct);
 }
 
@@ -1877,7 +1246,7 @@ function updateMapLegends() {
   else if (currentMapT1Mode === '2007') partiesT1 = ['LR', 'PS'];
   else if (currentMapT1Mode === '2002') partiesT1 = ['LR', 'PS', 'RN'];
   else if (currentMapT1Mode === '1995') partiesT1 = ['PS', 'LR', 'HZ'];
-
+  
   partiesT1.forEach(p => {
     let label = getPartyShortName(p, currentMapT1Mode);
     legendT1.innerHTML += `<div class="legend-item"><div class="legend-color" style="background:${COULEURS[p]||'#666'}"></div>${label}</div>`;
@@ -1922,7 +1291,6 @@ function getFeatureColor(code, tour, mode, mapData) {
 
 function handleMouseOver(element, event, properties, tour, mode, mapData, isDrom=false) {
   if(!isDrom && element) d3.select(element).attr("stroke", "#fff").attr("stroke-width", 1.5);
-  
   let winner = mapData[properties.code];
   if (tour === 'T1' && mode === '2027') {
     if (winner === 'REN' && currentCenterCandidate === 'Philippe') winner = 'HZ';
@@ -1930,7 +1298,6 @@ function handleMouseOver(element, event, properties, tour, mode, mapData, isDrom
   }
 
   const meta = DEP_META[properties.code] || { region: "France", exprimes: 100000, inscrits: 130000, abstentions: 30000, blancs: 5000 };
-  
   let candNamesData = mode === '2027' ? CANDIDATS : HISTORICAL_DATA[mode][tour].candidats;
   let candName = winner ? (candNamesData[winner] || getPartyName(winner, mode)) : '?';
 
@@ -1952,19 +1319,15 @@ function handleMouseOver(element, event, properties, tour, mode, mapData, isDrom
       </div>
     `});
     detailsHtml = `<div style="margin-top:12px; display:flex; flex-direction:column; gap:4px;">${lines.join('')}</div>`;
-    
     finalAbsVolume = meta.abstentions;
     finalAbsPct = meta.inscrits > 0 ? ((meta.abstentions / meta.inscrits) * 100).toFixed(1) : 0;
-
   } else {
-    // Mode T2 approximatif basé sur 100% exprimes
     let globalScores = mode === '2027' ? { LFI: 50, RN: 50 } : HISTORICAL_DATA[mode].T2.scores;
     let parties = Object.keys(globalScores).sort((a,b) => globalScores[b] - globalScores[a]);
     let c1 = parties[0], c2 = parties[1];
     
     let s1 = winner === c1 ? (52 + (Math.random() * 10)) : (38 + (Math.random() * 11));
     let s2 = 100 - s1;
-    
     let t2ExprimesVol = meta.exprimes;
     let nonExpressedVol = meta.inscrits - meta.exprimes;
 
@@ -1975,7 +1338,6 @@ function handleMouseOver(element, event, properties, tour, mode, mapData, isDrom
 
     let name1 = candNamesData[c1] || getPartyName(c1, mode);
     let name2 = candNamesData[c2] || getPartyName(c2, mode);
-
     detailsHtml = `<div style="margin-top:12px; display:flex; flex-direction:column; gap:4px;">
         <div class="tt-row">
           <div class="tt-row-left"><span class="tt-dot" style="background:${COULEURS[c1]||'#666'}"></span> <span>${name1}</span></div>
@@ -1986,7 +1348,6 @@ function handleMouseOver(element, event, properties, tour, mode, mapData, isDrom
           <div>${v2.toLocaleString('fr-FR')} <span style="opacity:0.5; font-size:10px;">(${s2.toFixed(1)}%)</span></div>
         </div>
     </div>`;
-
     const ratioBlancs = 3039594 / (3039594 + 13655861);
     finalBlancs = Math.round(nonExpressedVol * ratioBlancs);
     finalAbsVolume = nonExpressedVol - finalBlancs;
@@ -2036,7 +1397,6 @@ function renderMap(tour, mode, containerId, cardId) {
   const svgEnter = svg.enter().append("svg").attr("class", "main-map").attr("width", width).attr("height", height);
   const svgMerged = svgEnter.merge(svg);
   svgMerged.selectAll("*").remove();
-
   let mapData = {};
   if (mode === '2027') {
       mapData = (tour === 'T1') ? MAP_T1_27 : computeDynamicT2Map();
@@ -2047,7 +1407,6 @@ function renderMap(tour, mode, containerId, cardId) {
   const featsMetropole = geojsonCacheFull.features.filter(f => f.properties.code.length <= 2 || f.properties.code === '2A' || f.properties.code === '2B');
   const projection = d3.geoConicConformal().center([2.454071, 46.279229]).scale(width * 3.5).translate([width/2, height/2]);
   const path = d3.geoPath().projection(projection);
-
   svgMerged.selectAll("path")
     .data(featsMetropole)
     .enter().append("path")
@@ -2059,7 +1418,7 @@ function renderMap(tour, mode, containerId, cardId) {
     .on("mouseover", function(event, d) { handleMouseOver(this, event, d.properties, tour, mode, mapData, false); })
     .on("mousemove", handleMouseMove)
     .on("mouseout", function() { handleMouseOut(this); });
-
+    
   const card = document.getElementById(cardId);
   let dromContainer = card.querySelector('.drom-com-container');
   if (dromContainer) dromContainer.remove();
@@ -2097,13 +1456,12 @@ function renderMap(tour, mode, containerId, cardId) {
     });
     dromGrid.appendChild(box);
   });
-  
   containerEl.appendChild(dromContainer);
 }
 
 function computeDynamicT2Map() {
   const { t2_g, t2_rn } = computeSecondRoundData(computeFirstRoundScores());
-  const globalMargin = t2_g - t2_rn; 
+  const globalMargin = t2_g - t2_rn;
   let dynamicT2 = {};
   Object.keys(MAP_T1_27).forEach(dep => {
     let t1Winner = MAP_T1_27[dep];
@@ -2202,27 +1560,15 @@ function updateT2Bar(t2scores) {
   currentT2ExprimesPct = t2scores.exprimes_pct; 
 }
 
-// Nouvelle fonction très légère qui ne fait que changer les couleurs
 function updateMapColors() {
   if (!geojsonCacheFull) return;
-
-  // 1. Repeindre la carte du 1er Tour
   let mapDataT1 = (currentMapT1Mode === '2027') ? MAP_T1_27 : HISTORICAL_DATA[currentMapT1Mode]['T1'].map;
+  d3.select("#mapT1").selectAll(".main-map path").attr("fill", d => getFeatureColor(d.properties.code, 'T1', currentMapT1Mode, mapDataT1));
+  d3.select("#mapCardT1 .drom-com-container").selectAll("path").attr("fill", d => getFeatureColor(d.properties.code, 'T1', currentMapT1Mode, mapDataT1) || '#222');
   
-  d3.select("#mapT1").selectAll(".main-map path")
-    .attr("fill", d => getFeatureColor(d.properties.code, 'T1', currentMapT1Mode, mapDataT1));
-    
-  d3.select("#mapCardT1 .drom-com-container").selectAll("path")
-    .attr("fill", d => getFeatureColor(d.properties.code, 'T1', currentMapT1Mode, mapDataT1) || '#222');
-
-  // 2. Repeindre la carte du 2nd Tour
   let mapDataT2 = (currentMapT2Mode === '2027') ? computeDynamicT2Map() : HISTORICAL_DATA[currentMapT2Mode]['T2'].map;
-  
-  d3.select("#mapT2").selectAll(".main-map path")
-    .attr("fill", d => getFeatureColor(d.properties.code, 'T2', currentMapT2Mode, mapDataT2));
-    
-  d3.select("#mapCardT2 .drom-com-container").selectAll("path")
-    .attr("fill", d => getFeatureColor(d.properties.code, 'T2', currentMapT2Mode, mapDataT2) || '#222');
+  d3.select("#mapT2").selectAll(".main-map path").attr("fill", d => getFeatureColor(d.properties.code, 'T2', currentMapT2Mode, mapDataT2));
+  d3.select("#mapCardT2 .drom-com-container").selectAll("path").attr("fill", d => getFeatureColor(d.properties.code, 'T2', currentMapT2Mode, mapDataT2) || '#222');
 }
 
 function update() {
@@ -2237,7 +1583,6 @@ function update() {
   tbody.innerHTML = '';
   
   let dataMap, candNames, stats, orderList = [];
-
   if (currentTableYear === '2027') {
     if (currentTableTour === 'T1') {
       dataMap = t1scores;
@@ -2287,7 +1632,6 @@ function update() {
     `;
     tbody.appendChild(tr);
   });
-  
   const absPct = ((stats.abs / stats.inscrits) * 100).toFixed(1);
   globalStats.innerHTML = `
     <div class="stat-item"><span class="stat-lbl">Inscrits</span><span class="stat-val">${stats.inscrits.toLocaleString('fr-FR')}</span></div>
@@ -2295,13 +1639,12 @@ function update() {
     <div class="stat-item"><span class="stat-lbl">Blancs & Nuls</span><span class="stat-val" style="color:var(--text-dim)">${stats.blancs.toLocaleString('fr-FR')}</span></div>
     <div class="stat-item"><span class="stat-lbl">Exprimés (100%)</span><span class="stat-val" style="color:var(--accent)">${stats.exp.toLocaleString('fr-FR')}</span></div>
   `;
-
   updateMapColors();
 }
 
 buildSliders(); initCharts(); initMaps(); update();
 </script>
-</script>
+
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -2326,20 +1669,19 @@ const db = firebase.firestore();
 let currentUser = null;
 let communityVotes = { LO:0, PCF:0, LFI:0, EELV:0, PS:0, REN:0, HZ:0, LR:0, DF:0, RN:0, RQ:0 };
 
-window.myFriendsList = []; // Mémorisera les UIDs de tes amis
-window.currentFriendFilter = null; // Mémorisera le filtre actif ('ALL' ou un UID)
-window.allPosts = []; // Stocke tous les posts en mémoire
-window.currentHashtagFilter = null; // Filtre hashtag actuel
+window.myFriendsList = [];
+window.currentFriendFilter = null; 
+window.allPosts = [];
+window.currentHashtagFilter = null; 
 
 window.commentListeners = {};
-window.commentCache = {}; 
+window.commentCache = {};
 window.openComments = {}; 
 window.currentReplyTarget = {}; 
 
 let selectedGifs = {}; 
 let gifSearchTimeout = null;
 
-// Icones minimalistes SVG
 const ICON_LIKE = `<svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>`;
 const ICON_DISLIKE = `<svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>`;
 const ICON_COMMENT = `<svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>`;
@@ -2347,7 +1689,6 @@ const ICON_TRASH = `<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 
 const ICON_HOURGLASS = `<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-3.99h-.01L18 18l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zm-4-5l-4-4V4h8v3.5l-4 4z"/></svg>`;
 const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
 const ICON_CROSS = `<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
-
 const VALID_HASHTAGS = ['LO','PCF','LFI','EELV','PS','REN','HZ','LR','DF','RN','RQ'];
 
 auth.onAuthStateChanged(user => {
@@ -2378,7 +1719,6 @@ auth.onAuthStateChanged(user => {
       if (doc.exists) {
         const prefs = doc.data();
         
-        // 1. Restauration Sidebar
         if (prefs.sidebarClosed) {
           document.body.classList.add('sidebar-closed');
           const sBtn = document.getElementById('sidebarToggleBtn');
@@ -2388,7 +1728,6 @@ auth.onAuthStateChanged(user => {
           }
         }
 
-        // 2. Restauration Hashtags
         if (prefs.hashtagOpen) {
           const hBar = document.getElementById('hashtag-bar');
           const hBtn = document.getElementById('hashtagToggleBtn');
@@ -2400,35 +1739,7 @@ auth.onAuthStateChanged(user => {
         }
       }
     });
-    
     fetchMyVote();
-	
-	db.collection("user_prefs").doc(user.uid).get().then(doc => {
-      if (doc.exists) {
-        const prefs = doc.data();
-        
-        // 1. Restauration Sidebar
-        if (prefs.sidebarClosed) {
-          document.body.classList.add('sidebar-closed');
-          const sBtn = document.getElementById('sidebarToggleBtn');
-          if (sBtn) {
-            sBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>';
-            sBtn.title = "Ouvrir le fil";
-          }
-        }
-
-        // 2. Restauration Hashtags
-        if (prefs.hashtagOpen) {
-          const hBar = document.getElementById('hashtag-bar');
-          const hBtn = document.getElementById('hashtagToggleBtn');
-          if (hBar) hBar.classList.remove('closed');
-          if (hBtn) {
-            hBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>';
-            hBtn.title = "Masquer les tendances";
-          }
-        }
-      }
-    });
 	
   } else {
     document.getElementById('chat-auth-msg').style.display = 'block';
@@ -2440,9 +1751,7 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Écoute de la liste d'amis en temps réel
 let friendsListener = null;
-
 auth.onAuthStateChanged(user => {
   if (user) {
     friendsListener = db.collection("friends").doc(user.uid).collection("list")
@@ -2464,7 +1773,7 @@ auth.onAuthStateChanged(user => {
         snap.forEach(doc => {
           const friend = doc.data();
           const fUid = doc.id;
-          
+         
           if (friend.status === 'pending_received') {
             requestsHtml += `
               <div class="friend-item" style="border-color: var(--accent);">
@@ -2524,7 +1833,7 @@ auth.onAuthStateChanged(user => {
         }
         
         listEl.innerHTML = finalHtml;
-        renderFeed(); // Rafraîchit les posts au cas où un ami a été ajouté/supprimé
+        renderFeed(); 
       });
   } else {
     if (friendsListener) friendsListener();
@@ -2532,7 +1841,6 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Affiche / Masque le menu déroulant Utilisateur
 function toggleUserMenu() { 
   const menu = document.getElementById('user-dropdown');
   const btn = document.getElementById('user-icon-btn');
@@ -2540,7 +1848,6 @@ function toggleUserMenu() {
   menu.classList.toggle('show');
 }
 
-// === ÉDITION DU PSEUDO "EN LIGNE" ===
 function startInlineEdit() {
   document.getElementById('dropdown-username').style.display = 'none';
   document.getElementById('btn-edit-inline').style.display = 'none';
@@ -2574,7 +1881,6 @@ function confirmInlineEdit() {
   const oldLowerName = currentName.toLowerCase();
 
   if (lowerName === oldLowerName) return cancelInlineEdit();
-
   db.collection("usernames").doc(lowerName).get().then((doc) => {
     if (doc.exists && doc.data().uid !== currentUser.uid) {
       showMsg('pseudo-msg', "Ce pseudo est déjà pris !", '#ff4444');
@@ -2583,7 +1889,6 @@ function confirmInlineEdit() {
         currentUser.updateProfile({ displayName: cleanName }).then(() => {
           document.getElementById('user-display-name').innerText = cleanName;
           document.getElementById('dropdown-username').innerText = cleanName;
-          showMsg('pseudo-msg', "Pseudo mis à jour !", '#2ea05a');
           cancelInlineEdit();
           showMsg('pseudo-msg', "Pseudo mis à jour !", '#2ea05a');
           setTimeout(() => { document.getElementById('pseudo-msg').style.display = 'none'; }, 2000);
@@ -2609,8 +1914,6 @@ function logoutUser() {
   document.getElementById('vote-selector').value = ""; 
   document.getElementById('user-badge').style.background = 'transparent';
   document.getElementById('user-display-name').style.color = '#fff';
-
-  // Réinitialisation par défaut de l'UI
   document.body.classList.remove('sidebar-closed');
   const sBtn = document.getElementById('sidebarToggleBtn');
   if (sBtn) {
@@ -2631,7 +1934,6 @@ function handleVoteClick() {
   if (!currentUser) return showMsg('vote-msg', "Veuillez vous connecter pour voter.", '#ff4444');
   const parti = document.getElementById('vote-selector').value;
   if (!parti) return showMsg('vote-msg', "Veuillez choisir un candidat.", '#ff4444');
-
   db.collection("votes").doc(currentUser.uid).set({
     parti: parti,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -2647,9 +1949,8 @@ function fetchMyVote() {
   myVoteListener = db.collection("votes").doc(currentUser.uid).onSnapshot(doc => {
     if (doc.exists) {
       const monVote = doc.data().parti;
-      // Dans fetchMyVote()
 	  document.getElementById('vote-selector').value = monVote;
-	  syncCustomSelectUI('vote-selector'); // <- Ajoute cette ligne
+	  syncCustomSelectUI('vote-selector');
       const couleurCandidat = COULEURS[monVote] || '#fff';
       document.getElementById('user-badge').style.background = couleurCandidat;
       document.getElementById('user-display-name').style.color = couleurCandidat;
@@ -2706,33 +2007,25 @@ function getRelativeTime(timestamp) {
   if (!timestamp) return "à l'instant";
   const now = new Date();
   const past = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  
   const diffSec = Math.floor((now - past) / 1000);
   if (diffSec < 60) return `il y a ${diffSec} sec`;
-  
   const diffMin = Math.floor(diffSec / 60);
   if (diffMin < 60) return `il y a ${diffMin} min`;
-  
   const diffHeures = Math.floor(diffMin / 60);
   if (diffHeures < 24) return `il y a ${diffHeures} h`;
-  
   const diffJours = Math.floor(diffHeures / 24);
-  if (diffJours < 7) return `il y a ${diffJours} ${diffJours === 1 ? 'jr' : 'jrs'}`; // Singulier géré ici
-  
+  if (diffJours < 7) return `il y a ${diffJours} ${diffJours === 1 ? 'jr' : 'jrs'}`; 
   const diffSem = Math.floor(diffJours / 7);
   if (diffJours < 30) return `il y a ${diffSem} sem`;
-  
   const diffMois = Math.floor(diffJours / 30);
   if (diffMois < 12) return `il y a ${diffMois} mois`;
-  
   const diffAns = Math.floor(diffJours / 365);
-  return `il y a ${diffAns} ${diffAns === 1 ? 'an' : 'ans'}`; // Singulier géré ici
+  return `il y a ${diffAns} ${diffAns === 1 ? 'an' : 'ans'}`;
 }
 
 function toggleReaction(postId, type) {
   if (!currentUser) return alert("Connectez-vous pour réagir.");
   const postRef = db.collection("posts").doc(postId);
-
   db.runTransaction(transaction => {
     return transaction.get(postRef).then(doc => {
       if (!doc.exists) throw "Post introuvable";
@@ -2743,17 +2036,17 @@ function toggleReaction(postId, type) {
 
       if (type === 'like') {
         if (likes.includes(uid)) {
-          likes = likes.filter(id => id !== uid); // Retire le like
+          likes = likes.filter(id => id !== uid); 
         } else {
-          likes.push(uid); // Ajoute le like
-          dislikes = dislikes.filter(id => id !== uid); // Enlève le dislike
+          likes.push(uid); 
+          dislikes = dislikes.filter(id => id !== uid); 
         }
       } else if (type === 'dislike') {
         if (dislikes.includes(uid)) {
-          dislikes = dislikes.filter(id => id !== uid); // Retire le dislike
+          dislikes = dislikes.filter(id => id !== uid); 
         } else {
-          dislikes.push(uid); // Ajoute le dislike
-          likes = likes.filter(id => id !== uid); // Enlève le like
+          dislikes.push(uid); 
+          likes = likes.filter(id => id !== uid); 
         }
       }
       transaction.update(postRef, { likes, dislikes });
@@ -2761,7 +2054,6 @@ function toggleReaction(postId, type) {
   });
 }
 
-// Gérer les likes et dislikes sur les commentaires
 function toggleCommentReaction(postId, commentId, type) {
   if (!currentUser) return alert("Connectez-vous pour réagir.");
   const commentRef = db.collection("posts").doc(postId).collection("comments").doc(commentId);
@@ -2805,13 +2097,13 @@ function setFriendFilter(filterValue) {
      const fItem = document.getElementById(`friend-item-${window.currentFriendFilter}`);
      if (fItem) fItem.classList.add('active-filter');
   }
-  renderFeed(); 
+  renderFeed();
 }
 
 function setHashtagFilter(tag) {
   if (window.currentHashtagFilter === tag) window.currentHashtagFilter = null;
   else window.currentHashtagFilter = tag;
-  renderFeed(); 
+  renderFeed();
 }
 
 function renderFeed() {
@@ -2873,6 +2165,7 @@ function renderFeed() {
     postEl.className = 'post-card';
 
     const pc = post.partyClass || ''; 
+    
     let deleteBtnHtml = '';
     if (currentUser && currentUser.uid === post.uid) {
       deleteBtnHtml = `<button class="delete-btn" onclick="deletePost('${postId}')" title="Supprimer">${ICON_TRASH}</button>`;
@@ -2891,7 +2184,8 @@ function renderFeed() {
       </div>
       ${textHtml}
       ${imgHtml}
-      ${pollHtml} <div class="post-actions">
+      ${pollHtml} 
+      <div class="post-actions">
         <button class="action-btn ${hasLiked ? 'active-like' : ''}" onclick="toggleReaction('${postId}', 'like')">
           ${ICON_LIKE} ${(post.likes || []).length}
         </button>
@@ -2951,7 +2245,6 @@ function extractAndCountHashtags(text) {
   });
 }
 
-// Fait l'inverse : décrémente le compteur quand un message est supprimé
 function decrementHashtags(text) {
   if (!text) return;
   const matches = text.match(/#([a-zA-Z]+)/gi);
@@ -2962,11 +2255,9 @@ function decrementHashtags(text) {
     let p = m.substring(1).toUpperCase();
     if (VALID_HASHTAGS.includes(p)) counts[p] = (counts[p] || 0) + 1;
   });
-
-  // Envoi asynchrone à Firebase (Soustraction via un nombre négatif)
   Object.keys(counts).forEach(parti => {
     db.collection('stats').doc('hashtags').set({
-      [parti]: firebase.firestore.FieldValue.increment(-counts[parti]) // Le "-" magique !
+      [parti]: firebase.firestore.FieldValue.increment(-counts[parti]) 
     }, { merge: true });
   });
 }
@@ -3006,7 +2297,6 @@ async function submitPost() {
   const text = textEl.value.trim();
   const gifUrl = selectedGifs['post'] || "";
 
-  // 1. On capture les données du sondage AVANT l'envoi
   let pollData = [];
   const isPollActive = document.getElementById('poll-creator-box').style.display === 'flex';
   
@@ -3017,28 +2307,24 @@ async function submitPost() {
         pollData.push({ id: opt.id, color: opt.color, text: inputEl.value.trim() });
       }
     });
-
     if (pollData.length < 2) {
       const errMsg = document.getElementById('poll-error-msg');
       if (errMsg) {
         errMsg.innerText = "Il faut mettre 2 choix minimum.";
         errMsg.style.display = 'block';
       }
-      return; // On bloque l'envoi du post
+      return;
     }
   }
 
-  // 2. On bloque l'envoi si TOUT est vide (pas de texte, pas de gif, pas de sondage)
   if (!text && !gifUrl && pollData.length === 0) return;
-
   const errMsg = document.getElementById('poll-error-msg');
-  if (errMsg) errMsg.style.display = 'none'; // On efface l'erreur si le post part
+  if (errMsg) errMsg.style.display = 'none';
 
-const partyClass = await getUserPartyClass(currentUser.uid);
+  const partyClass = await getUserPartyClass(currentUser.uid);
   const pseudoUser = currentUser.displayName || currentUser.email.split('@')[0];
 
   if (window.mainReplyTarget) {
-    // ---- MODE RÉPONSE ----
     const target = window.mainReplyTarget;
     db.collection("posts").doc(target.postId).collection("comments").add({
       uid: currentUser.uid,
@@ -3046,8 +2332,8 @@ const partyClass = await getUserPartyClass(currentUser.uid);
       partyClass: partyClass,
       text: text,
       gifUrl: gifUrl,
-      poll: pollData,       // <-- Les données du sondage
-      pollVotes: {},        // <-- L'objet vide pour accueillir les futurs votes
+      poll: pollData,       
+      pollVotes: {},        
       parentId: target.commentId,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       likes: [],
@@ -3057,19 +2343,17 @@ const partyClass = await getUserPartyClass(currentUser.uid);
       textEl.value = '';
       removeSelectedGif('post');
       cancelMainReply();
-      closeAndResetPollCreator(); // Nettoyage du sondage
+      closeAndResetPollCreator();
     });
-
   } else {
-    // ---- MODE POST CLASSIQUE ----
     db.collection("posts").add({
       uid: currentUser.uid,
       pseudo: pseudoUser,
       partyClass: partyClass,
       text: text,
       gifUrl: gifUrl,
-      poll: pollData,       // <-- Les données du sondage
-      pollVotes: {},        // <-- L'objet vide pour accueillir les futurs votes
+      poll: pollData,       
+      pollVotes: {},        
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       likes: [],
       dislikes: []
@@ -3077,12 +2361,11 @@ const partyClass = await getUserPartyClass(currentUser.uid);
       extractAndCountHashtags(text);
       textEl.value = '';
       removeSelectedGif('post');
-      closeAndResetPollCreator(); // Nettoyage du sondage
+      closeAndResetPollCreator();
     });
   }
 }
 
-// Fonction utilitaire pour vider le créateur de sondage après publication
 function closeAndResetPollCreator() {
   const box = document.getElementById('poll-creator-box');
   const btn = document.getElementById('btn-toggle-poll');
@@ -3093,32 +2376,25 @@ function closeAndResetPollCreator() {
   if (list) list.innerHTML = '';
 }
 
-// Supprimer son propre Post principal
 function deletePost(postId) {
   if (!currentUser) return;
   const postRef = db.collection("posts").doc(postId);
   
-  // 1. On lit le message pour voir quels hashtags il contenait
   postRef.get().then(doc => {
     if (doc.exists) {
-      decrementHashtags(doc.data().text); // On soustrait !
+      decrementHashtags(doc.data().text); 
     }
-    // 2. On supprime définitivement le message
     return postRef.delete();
   }).catch(e => console.error("Erreur de suppression :", e));
 }
 
-// Supprimer son propre Commentaire/Réponse
 function deleteComment(postId, commentId) {
   if (!currentUser) return;
   const commentRef = db.collection("posts").doc(postId).collection("comments").doc(commentId);
-  
-  // 1. On lit le commentaire pour voir quels hashtags il contenait
   commentRef.get().then(doc => {
     if (doc.exists) {
-      decrementHashtags(doc.data().text); // On soustrait !
+      decrementHashtags(doc.data().text); 
     }
-    // 2. On supprime définitivement le commentaire
     return commentRef.delete();
   }).catch(e => console.error("Erreur de suppression :", e));
 }
@@ -3145,7 +2421,6 @@ function buildCommentTree(comments, parentId = null, isRoot = true) {
     const threadHtml = childrenHtml ? `<div class="comment-thread-nested">${childrenHtml}</div>` : '';
 	
 	let pollHtml = generatePollHtml(c, c.postId, c.id);
-
     html += `
     <div class="${isRoot ? 'comment-card' : ''}" style="${!isRoot ? 'margin-bottom: 4px;' : ''}">
       <div class="post-header" style="margin-bottom: 4px;">
@@ -3165,9 +2440,9 @@ function buildCommentTree(comments, parentId = null, isRoot = true) {
         <button class="action-btn ${hasDisliked ? 'active-dislike' : ''}" style="font-size: 10px;" onclick="toggleCommentReaction('${c.postId}', '${c.id}', 'dislike')">
           ${ICON_DISLIKE} ${(c.dislikes || []).length}
         </button>
-<button class="action-btn" style="font-size: 10px;" onclick="prepareMainReply('${c.postId}', '${c.id}', '${c.pseudo.replace(/'/g, "\\'")}');">
-  ${ICON_COMMENT} Répondre
-</button>
+        <button class="action-btn" style="font-size: 10px;" onclick="prepareMainReply('${c.postId}', '${c.id}', '${c.pseudo.replace(/'/g, "\\'")}');">
+          ${ICON_COMMENT} Répondre
+        </button>
       </div>
       ${threadHtml}
     </div>
@@ -3181,7 +2456,7 @@ function toggleComments(postId) {
   const isHidden = el.style.display === 'none' || el.style.display === '';
   if (isHidden) {
     el.style.display = 'flex';
-    window.openComments[postId] = true; 
+    window.openComments[postId] = true;
     if (!window.commentListeners[postId]) {
       const listEl = document.getElementById(`comments-list-${postId}`);
       listEl.innerHTML = '<div style="font-size:10px; color:var(--text-dim); text-align:center;">Chargement...</div>';
@@ -3201,7 +2476,7 @@ function toggleComments(postId) {
     }
   } else {
     el.style.display = 'none';
-    window.openComments[postId] = false; 
+    window.openComments[postId] = false;
   }
 }
 
@@ -3270,7 +2545,6 @@ function searchGifs(query, targetId) {
   resultsDiv.innerHTML = '<div style="grid-column: span 2; text-align:center; color:var(--text-dim); font-size:9px;">...</div>';
   let url = `https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=LIVDSRZULELA&limit=10&locale=fr_FR&tiny_gif_formats=tinygif`;
   if (query === 'trending') url = `https://g.tenor.com/v1/trending?key=LIVDSRZULELA&limit=10&locale=fr_FR&tiny_gif_formats=tinygif`;
-
   fetch(url).then(r => r.json()).then(data => {
       resultsDiv.innerHTML = '';
       if (!data.results || data.results.length === 0) {
@@ -3310,7 +2584,6 @@ window.addEventListener('click', function(e) {
     });
   }
   
-  // Fermeture du menu AMIS si clic à l'extérieur
   if (!e.target.closest('#friends-dropdown') && !e.target.closest('#friends-btn')) {
     const menu = document.getElementById('friends-dropdown');
     const btn = document.getElementById('friends-btn');
@@ -3320,7 +2593,6 @@ window.addEventListener('click', function(e) {
     }
   }
 
-  // NOUVEAU : Fermeture du menu UTILISATEUR si clic à l'extérieur
   if (!e.target.closest('#user-dropdown') && !e.target.closest('#user-icon-btn')) {
     const userMenu = document.getElementById('user-dropdown');
     const userBtn = document.getElementById('user-icon-btn');
@@ -3346,7 +2618,6 @@ function addFriend() {
   if (!pseudoToAdd) return;
   const lowerName = pseudoToAdd.toLowerCase();
   const myPseudo = currentUser.displayName || currentUser.email.split('@')[0];
-
   if (lowerName === myPseudo.toLowerCase()) {
     msg.style.color = "var(--text-dim)";
     msg.innerText = "Vous ne pouvez pas vous ajouter vous-même.";
@@ -3401,7 +2672,7 @@ function addFriend() {
         }
       });
     } else {
-      msg.style.color = "var(--LFI)"; 
+      msg.style.color = "var(--LFI)";
       msg.innerText = "Utilisateur introuvable.";
       msg.style.display = 'block';
     }
@@ -3424,7 +2695,6 @@ function toggleSidebar() {
   document.body.classList.toggle('sidebar-closed');
   const btn = document.getElementById('sidebarToggleBtn');
   const isClosed = document.body.classList.contains('sidebar-closed');
-
   if (isClosed) {
     btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>';
     btn.title = "Ouvrir le fil";
@@ -3433,10 +2703,7 @@ function toggleSidebar() {
     btn.title = "Masquer le fil";
   }
 
-  // 1. Sauvegarde instantanée (Navigateur)
   localStorage.setItem('sidebarClosed', isClosed);
-
-  // 2. Sauvegarde Cloud (Firebase)
   if (currentUser) {
     db.collection("user_prefs").doc(currentUser.uid).set({ sidebarClosed: isClosed }, { merge: true }).catch(()=>{});
   }
@@ -3448,7 +2715,6 @@ function toggleHashtags() {
 
   bar.classList.toggle('closed');
   const isClosed = bar.classList.contains('closed');
-
   if (isClosed) {
     btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>';
     btn.title = "Afficher les tendances";
@@ -3457,10 +2723,7 @@ function toggleHashtags() {
     btn.title = "Masquer les tendances";
   }
 
-  // 1. Sauvegarde instantanée (Navigateur)
   localStorage.setItem('hashtagOpen', !isClosed);
-
-  // 2. Sauvegarde Cloud (Firebase)
   if (currentUser) {
     db.collection("user_prefs").doc(currentUser.uid).set({ hashtagOpen: !isClosed }, { merge: true }).catch(()=>{});
   }
@@ -3475,83 +2738,55 @@ document.querySelectorAll('.minimal-gif-btn4').forEach(sel => {
     });
 });
 
-// --- CRÉATION DES SELECTS PERSONNALISÉS ---
 document.addEventListener("DOMContentLoaded", function() {
   const selects = document.querySelectorAll("select.minimal-gif-btn4");
   
   selects.forEach(select => {
-    // 1. On cache le select natif, mais on le garde dans le DOM (pour que tes fonctions marchent)
     select.style.display = "none";
-    
-    // 2. On crée l'enveloppe
     const wrapper = document.createElement("div");
     wrapper.className = "custom-select-wrapper";
     select.parentNode.insertBefore(wrapper, select);
     wrapper.appendChild(select);
     
-    // 3. On crée le bouton cliquable
     const trigger = document.createElement("div");
     trigger.className = "custom-select-trigger";
     const selectedOpt = select.options[select.selectedIndex];
     trigger.innerHTML = `<span class="trigger-text">${selectedOpt.text}</span> <span style="font-size:8px;">▼</span>`;
-    
-    // Récupérer la couleur si c'est le sélecteur de vote
     if(selectedOpt.style.color) trigger.style.color = selectedOpt.style.color;
     wrapper.appendChild(trigger);
     
-    // 4. On crée la liste déroulante
     const optionsList = document.createElement("div");
     optionsList.className = "custom-options";
-    
     Array.from(select.options).forEach(option => {
       const customOpt = document.createElement("div");
       customOpt.className = "custom-option";
       customOpt.textContent = option.text;
       customOpt.dataset.value = option.value;
-      
-      // Si l'option avait une couleur spécifique (comme les candidats)
       if (option.style.color) {
         customOpt.style.color = option.style.color;
         customOpt.dataset.color = option.style.color;
         customOpt.style.fontWeight = option.style.fontWeight;
       }
-      
-      // Comportement au clic sur une option
       customOpt.addEventListener("click", function() {
-        // MAJ du texte du bouton
         trigger.querySelector(".trigger-text").textContent = this.textContent;
         if (this.dataset.color) trigger.style.color = this.dataset.color;
-        else trigger.style.color = ""; // Reset
-        
-        // MAJ du vrai select caché
+        else trigger.style.color = ""; 
         select.value = this.dataset.value;
-        
-        // Déclenche l'événement "change" pour réveiller tes fonctions (switchMapT1, etc.)
         select.dispatchEvent(new Event("change", { bubbles: true }));
-        
-        // Ferme le menu
         optionsList.classList.remove("open");
       });
-      
       optionsList.appendChild(customOpt);
     });
-    
     wrapper.appendChild(optionsList);
-    
-    // 5. Ouverture / Fermeture au clic
     trigger.addEventListener("click", function(e) {
-      e.stopPropagation(); // Évite que le document ferme ça direct
-      
-      // Ferme tous les autres selects ouverts
+      e.stopPropagation(); 
       document.querySelectorAll(".custom-options.open").forEach(list => {
         if (list !== optionsList) list.classList.remove("open");
       });
-      
       optionsList.classList.toggle("open");
     });
-  });
+});
   
-  // 6. Fermeture quand on clique n'importe où ailleurs sur la page
   document.addEventListener("click", function(e) {
     if (!e.target.closest(".custom-select-wrapper")) {
       document.querySelectorAll(".custom-options").forEach(list => {
@@ -3561,7 +2796,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-// Petite fonction utilitaire pour mettre à jour l'UI personnalisée quand le JS modifie la valeur du select en arrière-plan
 function syncCustomSelectUI(selectId) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -3578,25 +2812,18 @@ function syncCustomSelectUI(selectId) {
   }
 }
 
-// Variable globale pour savoir à qui on répond
 window.mainReplyTarget = null;
-
 function prepareMainReply(postId, commentId, pseudo) {
-  // On sauvegarde les infos de la cible
   window.mainReplyTarget = { postId, commentId, pseudo };
-  
   const textarea = document.getElementById('post-text');
   const badge = document.getElementById('main-reply-badge');
   
-  // On change le texte et on focus la zone principale
   textarea.placeholder = `En réponse à ${pseudo}...`;
   textarea.focus();
   
-  // On affiche le petit badge au-dessus de la zone
   badge.innerHTML = `<span>En réponse à <strong style="color: #fff;">${pseudo}</strong></span> <button onclick="cancelMainReply()" style="background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:14px; padding:0;">✖</button>`;
   badge.style.display = 'flex';
   
-  // Fait défiler la page jusqu'en bas pour être sûr de voir la zone
   textarea.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
@@ -3607,17 +2834,14 @@ function cancelMainReply() {
   document.getElementById('main-reply-badge').style.display = 'none';
 }
 
-// Déclenche les actions en appuyant sur Entrée (Connexion et Modif Pseudo)
 document.addEventListener("DOMContentLoaded", function() {
   
-  // 1. Pour la connexion
   const emailInput = document.getElementById('email-input');
   const passwordInput = document.getElementById('password-input');
 
 function triggerLogin(event) {
     if (event.key === 'Enter') {
       event.preventDefault();
-      // Le comportement change selon ce qu'on est en train de faire !
       if (isRegisterMode) {
           registerUser();
       } else {
@@ -3629,22 +2853,18 @@ function triggerLogin(event) {
   if (emailInput) emailInput.addEventListener('keypress', triggerLogin);
   if (passwordInput) passwordInput.addEventListener('keypress', triggerLogin);
 
-  // 2. Pour la modification du pseudo
   const inlinePseudoInput = document.getElementById('inline-pseudo-input');
-  
   if (inlinePseudoInput) {
     inlinePseudoInput.addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
-        event.preventDefault(); // Évite que le navigateur fasse une action par défaut
-        confirmInlineEdit();    // Valide et enregistre le nouveau pseudo
+        event.preventDefault();
+        confirmInlineEdit();
       }
     });
   }
 });
-
 let isRegisterMode = false;
 
-// --- GESTION DE L'AFFICHAGE DU MENU ---
 function showRegisterForm() {
   isRegisterMode = true;
   document.getElementById('reg-pseudo-input').style.display = 'block';
@@ -3656,7 +2876,7 @@ function showRegisterForm() {
   btnReg.innerText = "Valider l'inscription";
   btnReg.style.background = 'var(--accent)';
   btnReg.style.color = 'var(--bg)';
-  btnReg.onclick = registerUser; // Le bouton valide maintenant l'inscription
+  btnReg.onclick = registerUser;
   
   document.getElementById('btn-back-login').style.display = 'block';
   document.getElementById('auth-msg').style.display = 'none';
@@ -3673,13 +2893,12 @@ function showLoginForm() {
   btnReg.innerText = "Créer un compte";
   btnReg.style.background = 'transparent';
   btnReg.style.color = 'var(--text-dim)';
-  btnReg.onclick = showRegisterForm; // Le bouton affiche le formulaire
+  btnReg.onclick = showRegisterForm; 
   
   document.getElementById('btn-back-login').style.display = 'none';
   document.getElementById('auth-msg').style.display = 'none';
 }
 
-// --- INSCRIPTION (On sauvegarde l'email avec le pseudo) ---
 function registerUser() {
   const pseudo = document.getElementById('reg-pseudo-input').value;
   const email = document.getElementById('email-input').value;
@@ -3697,12 +2916,11 @@ function registerUser() {
     } else {
       auth.createUserWithEmailAndPassword(email, pass).then((userCredential) => {
         const user = userCredential.user;
-        // MAGIE ICI : On stocke l'email dans l'annuaire des pseudos
         db.collection("usernames").doc(lowerName).set({ uid: user.uid, email: email });
         user.updateProfile({ displayName: cleanName }).then(() => {
             document.getElementById('user-display-name').innerText = cleanName;
             document.getElementById('dropdown-username').innerText = cleanName;
-            showLoginForm(); // On remet le menu propre
+            showLoginForm(); 
         });
         showMsg('auth-msg', "Compte créé avec succès !", '#2ea05a');
       }).catch(err => showMsg('auth-msg', "Erreur : email invalide ou mot de passe trop court.", '#ff4444'));
@@ -3710,30 +2928,25 @@ function registerUser() {
   });
 }
 
-// --- CONNEXION (Pseudo ou Email) ---
 function loginUser() {
   const identifier = document.getElementById('email-input').value.trim();
   const pass = document.getElementById('password-input').value;
   if(!identifier || !pass) return showMsg('auth-msg', "Veuillez remplir vos identifiants.", '#ff4444');
-  
-  // Si ça contient un "@", on part du principe que c'est un email classique
   if (identifier.includes('@')) {
     auth.signInWithEmailAndPassword(identifier, pass).then(() => {
        document.getElementById('auth-msg').style.display = 'none';
        showLoginForm();
     }).catch(err => showMsg('auth-msg', "Identifiants incorrects.", '#ff4444'));
   } else {
-    // Si c'est un pseudo, on va chercher son email caché dans la base
     const lowerName = identifier.toLowerCase();
     db.collection("usernames").doc(lowerName).get().then(doc => {
       if (doc.exists && doc.data().email) {
          const userEmail = doc.data().email;
-         // On se connecte en cachette avec l'email trouvé
          auth.signInWithEmailAndPassword(userEmail, pass).then(() => {
             document.getElementById('auth-msg').style.display = 'none';
             showLoginForm();
          }).catch(err => showMsg('auth-msg', "Mot de passe incorrect.", '#ff4444'));
-      } else {
+       } else {
          showMsg('auth-msg', "Pseudo introuvable.", '#ff4444');
       }
     }).catch(err => showMsg('auth-msg', "Erreur de connexion.", '#ff4444'));
@@ -3742,14 +2955,14 @@ function loginUser() {
 
 // --- SYSTÈME DE SONDAGE ---
 const MODERN_COLORS = ['#ef476f', '#f78c6b', '#ffd166', '#06d6a0', '#118ab2', '#073b4c', '#9d4edd', '#a1a1aa'];
-let currentPollOptions = []; // Stocke les options en cours de création
-window.activePollData = {}; // Cache global pour les tooltips
+let currentPollOptions = [];
+window.activePollData = {};
 
 function togglePollCreator() {
   const box = document.getElementById('poll-creator-box');
   const btn = document.getElementById('btn-toggle-poll');
   const errMsg = document.getElementById('poll-error-msg');
-  if (errMsg) errMsg.style.display = 'none'; // <-- Ajoute cette ligne
+  if (errMsg) errMsg.style.display = 'none';
 
   if (box.style.display === 'flex') {
     box.style.display = 'none';
@@ -3759,13 +2972,13 @@ function togglePollCreator() {
     box.style.display = 'flex';
     btn.classList.add('active');
     document.getElementById('poll-options-list').innerHTML = '';
-    addPollOption(); addPollOption(); // 2 options par défaut
+    addPollOption(); addPollOption();
   }
 }
 
 function addPollOption() {
   const errMsg = document.getElementById('poll-error-msg');
-  if (errMsg) errMsg.style.display = 'none'; // On cache l'erreur si tout va bien
+  if (errMsg) errMsg.style.display = 'none';
 
   if (currentPollOptions.length >= 6) {
     if (errMsg) {
@@ -3804,12 +3017,10 @@ function openPalette(e, optId) {
     document.body.appendChild(palette);
   }
   palette.innerHTML = MODERN_COLORS.map(c => `<div class="palette-color" style="background:${c}" onclick="setPollColor('${optId}', '${c}')"></div>`).join('');
-  
   const rect = e.target.getBoundingClientRect();
   palette.style.left = rect.left + 'px';
   palette.style.top = (rect.bottom + 5) + 'px';
   palette.classList.add('show');
-  
   setTimeout(() => {
     window.addEventListener('click', closePalette);
   }, 10);
@@ -3827,12 +3038,11 @@ function closePalette() {
   window.removeEventListener('click', closePalette);
 }
 
-// Fonction centrale pour générer le HTML d'un sondage dans le fil
 function generatePollHtml(entityData, postId, commentId = null) {
   if (!entityData.poll || entityData.poll.length === 0) return '';
-  const entityId = commentId || postId; // ID unique du composant
+  const entityId = commentId || postId; 
   const votesMap = entityData.pollVotes || {};
-  window.activePollData[entityId] = votesMap; // Mise en cache pour le tooltip
+  window.activePollData[entityId] = votesMap; 
   
   const totalVotes = Object.keys(votesMap).length;
   const hasVoted = currentUser && votesMap[currentUser.uid];
@@ -3863,7 +3073,6 @@ function generatePollHtml(entityData, postId, commentId = null) {
   return html;
 }
 
-// Actions de vote Firebase
 async function votePoll(postId, commentId, optionId) {
   if (!currentUser) return alert("Connectez-vous pour voter.");
   const partyClass = await getUserPartyClass(currentUser.uid);
@@ -3873,13 +3082,10 @@ async function votePoll(postId, commentId, optionId) {
   const ref = commentId 
       ? db.collection("posts").doc(postId).collection("comments").doc(commentId)
       : db.collection("posts").doc(postId);
-      
   ref.update({ [`pollVotes.${currentUser.uid}`]: voteData });
 }
 
-// Logique de survol 2 secondes
 let pollHoverTimeout = null;
-
 function startPollHover(e, entityId, optionId) {
   const rect = e.target.getBoundingClientRect();
   pollHoverTimeout = setTimeout(() => {
@@ -3895,7 +3101,6 @@ function cancelPollHover() {
 function showPollTooltip(entityId, optionId, rect) {
   const votesMap = window.activePollData[entityId];
   if(!votesMap) return;
-  
   const voters = Object.values(votesMap).filter(v => v.optionId === optionId);
   if (voters.length === 0) return;
   
@@ -3906,10 +3111,8 @@ function showPollTooltip(entityId, optionId, rect) {
       const pClass = v.partyClass ? v.partyClass.replace('p-', '') : 'Sans étiquette';
       partyCounts[pClass] = (partyCounts[pClass] || 0) + 1;
   });
-  
   let tooltipHtml = `<div class="poll-tooltip-title">Analyse du vote</div>`;
   
-  // Barre des partis (triés par pourcentage décroissant)
   const sortedParties = Object.entries(partyCounts).sort((a,b) => b[1] - a[1]);
   sortedParties.forEach(([p, count]) => {
       const pct = Math.round((count / voters.length) * 100);
@@ -3923,13 +3126,10 @@ function showPollTooltip(entityId, optionId, rect) {
           <span style="font-weight:bold;">${pct}%</span>
       </div>`;
   });
-
   tooltipHtml += `<div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; font-style: italic; color: var(--text-dim); font-size: 10px;">Ont voté : ${userList.join(', ')}</div>`;
-  
   const tt = document.getElementById('globalPollTooltip');
   tt.innerHTML = tooltipHtml;
   
-  // Placement intelligent pour éviter de sortir de l'écran
   let left = rect.left;
   if (left + 200 > window.innerWidth) left = window.innerWidth - 220;
   tt.style.left = left + 'px';
@@ -3938,7 +3138,6 @@ function showPollTooltip(entityId, optionId, rect) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Restauration de l'état des Hashtags
     if (localStorage.getItem('hashtagOpen') === 'true') {
       const hBar = document.getElementById('hashtag-bar');
       const hBtn = document.getElementById('hashtagToggleBtn');
@@ -3949,7 +3148,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Ajustement de l'icône du bouton Sidebar
     if (localStorage.getItem('sidebarClosed') === 'true') {
        const sBtn = document.getElementById('sidebarToggleBtn');
        if (sBtn) {
@@ -3958,7 +3156,6 @@ document.addEventListener("DOMContentLoaded", () => {
        }
     }
 });
-
 </script>
 </body>
 </html>
