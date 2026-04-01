@@ -3273,9 +3273,14 @@ function showPollTooltip(entityId, optionId, rect) {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
           <div style="display:flex; align-items:center; gap:6px;">
              <div style="width:8px; height:8px; border-radius:50%; background:${color};"></div>
+		
+<span style="
+            color:${color} !important;
+            font-weight:bold;
+        ">
              <span>${p}</span>
           </div>
-          <span style="font-weight:bold;">${pct}%</span>
+          <span style="font-weight:bold;olor:${color} !important;">${pct}%</span>
       </div>`;
   });
   tooltipHtml += `<div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; font-style: italic; color: var(--text-dim); font-size: 10px;">Ont voté : ${userList.join(', ')}</div>`;
