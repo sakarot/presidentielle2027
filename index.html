@@ -3268,7 +3268,7 @@ function showPollTooltip(entityId, optionId, rect) {
   const sortedParties = Object.entries(partyCounts).sort((a,b) => b[1] - a[1]);
   sortedParties.forEach(([p, count]) => {
       const pct = Math.round((count / voters.length) * 100);
-      const color = window.COULEURS ? (window.COULEURS[p] || '#888') : '#888';
+      const color = COULEURS[p] || '#888';
       tooltipHtml += `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
           <div style="display:flex; align-items:center; gap:6px;">
@@ -3280,7 +3280,7 @@ function showPollTooltip(entityId, optionId, rect) {
         ">
              <span>${p}</span>
           </div>
-          <span style="font-weight:bold;olor:${color} !important;">${pct}%</span>
+          <span style="font-weight:bold;color:white !important;">${pct}%</span>
       </div>`;
   });
   tooltipHtml += `<div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; font-style: italic; color: var(--text-dim); font-size: 10px;">Ont voté : ${userList.join(', ')}</div>`;
