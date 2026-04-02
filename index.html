@@ -1140,7 +1140,7 @@ body.light-mode .sticky-chat-footer {
                   <strong id="dropdown-username" style="font-size: 14px;"></strong>
                   <button id="btn-edit-inline" class="edit-pseudo-btn" onclick="startInlineEdit()" title="Modifier le pseudo">✎</button>
                   <input type="text" id="inline-pseudo-input" style="display: none; padding: 2px 6px; background: var(--surface2); color: var(--text); border: 1px solid var(--accent); border-radius: 4px; font-size: 13px; width: 130px; text-align: center;">
-                  <button id="btn-save-inline" class="btn-sort" style="display: none; padding: 2px 8px; font-size: 11px; height: 24px;" onclick="confirmInlineEdit()">OK</button>
+                  <button id="btn-save-inline" class="minimal-gif-btn2" style="display: none; padding: 2px 8px; font-size: 11px; height: 24px;" onclick="confirmInlineEdit()">OK</button>
                   <button id="btn-cancel-inline" class="edit-pseudo-btn" style="display: none; font-size: 16px; padding: 0;" onclick="cancelInlineEdit()" title="Annuler">×</button>
                 </div>
                 <div id="pseudo-msg" style="font-size: 11px; display: none; text-align: center; font-weight: bold; margin-top: 4px;"></div>
@@ -1153,29 +1153,47 @@ body.light-mode .sticky-chat-footer {
 
       <div class="vote-panel-container">
         <div class="vote-panel-left">
-          <div id="voter-profile-view" style="display: none; align-items: center; gap: 12px;">
+          <div id="voter-profile-view" style="display: none; flex-direction: column; align-items: flex-start; gap: 6px;">
             <div class="username-container" style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border);">
               <span id="user-badge" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background 0.3s;"></span>
               <strong id="user-display-name" style="font-size: 15px; transition: color 0.3s;"></strong>
             </div>
+					  <div id="bio-display-container" style="display: flex; align-items: center; gap: 6px; margin-left: 4px;">
+      <span id="user-bio-text" style="font-size: 12px; color: var(--text-dim); font-style: italic; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Chargement...</span>
+      <button class="edit-pseudo-btn" onclick="startBioEdit()" title="Modifier la bio">✎</button>
+   
           </div>
+
+    <div id="bio-edit-container" style="display: none; flex-direction: column; gap: 4px; width: 100%; min-width: 220px;">
+      <textarea id="bio-input" maxlength="150" rows="2" placeholder="Décrivez-vous brièvement..." style="background: var(--bg); color: var(--text); border: 1px solid var(--accent); border-radius: 6px; padding: 6px; font-size: 11px; resize: none; font-family: 'DM Sans', sans-serif;" oninput="updateBioCount()"></textarea>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="bio-count" style="font-size: 10px; color: var(--text-dim); font-family: 'Space Mono', monospace;">0/150</span>
+        <div style="display: flex; gap: 4px;">
+<button type="button" class="minimal-gif-btn2"style="padding: 2px 8px; font-size: 10px;" onclick="saveBio()">OK</button>
+<button type="button" class="edit-pseudo-btn" style="padding: 0; font-size: 16px;" onclick="cancelBioEdit()" title="Annuler">×</button>
+        </div>
+      </div>
+    </div>
+  </div>
           
           <div style="display: flex; flex-direction: column; gap: 6px;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <select id="vote-selector" class="minimal-gif-btn4" >
-                <option value="" style="color: var(--text-dim);">Choisissez un candidat</option>
-                <option value="LO" style="color: #7a1020; font-weight: bold;">Arthaud (LO)</option>
-                <option value="PCF" style="color: #9b1010; font-weight: bold;">Roussel (PCF)</option>
-                <option value="LFI" style="color: #c0001a; font-weight: bold;">Mélenchon (LFI)</option>
-                <option value="EELV" style="color: #2ea05a; font-weight: bold;">Tondelier (EELV)</option>
-                <option value="PS" style="color: #e07080; font-weight: bold;">Glucksmann (PS)</option>
-                <option value="REN" style="color: #f0c030; font-weight: bold;">Attal (REN)</option>
-                <option value="HZ" style="color: #70c8f8; font-weight: bold;">Philippe (HZ)</option>
-                <option value="LR" style="color: #2c75ff; font-weight: bold;">Retailleau (LR)</option>
-                <option value="DF" style="color: #003870; font-weight: bold;">Dupont-Aignan (DLF)</option>
-                <option value="RN" style="color: #0d3890; font-weight: bold;">Le Pen (RN)</option>
-                <option value="RQ" style="color: #000000; font-weight: bold;">Zemmour (RQ)</option>
-              </select>
+              <select id="vote-selector" class="minimal-gif-btn4">
+    <option value="" style="color: var(--text-dim);">Choisissez un candidat</option>
+    <option value="ABS" style="color: var(--text-dim); font-style: italic;">Abstention</option>
+    <option value="BLANC" style="color: var(--text-dim); font-style: italic;">Vote Blanc</option>
+    <option value="LO" style="color: #7a1020; font-weight: bold;">Arthaud (LO)</option>
+    <option value="PCF" style="color: #9b1010; font-weight: bold;">Roussel (PCF)</option>
+    <option value="LFI" style="color: #c0001a; font-weight: bold;">Mélenchon (LFI)</option>
+    <option value="EELV" style="color: #2ea05a; font-weight: bold;">Tondelier (EELV)</option>
+    <option value="PS" style="color: #e07080; font-weight: bold;">Glucksmann (PS)</option>
+    <option value="REN" style="color: #f0c030; font-weight: bold;">Attal (REN)</option>
+    <option value="HZ" style="color: #70c8f8; font-weight: bold;">Philippe (HZ)</option>
+    <option value="LR" style="color: #2c75ff; font-weight: bold;">Retailleau (LR)</option>
+    <option value="DF" style="color: #003870; font-weight: bold;">Dupont-Aignan (DLF)</option>
+    <option value="RN" style="color: #0d3890; font-weight: bold;">Le Pen (RN)</option>
+    <option value="RQ" style="color: #000000; font-weight: bold;">Zemmour (RQ)</option>
+</select>
               <button onclick="handleVoteClick()" class="minimal-gif-btn2" style="font-weight: bold">Voter</button>
             </div>
             <div id="vote-msg" style="font-size: 13px; font-weight: bold; display: none; margin-left: 4px;"></div>
@@ -2327,20 +2345,28 @@ auth.onAuthStateChanged(user => {
 
     db.collection("usernames").doc(lowerName).get().then(doc => {
       if (!doc.exists) {
-         // CORRECTION 1 : On ajoute l'email à la création du pseudo
          db.collection("usernames").doc(lowerName).set({ uid: user.uid, email: user.email });
       } else if (doc.data().uid !== user.uid) {
          pseudo = pseudo + Math.floor(Math.random() * 1000);
          user.updateProfile({ displayName: pseudo });
-         // CORRECTION 2 : On ajoute l'email si on génère un pseudo alternatif
          db.collection("usernames").doc(pseudo.toLowerCase()).set({ uid: user.uid, email: user.email });
       } else if (!doc.data().email) {
-         // CORRECTION 3 : Si le document existe mais n'a pas l'email (les anciens comptes buggés), on le répare
          db.collection("usernames").doc(lowerName).update({ email: user.email });
       }
-      
       document.getElementById('user-display-name').innerText = pseudo;
       document.getElementById('dropdown-username').innerText = pseudo;
+    }).catch(err => console.error("Erreur chargement pseudo:", err));
+
+db.collection("users").doc(user.uid).onSnapshot(doc => {
+      const bioText = document.getElementById('user-bio-text');
+      if (doc.exists && doc.data().bio) {
+        bioText.innerText = doc.data().bio;
+      } else {
+        bioText.innerText = "Votre bio...";
+      }
+    }, err => {
+      console.error("Erreur lecture bio:", err);
+      document.getElementById('user-bio-text').innerText = "Votre bio...";
     });
 	
     db.collection("user_prefs").doc(user.uid).get().then(doc => {
@@ -2573,11 +2599,22 @@ function handleVoteClick() {
   if (!currentUser) return showMsg('vote-msg', "Veuillez vous connecter pour voter.", '#ff4444');
   const parti = document.getElementById('vote-selector').value;
   if (!parti) return showMsg('vote-msg', "Veuillez choisir un candidat.", '#ff4444');
+  
+  // 1. Vote public
   db.collection("votes").doc(currentUser.uid).set({
     parti: parti,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   }).then(() => {
-    showMsg('vote-msg', "A voté !", COULEURS[parti] || '#2ea05a');
+    
+    // 2. Historique privé (ajouté ici)
+    db.collection("users").doc(currentUser.uid).set({
+      history: {
+        "pres_2027": parti
+      }
+    }, { merge: true }).then(() => {
+        showMsg('vote-msg', "A voté !", COULEURS[parti] || '#2ea05a');
+    });
+    
   }).catch(err => showMsg('vote-msg', "Erreur lors de l'enregistrement.", '#ff4444'));
 }
 
@@ -4172,9 +4209,18 @@ async function openUserProfile(pseudoToFind) {
         
         if (electionsEligibles.length > 0) {
             electionsEligibles.forEach(elec => {
-                // On cherche ce qu'il a voté dans sa base de données (abstention/blanc inclus)
-                const sonVote = userData.history && userData.history[elec.id] ? userData.history[elec.id] : 'Non renseigné';
-                votesHtml += `<div class="vote-item"><strong>${elec.nom} :</strong> ${sonVote}</div>`;
+                const rawVote = userData.history && userData.history[elec.id] ? userData.history[elec.id] : 'Non renseigné';
+                
+                // Traduction et couleur
+                let displayVote = rawVote;
+                let color = COULEURS[rawVote] || 'var(--text)';
+                
+                if (rawVote === 'ABS') { displayVote = 'Abstention'; color = 'var(--text-dim)'; }
+                else if (rawVote === 'BLANC') { displayVote = 'Vote Blanc'; color = 'var(--text-dim)'; }
+                else if (rawVote === 'Non renseigné') { color = 'var(--text-dim)'; }
+                else if (CANDIDATS[rawVote]) { displayVote = `${CANDIDATS[rawVote]} (${rawVote})`; }
+
+                votesHtml += `<div class="vote-item"><strong>${elec.nom} :</strong> <span style="color: ${color}; font-weight: bold;">${displayVote}</span></div>`;
             });
         } else {
             votesHtml = `<div style="font-size:0.9em; color:var(--text-dim);">Pas encore en âge de voter lors des dernières élections.</div>`;
@@ -4478,6 +4524,53 @@ async function shareAsImage(btnElement, type, id) {
             }
         }, 2500);
     }
+}
+
+function startBioEdit() {
+  const currentBio = document.getElementById('user-bio-text').innerText;
+  const input = document.getElementById('bio-input');
+  
+  // Si c'est un texte par défaut, on vide l'input pour laisser l'utilisateur écrire
+  if (currentBio === "Aucune bio renseignée." || currentBio === "Votre bio..." || currentBio === "Chargement...") {
+      input.value = "";
+  } else {
+      input.value = currentBio;
+  }
+  
+  updateBioCount();
+  
+  document.getElementById('bio-display-container').style.display = 'none';
+  document.getElementById('bio-edit-container').style.display = 'flex';
+  input.focus();
+}
+
+function cancelBioEdit() {
+  document.getElementById('bio-edit-container').style.display = 'none';
+  document.getElementById('bio-display-container').style.display = 'flex';
+}
+
+function updateBioCount() {
+  const input = document.getElementById('bio-input');
+  document.getElementById('bio-count').innerText = `${input.value.length}/150`;
+}
+
+function saveBio() {
+  if (!currentUser) return;
+  const newBio = document.getElementById('bio-input').value.trim();
+  
+  // 1. Mise à jour visuelle optimiste
+  document.getElementById('user-bio-text').innerText = newBio || "Votre bio...";
+  cancelBioEdit();
+
+  // 2. Sauvegarde dans Firebase
+  db.collection("users").doc(currentUser.uid).set({
+    bio: newBio
+  }, { merge: true }).then(() => {
+    console.log("Bio bien enregistrée dans Firebase !");
+  }).catch(err => {
+    console.error("Erreur lors de la sauvegarde de la bio:", err);
+    alert("Impossible de sauvegarder la bio. Vérifiez la connexion ou les règles Firestore.");
+  });
 }
 
 </script>
