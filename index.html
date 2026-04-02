@@ -223,15 +223,6 @@ body.light-mode .sticky-chat-footer {
     box-shadow: 0 -4px 30px rgba(119, 141, 169, 0.15) !important;
 }
 
-/* Sur mobile, on adoucit aussi la barre de navigation du bas si elle a une ombre */
-@media (max-width: 768px) {
-    body.light-mode .bottom-nav {
-        box-shadow: 0 -2px 15px rgba(119, 141, 169, 0.1) !important;
-    }
-}
-
-
-
  .bottom-nav {
   display: none;
   position: fixed;
@@ -3558,8 +3549,8 @@ function updateFavicon(isLight) {
 
     // Mode Sombre (défaut) : Araignée blanche, yeux bleus
     // Mode Clair : Araignée bleue, yeux blancs
-    const spiderColor = isLight ? 'var(--surface)' : '#1B263B';
-    const eyeColor = isLight ? '#1B263B' : 'var(--surface)';
+    const spiderColor = isLight ? var(--surface) : '#1B263B';
+    const eyeColor = isLight ? '#1B263B' : var(--surface);
 
     // On reprend exactement ton SVG mais sans la ligne du <circle> de fond
     const svg = `
