@@ -2871,7 +2871,7 @@ function renderFeed() {
     postEl.innerHTML = `
       <div class="post-header">
         <div style="display:flex; align-items:center;">
-            <span class="post-pseudo ${pc}" onclick="event.stopPropagation(); openUserProfile('${post.pseudo.replace(/'/g, "\\'")}')">${post.pseudo}</span>
+            <span class="post-pseudo ${pc}" style="cursor:pointer;" onclick="event.stopPropagation(); window.openUserProfile(&quot;${post.pseudo}&quot;)">${post.pseudo}</span>
             ${deleteBtnHtml}
         </div>
         <span class="post-time">${getRelativeTime(post.timestamp)}</span>
@@ -2952,9 +2952,9 @@ function formatText(txt) {
   }
   
   escaped = escaped.replace(/@([a-zA-Z0-9_-]+)/g, (match, p1) => {
-      return `<span class="mention-link" onclick="event.stopPropagation(); openUserProfile('${p1}')">${match}</span>`;
+    return `<span class="mention-link" onclick="event.stopPropagation(); window.openUserProfile(&quot;${p1}&quot;)">${match}</span>`;
   });
-
+ 
   return escaped;
 }
 
@@ -4186,73 +4186,83 @@ function calculateAge(dobString) {
     return Math.abs(new Date(diff).getUTCFullYear() - 1970);
 }
 
-async function openUserProfile(pseudoToFind) {
-    // 1. Trouver l'UID à partir du pseudo
-    const lowerName = pseudoToFind.toLowerCase();
-    const usernameDoc = await db.collection("usernames").doc(lowerName).get();
-    
-    if (!usernameDoc.exists) return alert("Utilisateur introuvable.");
-    const targetUid = usernameDoc.data().uid;
+window.openUserProfile = async function(pseudoToFind) {
+    try {
+        if (!pseudoToFind) return;
 
-    // 2. Récupérer les données de l'utilisateur
-    const userDoc = await db.collection("users").doc(targetUid).get();
-    if (!userDoc.exists) return;
-    
-    const userData = userDoc.data();
-    const age = userData.dob ? calculateAge(userData.dob) : 'Inconnu';
-    const bio = userData.bio || "Cet utilisateur n'a pas encore de bio.";
-    
-    // 3. Calculer les élections éligibles (Majorité = 18 ans)
-    let votesHtml = '';
-    if (userData.dob) {
-        const dateMajorite = new Date(userData.dob);
-        dateMajorite.setFullYear(dateMajorite.getFullYear() + 18); // Date exacte des 18 ans
-
-        const electionsEligibles = ELECTIONS_FRANCE.filter(elec => new Date(elec.date) >= dateMajorite);
+        // 1. Trouver l'UID à partir du pseudo
+        const lowerName = pseudoToFind.trim().toLowerCase();
+        const usernameDoc = await db.collection("usernames").doc(lowerName).get();
         
-        if (electionsEligibles.length > 0) {
-            electionsEligibles.forEach(elec => {
-                const rawVote = userData.history && userData.history[elec.id] ? userData.history[elec.id] : 'Non renseigné';
-                
-                // Traduction et couleur
-                let displayVote = rawVote;
-                let color = COULEURS[rawVote] || 'var(--text)';
-                
-                if (rawVote === 'ABS') { displayVote = 'Abstention'; color = 'var(--text-dim)'; }
-                else if (rawVote === 'BLANC') { displayVote = 'Vote Blanc'; color = 'var(--text-dim)'; }
-                else if (rawVote === 'Non renseigné') { color = 'var(--text-dim)'; }
-                else if (CANDIDATS[rawVote]) { displayVote = `${CANDIDATS[rawVote]} (${rawVote})`; }
-
-                votesHtml += `<div class="vote-item"><strong>${elec.nom} :</strong> <span style="color: ${color}; font-weight: bold;">${displayVote}</span></div>`;
-            });
-        } else {
-            votesHtml = `<div style="font-size:0.9em; color:var(--text-dim);">Pas encore en âge de voter lors des dernières élections.</div>`;
+        if (!usernameDoc.exists) {
+            return alert("Cet utilisateur est introuvable (ancien compte supprimé ou bot).");
         }
+        const targetUid = usernameDoc.data().uid;
+
+        // 2. Récupérer les données de l'utilisateur
+        const userDoc = await db.collection("users").doc(targetUid).get();
+        
+        // CORRECTION ICI : S'il n'a pas de document (ancien compte), on met des valeurs vides au lieu de tout bloquer !
+        const userData = userDoc.exists ? userDoc.data() : {};
+        
+        const age = userData.dob ? calculateAge(userData.dob) : 'Inconnu';
+        const bio = userData.bio || "Cet utilisateur n'a pas encore de bio.";
+        
+        // 3. Calculer les élections éligibles
+        let votesHtml = '';
+        if (userData.dob) {
+            const dateMajorite = new Date(userData.dob);
+            dateMajorite.setFullYear(dateMajorite.getFullYear() + 18);
+
+            const electionsEligibles = ELECTIONS_FRANCE.filter(elec => new Date(elec.date) >= dateMajorite);
+            
+            if (electionsEligibles.length > 0) {
+                electionsEligibles.forEach(elec => {
+                    const rawVote = userData.history && userData.history[elec.id] ? userData.history[elec.id] : 'Non renseigné';
+                    let displayVote = rawVote;
+                    let color = COULEURS[rawVote] || 'var(--text)';
+                    
+                    if (rawVote === 'ABS') { displayVote = 'Abstention'; color = 'var(--text-dim)'; }
+                    else if (rawVote === 'BLANC') { displayVote = 'Vote Blanc'; color = 'var(--text-dim)'; }
+                    else if (rawVote === 'Non renseigné') { color = 'var(--text-dim)'; }
+                    else if (CANDIDATS[rawVote]) { displayVote = `${CANDIDATS[rawVote]} (${rawVote})`; }
+
+                    votesHtml += `<div class="vote-item"><strong>${elec.nom} :</strong> <span style="color: ${color}; font-weight: bold;">${displayVote}</span></div>`;
+                });
+            } else {
+                votesHtml = `<div style="font-size:0.9em; color:var(--text-dim);">Pas encore en âge de voter lors des dernières élections.</div>`;
+            }
+        } else {
+            votesHtml = `<div style="font-size:0.9em; color:var(--text-dim);">Date de naissance non renseignée, historique indisponible.</div>`;
+        }
+
+        // 4. Afficher le Modal (on supprime l'ancien s'il était déjà ouvert)
+        const oldModal = document.getElementById('profile-modal');
+        if (oldModal) oldModal.remove();
+
+        const modalHtml = `
+        <div id="profile-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;" onclick="this.remove()">
+            <div class="profile-modal-content" onclick="event.stopPropagation()">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h2 style="margin:0;">@${pseudoToFind} <span style="font-size:0.6em; color:var(--text-dim);">(${age}${age !== 'Inconnu' ? ' ans' : ''})</span></h2>
+                    <button onclick="document.getElementById('profile-modal').remove()" style="background:none; border:none; color:var(--text-dim); font-size:1.5em; cursor:pointer;">&times;</button>
+                </div>
+                <div class="profile-bio">"${bio}"</div>
+                <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+                <h3 style="font-size:1em; margin-bottom:10px;">Historique de vote</h3>
+                <div class="vote-history-list">
+                    ${votesHtml}
+                </div>
+            </div>
+        </div>`;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    } catch (error) {
+        console.error("Erreur lors de l'ouverture du profil :", error);
+        alert("Une erreur inattendue est survenue lors du chargement du profil.");
     }
-
-    // 4. Afficher le Modal
-const modalHtml = `
-    <div id="profile-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex;" onclick="this.remove()">
-        <div class="profile-modal-content" onclick="event.stopPropagation()">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h2 style="margin:0;">@${pseudoToFind} <span style="font-size:0.6em; color:var(--text-dim);">(${age} ans)</span></h2>
-                <button onclick="document.getElementById('profile-modal').remove()" style="background:none; border:none; color:var(--text-dim); font-size:1.5em; cursor:pointer;">&times;</button>
-            </div>
-            <div class="profile-bio">"${bio}"</div>
-            <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-            <h3 style="font-size:1em; margin-bottom:10px;">Historique de vote</h3>
-            <div class="vote-history-list">
-                ${votesHtml}
-            </div>
-        </div>
-    </div>`;
-
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-
-// =========================================================
-// --- MENU DÉROULANT PERSONNALISÉ & DATE DE NAISSANCE ---
-// =========================================================
+};
 
 // 1. Fonction pour construire ou mettre à jour le design d'un menu déroulant
 function buildCustomSelect(select) {
