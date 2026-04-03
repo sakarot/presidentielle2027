@@ -1344,15 +1344,6 @@ textarea#post-text {
 }
 
 @media (max-width: 768px) {
-	.gif-dropdown {
-      position: fixed !important;
-      bottom: 80px !important;
-      left: 50% !important;
-      transform: translateX(-50%);
-      width: 90vw !important;
-      max-width: 340px;
-      z-index: 10000; /* Passe au-dessus de tout */
-  }
     /* Cache l'en-tête "Communauté" originel */
     .chat-header {
         display: none !important;
@@ -1375,15 +1366,15 @@ textarea#post-text {
     
     /* Gérer la nouvelle barre flottante Fil d'actualité */
 #mobile-feed-header {
-        position: fixed;
+        position: absolute;
         top: 0;
-        left: 0; /* Annule la marge gauche du conteneur */
+        left: -16px; /* Annule la marge gauche du conteneur */
         width: calc(100% + 32px) !important; /* Prend toute la largeur de l'écran */
         background: rgba(13, 27, 42, 0.85) !important; /* Semi-transparent */
         backdrop-filter: blur(12px); /* Effet de flou natif iPhone/Android */
         -webkit-backdrop-filter: blur(12px);
         box-sizing: border-box;
-        z-index: 1000;
+        z-index: 50;
         transition: transform 0.3s ease-in-out;
     }
     
@@ -1507,11 +1498,6 @@ body.light-mode #mobile-feed-header {
         display: block !important;
         padding: 0 !important;
     }
-
-	body.mobile-show-sim .container, 
-    body.mobile-show-profile .container {
-        padding-top: 70px !important; 
-    }
     /* On cache TOUT le simulateur et l'en-tête... */
     body.mobile-show-profile .container > * {
         display: none !important; 
@@ -1571,14 +1557,15 @@ body.light-mode #mobile-feed-header {
     }
     .controls-header {
         flex-direction: column;
-        align-items: center !important; /* Centrage vertical */
-        text-align: center;
+        align-items: flex-start !important; /* On remet à gauche */
+        text-align: left;
         gap: 16px;
     }
+    
     .candidate-selector {
         width: 100%;
         display: flex;
-        justify-content: center !important; /* Centrage horizontal */
+        justify-content: space-between !important;
     }
 	
 	.candidate-selector button {
@@ -1632,7 +1619,7 @@ body.light-mode #mobile-feed-header {
     /* On s'assure que le dessin vectoriel (SVG) garde ses proportions */
     .map-container svg {
         width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
         display: block; /* Supprime l'espace fantôme sous la carte */
     }
 	
@@ -1885,11 +1872,6 @@ body.light-mode #mobile-feed-header {
                 <div id="my-profile-history-list" class="vote-history-list" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
                     <span style="font-size: 11px; color: var(--text-dim); font-style: italic; text-align: center;">Chargement...</span>
                 </div>
-				<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 8px;">
-    <span style="font-size: 13px; font-weight: bold; color: var(--text);">Historique de vote</span>
-    <button id="my-profile-btn-switch-tour" class="minimal-gif-btn4" style="font-size:10px; padding: 2px 6px;" onclick="toggleMyProfileTour()">2nd Tour</button>
-    <button class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px;" onclick="openHistoryEditor()">Modifier</button>
-</div>
             </div>
 
             <div id="desktop-history-btn" style="margin-left: 4px; margin-top: 10px;">
@@ -1943,14 +1925,12 @@ body.light-mode #mobile-feed-header {
               <button id="btnPhilippe" class="selector-btn active" onclick="setCenterCandidate('Philippe')">Philippe</button>
             </div>
           </div>
+          <button class="reset-btn" onclick="resetSliders()">↺ RESET</button>
         </div>
         
         <p style="margin-bottom:16px; font-size:12px; color:var(--text-dim);"><strong style="color:var(--text);">Reports du 2<sup>nd</sup> Tour :</strong> Déplacez les curseurs pour ajuster les transferts de voix vers LFI (Rouge), vers le RN (Bleu), ou l'Abstention/Blanc (Gris).</p>
         
         <div class="sliders-grid" id="sliders"></div>
-		  <div style="display: flex; justify-content: center; margin-top: 24px;">
-    <button class="reset-btn" onclick="resetSliders()">↺ RESET</button>
-</div>
       </div>
 
       <div class="main-grid">
@@ -2002,10 +1982,10 @@ body.light-mode #mobile-feed-header {
         
         <div class="global-stats-row" id="globalStats"></div>
 
-        <div id="tableSortWrap" style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-  <button id="btnSortScore" class="minimal-gif-btn3 active" onclick="setSort('score')">Trier par Score (Décroissant)</button>
-  <button id="btnSortParti" class="minimal-gif-btn3" onclick="setSort('parti')">Trier par Parti (EG ➔ ED)</button>
-</div>
+        <div class="minimal-gif-btn3" id="tableSortWrap" style="margin-bottom: 20px; background: transparent; border: none; padding: 0;">
+          <button id="btnSortScore" class="minimal-gif-btn3 active" onclick="setSort('score')">Trier par Score (Décroissant)</button>
+          <button id="btnSortParti" class="minimal-gif-btn3" onclick="setSort('parti')">Trier par Parti (EG ➔ ED)</button>
+         </div>
         
         <table id="mainTable">
           <thead>
@@ -6789,16 +6769,6 @@ window.renderMyProfileHistory = function(userData) {
     }
     
     listContainer.innerHTML = html;
-};
-
-	window.myProfileTour = 'T1';
-window.toggleMyProfileTour = function() {
-    window.myProfileTour = window.myProfileTour === 'T1' ? 'T2' : 'T1';
-    const btn = document.getElementById('my-profile-btn-switch-tour');
-    if (btn) btn.innerHTML = window.myProfileTour === 'T1' ? '2<sup>nd</sup> Tour' : '1<sup>er</sup> Tour';
-    
-    // Relance la fonction qui charge votre historique pour appliquer le changement
-    if (typeof fetchMyVote === 'function') fetchMyVote(); 
 };
 
 </script>
