@@ -990,7 +990,6 @@ body.light-mode .sticky-chat-footer {
   }
 
   .gif-preview-container {
-    display: flex !important;
     align-items: center;
     gap: 6px;
     background: rgba(255,255,255,0.04);
@@ -5966,6 +5965,29 @@ window.seekAudio = function(e, id) {
     }
   });
 })();
+
+window.openMobileComposer = function() {
+    window.mainReplyTarget = null;
+    const textarea = document.getElementById('post-text');
+    if (textarea) {
+        textarea.placeholder = "Exprimez-vous sur l'élection...";
+        document.getElementById('main-reply-badge').style.display = 'none';
+        document.body.classList.add('mobile-composer-open');
+        setTimeout(() => textarea.focus(), 100); // Petit délai pour assurer l'ouverture avant le focus
+    }
+};
+
+window.closeMobileComposer = function() {
+    document.body.classList.remove('mobile-composer-open');
+    if (typeof cancelMainReply === 'function') cancelMainReply();
+};
+
+// On s'assure que le bouton "Répondre" ouvre la fenêtre sans toucher à votre ancien code
+const originalPrepareMainReply = window.prepareMainReply;
+window.prepareMainReply = function(postId, commentId, pseudo) {
+    if (originalPrepareMainReply) originalPrepareMainReply(postId, commentId, pseudo);
+    document.body.classList.add('mobile-composer-open');
+};
 
 </script>
 </body>
