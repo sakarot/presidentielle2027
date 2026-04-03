@@ -3931,6 +3931,25 @@ function renderFeed() {
     const ta = document.getElementById(id);
     if (ta) ta.value = savedTexts[id];
   });
+  
+  if (window.pendingScrollPostId) {
+      setTimeout(() => {
+          const newPostEl = document.getElementById('post-card-' + window.pendingScrollPostId);
+          if (newPostEl) {
+              newPostEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              // Petit effet lumineux sur la bordure
+              const originalBorder = newPostEl.style.borderColor;
+              newPostEl.style.transition = "border-color 0.5s";
+              newPostEl.style.borderColor = "var(--accent)";
+              setTimeout(() => { newPostEl.style.borderColor = originalBorder; }, 1500);
+          } else {
+              // Sécurité : si le post n'est pas encore rendu on remonte simplement tout en haut
+              const feedEl = document.getElementById('chat-feed');
+              if (feedEl) feedEl.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+          window.pendingScrollPostId = null;
+      }, 150);
+  }
 }
 
 // ==========================================
@@ -4118,7 +4137,7 @@ function toggleComments(postId) {
     el.style.display = 'flex';
     window.openComments[postId] = true;
     
-       if (!window.commentListeners[postId]) {
+    if (!window.commentListeners[postId]) {
       const listEl = document.getElementById(`comments-list-${postId}`);
       listEl.innerHTML = '<div style="font-size:10px; color:var(--text-dim); text-align:center;">Chargement...</div>';
       
@@ -4129,7 +4148,6 @@ function toggleComments(postId) {
           
           window.postComments[postId] = allComments;
 
-          // CORRECTION DU COMPTEUR : On met à jour l'affichage avec le vrai nombre total d'enfants !
           const replyBtn = document.getElementById(`reply-btn-${postId}`);
           if (replyBtn) {
               replyBtn.innerHTML = `${ICON_REPLIES} ${allComments.length}`;
@@ -4140,7 +4158,19 @@ function toggleComments(postId) {
           renderPostComments(postId);
         });
     }
-}
+  } else {
+    // --- NOUVEAU : Fermer le conteneur et nettoyer la mémoire ---
+    el.style.display = 'none';
+    window.openComments[postId] = false;
+    window.focusedCommentId[postId] = null;
+    
+    // Ferme également tous les sous-commentaires
+    if (window.postComments[postId]) {
+        window.postComments[postId].forEach(c => {
+            window.openThreads[c.id] = false;
+        });
+    }
+  }
 }
 
 async function submitComment(postId) {
@@ -5019,6 +5049,21 @@ function renderPostComments(postId) {
     window.commentCache[postId] = html;
     const listEl = document.getElementById(`comments-list-${postId}`);
     if (listEl) listEl.innerHTML = html; 
+	
+	if (window.pendingScrollCommentId) {
+        const newCommentEl = document.getElementById('comment-' + window.pendingScrollCommentId);
+        if (newCommentEl) {
+            setTimeout(() => {
+                newCommentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Petit effet lumineux
+                const originalBg = newCommentEl.style.backgroundColor;
+                newCommentEl.style.transition = "background-color 0.5s";
+                newCommentEl.style.backgroundColor = "color-mix(in srgb, var(--accent) 30%, transparent)";
+                setTimeout(() => { newCommentEl.style.backgroundColor = originalBg; }, 1500);
+            }, 100); // Laisse le temps au DOM de s'afficher
+            window.pendingScrollCommentId = null;
+        }
+    }
 }
 
 function buildCommentNodeHtml(c, allComments, isRoot, focusPath = [], focusId = null, depth = 0) {
@@ -5167,6 +5212,19 @@ function toggleReplies(postId, commentId, event) {
     }
 
     window.openThreads[commentId] = !isCurrentlyOpen;
+
+    // --- NOUVEAU : Si on ferme, on cache TOUS les enfants imbriqués ---
+    if (isCurrentlyOpen) {
+        function closeAllDescendants(parentId) {
+            allComments.filter(c => c.parentId === parentId).forEach(child => {
+                window.openThreads[child.id] = false;
+                closeAllDescendants(child.id); // Récursion
+            });
+        }
+        closeAllDescendants(commentId);
+        window.focusedCommentId[postId] = null; // Retire le focus pour éviter un affichage bugué
+    }
+
     renderPostComments(postId);
 }
 
@@ -6260,16 +6318,30 @@ window.submitPost = async function() {
       // --- 4. ENVOI À FIREBASE ---
       if (window.mainReplyTarget) {
           const target = window.mainReplyTarget;
-          postData.parentId = target.commentId;
+          postData.parentId = target.commentId || null; // Assure la compatibilité si on répond au post directement
           
-          await db.collection("posts").doc(target.postId).collection("comments").add(postData);
+          const docRef = await db.collection("posts").doc(target.postId).collection("comments").add(postData);
           await db.collection("posts").doc(target.postId).set({ commentCount: firebase.firestore.FieldValue.increment(1) }, { merge: true });
           
-          openAncestors(target.postId, target.commentId);
+          // --- NOUVEAU : Force l'ouverture des commentaires s'ils sont fermés ---
+          const commentsContainer = document.getElementById(`comments-container-${target.postId}`);
+          if (commentsContainer && (commentsContainer.style.display === 'none' || commentsContainer.style.display === '')) {
+              toggleComments(target.postId); // Charge et ouvre la section de discussion
+          }
+          
+          // Si on répondait spécifiquement à un sous-commentaire
+          if (target.commentId) {
+              openAncestors(target.postId, target.commentId);
+              window.openThreads[target.commentId] = true; 
+          }
+          
+          window.pendingScrollCommentId = docRef.id; // Prépare l'auto-scroll
+          
           cancelMainReply(); 
       } else {
           postData.commentCount = 0;
-          await db.collection("posts").add(postData);
+          const docRef = await db.collection("posts").add(postData);
+          window.pendingScrollPostId = docRef.id; // Prépare l'auto-scroll du post
       }
 
       // --- 5. NETTOYAGE APRÈS PUBLICATION ---
