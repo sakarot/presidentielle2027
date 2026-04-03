@@ -289,8 +289,10 @@ body.light-mode .sticky-chat-footer {
     font-size: 0.95em !important; /* Les enfants directs retrouvent une taille lisible */
 }
 
+.bottom-nav { display: none; }
+
 @media (max-width: 1024px) {
-  .bottom-nav { display: flex; }
+  .bottom-nav { display: none; }
   .community-sidebar { display: none !important; width: 100%; border-left: none; }
   .main-content { display: block; }
   body.show-community .community-sidebar { display: flex !important; margin-right: 0 !important; }
@@ -804,137 +806,207 @@ body.light-mode .sticky-chat-footer {
 
 @media (max-width: 768px) {
 
-    /* --- Structure générale --- */
-    body {
-        background: #0D0F14;
-        font-size: 15px;
-    }
+  /* ── Structure de base ── */
+  body { font-size: 15px; }
 
-    .page-wrapper {
-        flex-direction: column;
-        padding-bottom: 70px;
-    }
+  .page-wrapper {
+    flex-direction: column;
+    padding-bottom: 0;
+    height: 100dvh;
+    overflow: hidden;
+  }
 
-    /* --- Header moderne --- */
-    .site-header {
-        background: rgba(20,20,25,0.9);
-        border-radius: 0;
-        border: none;
-        padding: 14px 18px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        backdrop-filter: blur(10px);
-        position: sticky;
-        top: 0;
-        z-index: 50;
-    }
+  /* ── Panneau principal (simulateur) ── */
+  .main-content {
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 70px;
+    display: none; /* caché par défaut sur mobile */
+  }
 
-    .site-header h1 {
-        font-size: 20px !important;
-    }
+  /* ── Panneau Communauté ── */
+  .community-sidebar {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    border-left: none;
+    border-top: none;
+    overflow: hidden;
+    position: relative;
+    flex: 1;
+  }
 
-    .header-right {
-        margin-top: 0 !important;
-    }
+  /* Quand on bascule sur l'onglet Simulateur */
+  body.mobile-show-sim .main-content    { display: block !important; }
+  body.mobile-show-sim .community-sidebar { display: none !important; }
 
-    /* --- Feed moderne --- */
-    .chat-feed {
-        padding: 16px 12px 120px 12px !important;
-        gap: 14px;
-    }
+  /* ── Header sticky compact ── */
+  .site-header {
+    background: rgba(13, 27, 42, 0.96);
+    border-radius: 0;
+    border: none;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    margin-bottom: 0;
+  }
 
-    .post-body {
-        font-size: 14px;
-        line-height: 1.45;
-    }
+  /* Logo réduit */
+  .logo-wrapper svg:first-child { width: 34px !important; height: 34px !important; }
+  .title-block h1 { font-size: 18px !important; }
+  .subtitle-row { display: none; } /* Masque le sous-titre sur mobile */
 
-    .post-img {
-        border-radius: 10px;
-        max-height: 240px;
-    }
+  /* ── Panels vote & sliders : scrollables ── */
+  .vote-panel-container {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+  .vote-panel-right {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding-left: 0;
+    padding-top: 12px;
+    width: 100%;
+    text-align: left;
+  }
 
-    /* --- Barre d’écriture (ultra moderne) --- */
-    .community-footer {
-        position: fixed !important;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        border-left: none;
-        border-radius: 0;
-        padding: 10px 14px;
-        background: rgba(15,15,20,0.95);
-        backdrop-filter: blur(12px);
-        border-top: 1px solid rgba(255,255,255,0.07);
-    }
+  /* ── Grilles de cartes en colonne ── */
+  .main-grid, .maps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
 
-    #chat-input-area {
-        gap: 10px;
-    }
+  /* ── Table responsive ── */
+  .data-table-card { overflow-x: auto; padding: 12px; }
+  table { min-width: 400px; }
 
-    textarea#post-text {
-        height: 60px;
-        border-radius: 12px;
-        padding: 12px;
-        font-size: 15px;
-        background: #0D0F14;
-    }
+  /* ── Chat feed ── */
+  .chat-header {
+    padding: 12px 16px;
+    font-size: 17px;
+  }
 
-    /* --- Boutons GIF + Envoyer --- */
-    .gif-picker-container button,
-    #btn-toggle-poll {
-        border-radius: 12px !important;
-        font-size: 12px !important;
-        padding: 8px 10px !important;
-    }
+  .chat-feed {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 12px 8px 12px !important;
+    gap: 12px;
+    max-height: none !important;
+    padding-bottom: 8px !important;
+  }
 
-    .minimal-gif-btn2 {
-        font-size: 15px !important;
-        padding: 10px 12px;
-        border-radius: 12px;
-        width: 100%;
-    }
+  .post-body  { font-size: 14px; line-height: 1.45; }
+  .post-img   { border-radius: 10px; max-height: 240px; }
 
-    /* --- Prévisualisation GIF --- */
-    .gif-preview-container {
-        display: flex !important;
-        align-items: center;
-        gap: 6px;
-        background: #111218;
-        padding: 6px;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.05);
-    }
+  /* ── Zone de saisie (footer communauté) ── */
+  .community-footer {
+    position: sticky !important;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-left: none;
+    border-radius: 0;
+    padding: 10px 14px env(safe-area-inset-bottom, 0px);
+    background: rgba(13, 27, 42, 0.97);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    /* Pas de bottom: 70px, la bottom-nav est au-dessus dans le DOM */
+    z-index: 40;
+  }
 
-    .gif-preview-container img {
-        height: 60px;
-        border-radius: 8px;
-    }
+  textarea#post-text {
+    height: 52px;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    background: rgba(255,255,255,0.05);
+  }
 
-    .gif-preview-close {
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-    }
+  .minimal-gif-btn2 {
+    font-size: 14px !important;
+    padding: 8px 14px;
+    border-radius: 10px;
+  }
 
-    /* --- Bottom navigation --- */
-    .bottom-nav {
-        height: 62px;
-        padding-bottom: 0;
-        background: rgba(10,10,15,0.95);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid rgba(255,255,255,0.05);
-        display: flex !important;
-    }
+  .gif-picker-container button,
+  #btn-toggle-poll {
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+  }
 
-    .bottom-nav button {
-        font-size: 11px !important;
-        color: #7D8695;
-    }
+  .gif-preview-container {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.04);
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
 
-    .bottom-nav button.active {
-        color: var(--text);
-    }
+  /* ── Bottom navigation ── */
+  .bottom-nav {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(10, 12, 18, 0.97);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex !important;
+    z-index: 200;
+  }
+
+  .bottom-nav button {
+    font-size: 10px !important;
+    color: #5a6378;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    padding: 6px 0;
+    transition: color 0.2s;
+  }
+
+  .bottom-nav button.active { color: var(--text); }
+  .bottom-nav button svg { width: 20px; height: 20px; }
+
+  /* ── Dropdown user centré ── */
+  .user-dropdown {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;
+    max-width: 340px;
+    margin: 0;
+    z-index: 9999;
+  }
+
+  /* ── Sidebar toggle desktop caché ── */
+  .sidebar-toggle-btn { display: none !important; }
+
+  /* ── Assure que la page garde 58px de padding pour la bottom-nav ── */
+  .community-sidebar {
+    padding-bottom: 58px;
+  }
 }
 
 /* 1. Le Wrapper s'adapte à l'espace sans forcer de largeur */
@@ -1522,7 +1594,16 @@ body.light-mode .sticky-chat-footer {
 		<div id="post-error-msg" style="color: #ff4d4d; font-size: 11px; margin-top: 8px; display: none; font-weight: bold; text-align: right;"></div>
         </div>
       </div>
-
+	 <nav class="bottom-nav">
+    <button data-tab="community" class="active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+      Communauté
+    </button>
+    <button data-tab="simulator">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      Simulateur
+    </button>
+  </nav>
     </div> 
 </div> 
 <div class="map-tooltip" id="globalTooltip"></div>
@@ -5775,6 +5856,49 @@ window.seekAudio = function(e, id) {
     let progressEl = document.getElementById(id === 'preview' ? 'progress-preview' : 'progress-' + id);
     if (progressEl) progressEl.style.width = (percent * 100) + '%';
 };
+
+// ── Navigation mobile : bascule Communauté ↔ Simulateur ──
+(function() {
+  const isMobile = () => window.innerWidth <= 768;
+
+  function initMobileNav() {
+    if (!isMobile()) return;
+
+    // Récupère les boutons de la bottom-nav
+    const btnCom = document.querySelector('.bottom-nav button[data-tab="community"]');
+    const btnSim = document.querySelector('.bottom-nav button[data-tab="simulator"]');
+    if (!btnCom || !btnSim) return;
+
+    function showCommunity() {
+      document.body.classList.remove('mobile-show-sim');
+      btnCom.classList.add('active');
+      btnSim.classList.remove('active');
+      // Corrige le label communauté si besoin
+      document.getElementById('communitySidebar')?.scrollTo(0, 0);
+    }
+
+    function showSimulator() {
+      document.body.classList.add('mobile-show-sim');
+      btnSim.classList.add('active');
+      btnCom.classList.remove('active');
+      document.getElementById('mainContent')?.scrollTo(0, 0);
+    }
+
+    btnCom.addEventListener('click', showCommunity);
+    btnSim.addEventListener('click', showSimulator);
+
+    // Au chargement : ouvre Communauté par défaut sur mobile
+    showCommunity();
+  }
+
+  document.addEventListener('DOMContentLoaded', initMobileNav);
+  window.addEventListener('resize', () => {
+    if (!isMobile()) {
+      // Réinitialise l'état sur desktop
+      document.body.classList.remove('mobile-show-sim');
+    }
+  });
+})();
 
 </script>
 </body>
