@@ -651,7 +651,7 @@ body.light-mode .sticky-chat-footer {
 
   /* Le dropdown GIF */
   .gif-dropdown { display: none; position: absolute; bottom: calc(100% + 10px); left: 0; width: 220px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; z-index: 1000; padding: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-  .gif-dropdown.show { display: flex; flex-direction: column; }
+  .gif-dropdown.show { display: flex !important; flex-direction: column; }
   .gif-search-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 11px; margin-bottom: 8px; }
   .gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 180px; overflow-y: auto; }
   .gif-grid img { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: opacity 0.1s; background: var(--bg); }
@@ -819,8 +819,8 @@ body.light-mode .sticky-chat-footer {
 
 @media (max-width: 768px) {
 
-/* Cache la barre PC sur petit écran (Mobile) */
-    #desktop-feed-header {
+/* Cache la barre PC et son menu déroulant sur petit écran (Mobile) */
+    #desktop-feed-header, #desktop-feed-header .custom-select-wrapper {
         display: none !important;
     }
 
@@ -1362,19 +1362,38 @@ textarea#post-text {
 
 @media (max-width: 768px) {
 
-/* ── Correction Ouverture GIF Mobile ── */
-  .gif-dropdown {
-      position: fixed !important;
-      bottom: 150px !important;
-      left: 5% !important;
-      width: 90% !important;
-      max-width: 400px;
-      z-index: 10000 !important;
-      max-height: 40vh;
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.8) !important;
+/* ── Menu GIF Mobile (Accroché au-dessus de la saisie) ── */
+  .chat-input-area {
+      position: relative !important; /* Indispensable pour retenir le menu GIF */
   }
+  
+.gif-dropdown {
+      position: fixed !important; /* Fixed est plus stable sur mobile */
+      bottom: 70px !important;    /* Ajusté pour être juste au-dessus du bouton */
+      left: 10px !important;
+      right: 10px !important;
+      width: auto !important;
+      max-width: none !important;
+      z-index: 9999 !important;   /* Doit être au-dessus du composer */
+      background: var(--surface) !important;
+      border: 1px solid var(--accent) !important;
+      border-radius: 15px !important;
+      box-shadow: 0 -5px 25px rgba(0,0,0,0.5) !important;
+      display: none;
+      flex-direction: column;
+  }
+
+  .gif-dropdown.show {
+      display: flex !important;
+  }
+
   .gif-grid {
-      max-height: 30vh !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 8px !important;
+      padding: 10px !important;
+      overflow-y: auto !important;
+      max-height: 40vh !important;
   }
 
     /* Cache l'en-tête "Communauté" originel */
@@ -1936,8 +1955,8 @@ body.light-mode #mobile-feed-header {
                 <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 8px;">
                     <span style="font-size: 13px; font-weight: bold; color: var(--text);">Historique de vote</span>
                     <div style="display: flex; gap: 4px;">
-                        <button id="toggle-history-tour" class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px; border-color: var(--accent); color: var(--accent);" onclick="toggleProfileTour()">T1</button>
                         <button class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px;" onclick="openHistoryEditor()">Modifier</button>
+						<button id="toggle-history-tour" class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px; border-color: var(--accent); color: var(--accent);" onclick="toggleProfileTour()">2<sup>nd</sup> Tour</button>
                     </div>
                 </div>
                 <div id="my-profile-history-list" class="vote-history-list" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
@@ -3828,7 +3847,7 @@ function renderFeed() {
     }
     let textHtml = post.text ? `<div class="post-body">${formatText(post.text)}</div>` : '';
 	
-	let pollHtml = generatePollHtml(post, postId);
+	let pollHtml = typeof generatePollHtml === 'function' ? generatePollHtml(post, post.id) : '';
 
     const postEl = document.createElement('div');
     postEl.className = 'post-card';
@@ -4192,22 +4211,39 @@ function searchGifs(query, targetId) {
   }).catch(e => { resultsDiv.innerHTML = '<div style="grid-column: span 2; text-align:center; color:#ff4444; font-size:10px;">Erreur</div>'; });
 }
 
-function selectGif(url, targetId) {
-  selectedGifs[targetId] = url; 
-  let previewWrap = document.getElementById(targetId === 'post' ? 'post-gif-preview-wrap' : `comment-gif-preview-wrap-${targetId.replace('comment-', '')}`);
-  let previewImg = document.getElementById(targetId === 'post' ? 'post-gif-preview' : `comment-gif-preview-${targetId.replace('comment-', '')}`);
-  if (previewWrap && previewImg) {
-    previewImg.src = url;
-    previewWrap.style.display = 'block';
-  }
-  toggleGifDropdown(targetId);
-}
+window.selectGif = function(url, targetId) {
+    selectedGifs[targetId] = url;
+    const previewWrap = document.getElementById(targetId + '-gif-preview-wrap');
+    
+    if (previewWrap) {
+        previewWrap.innerHTML = `<img id="${targetId}-gif-preview" src="${url}" style="max-height: 120px; border-radius: 8px;">
+                                 <button class="gif-preview-close" onclick="removeSelectedGif('${targetId}')">✖</button>`;
+        previewWrap.style.display = 'flex';
+    }
+    
+    // --- 1. FERMETURE AUTOMATIQUE DU MENU GIF ---
+    const menu = document.getElementById(targetId + '-gif-menu');
+    if(menu) menu.classList.remove('show');
+    
+    // --- 2. SÉCURITÉ : Force la fermeture de tout menu GIF resté ouvert ---
+    document.querySelectorAll('.gif-dropdown.show').forEach(el => el.classList.remove('show'));
+    
+    // Si l'utilisateur avait sélectionné des photos, on les annule
+    if (targetId === 'post' && typeof removeSelectedMedia === 'function') {
+        window.selectedMediaDataUrls = [];
+        const input = document.getElementById('media-upload-input');
+        if(input) input.value = '';
+    }
+};
 
-function removeSelectedGif(targetId) {
-  selectedGifs[targetId] = null;
-  let previewWrap = document.getElementById(targetId === 'post' ? 'post-gif-preview-wrap' : `comment-gif-preview-wrap-${targetId.replace('comment-', '')}`);
-  if (previewWrap) previewWrap.style.display = 'none';
-}
+window.removeSelectedGif = function(targetId) {
+    selectedGifs[targetId] = null;
+    const previewWrap = document.getElementById(targetId + '-gif-preview-wrap');
+    if (previewWrap) {
+        previewWrap.style.display = 'none';
+        previewWrap.innerHTML = ''; // Nettoie la boîte
+    }
+};
 
 window.addEventListener('click', function(e) {
   if (!e.target.closest('.gif-picker-container')) {
@@ -5010,7 +5046,7 @@ function buildCommentNodeHtml(c, allComments, isRoot, focusPath = [], focusId = 
             ${ICON_REPLIES} ${descCount}
         </button>` : '';
 
-    let pollHtml = generatePollHtml(c, c.postId, c.id);
+    let pollHtml = typeof generatePollHtml === 'function' ? generatePollHtml(c, c.postId, c.id) : ''
 
     let replyIndicator = '';
     if (c.parentId) {
@@ -6019,7 +6055,6 @@ window.handleMediaUpload = function(input) {
     if (errMsg) errMsg.style.display = 'none';
 
     if (input.files && input.files.length > 0) {
-        // Limite à 4 fichiers
         const files = Array.from(input.files).slice(0, 4);
         window.selectedMediaDataUrls = [];
         
@@ -6029,26 +6064,33 @@ window.handleMediaUpload = function(input) {
         previewWrap.innerHTML = '';
         
         let loadedCount = 0;
+        const checkDone = () => {
+            loadedCount++;
+            if(loadedCount === files.length) {
+                previewWrap.innerHTML += `<button class="gif-preview-close" onclick="removeSelectedMedia()">✖</button>`;
+                previewWrap.style.display = 'flex';
+            }
+        };
+
         files.forEach((file) => {
             const isVideo = file.type.startsWith('video/');
-            const reader = new FileReader();
-            reader.onload = e => {
-                window.selectedMediaDataUrls.push({ url: e.target.result, isVideo });
-                
-                if (isVideo) {
-                    previewWrap.innerHTML += `<video src="${e.target.result}" style="height: 60px; width: 60px; object-fit:cover; border-radius:6px; margin-right:4px;" autoplay muted loop playsinline></video>`;
-                } else {
-                    previewWrap.innerHTML += `<img src="${e.target.result}" style="height: 60px; width: 60px; object-fit:cover; border-radius:6px; margin-right:4px;">`;
-                }
-                
-                loadedCount++;
-                // Quand tous les fichiers sont chargés, on ajoute la croix
-                if(loadedCount === files.length) {
-                    previewWrap.innerHTML += `<button class="gif-preview-close" onclick="removeSelectedMedia()">✖</button>`;
-                    previewWrap.style.display = 'flex';
-                }
-            };
-            reader.readAsDataURL(file);
+            if (isVideo) {
+                // Compression Vidéo
+                compressVideoToBase64(file, errMsg, (base64, err) => {
+                    if (base64) {
+                        window.selectedMediaDataUrls.push({ url: base64, isVideo: true });
+                        previewWrap.innerHTML += `<video src="${base64}" style="height: 60px; width: 60px; object-fit:cover; border-radius:6px; margin-right:4px;" autoplay muted loop playsinline></video>`;
+                    }
+                    checkDone();
+                });
+            } else {
+                // Compression Image (Empêche le crash Firebase)
+                compressImageToBase64(file, (base64) => {
+                    window.selectedMediaDataUrls.push({ url: base64, isVideo: false });
+                    previewWrap.innerHTML += `<img src="${base64}" style="height: 60px; width: 60px; object-fit:cover; border-radius:6px; margin-right:4px;">`;
+                    checkDone();
+                });
+            }
         });
     }
 };
@@ -6065,20 +6107,34 @@ window.removeSelectedMedia = function() {
 };
 
 window.submitPost = async function() {
-  if (!currentUser) return alert("Connectez-vous pour publier.");
+ if (!currentUser) return alert("Connectez-vous pour publier.");
 
-  const textEl = document.getElementById('post-text');
-  const text = textEl.value.trim();
+  // On cherche le texte soit dans le champ mobile, soit dans le champ PC
+  const textMobile = document.getElementById('post-text-mobile');
+  const textPC = document.getElementById('post-text');
+  const text = (textMobile && textMobile.value.trim()) ? textMobile.value.trim() : (textPC ? textPC.value.trim() : "");
 
+  // On cherche les médias
   const gifUrlFromTenor = selectedGifs['post'] || "";
   const mediaUrlsArray = window.selectedMediaDataUrls || [];
   const audioDataUrl = (window.selectedMediaFile && window.selectedMediaFile.type.startsWith('audio/')) ? window.selectedMediaDataUrl : null;
 
+  // --- 1. RÉCUPÉRATION DU SONDAGE ---
+  let finalPoll = [];
+  if (typeof currentPollOptions !== 'undefined' && currentPollOptions.length > 0) {
+      currentPollOptions.forEach(opt => {
+          const inputEl = document.getElementById('input_' + opt.id);
+          if (inputEl && inputEl.value.trim()) {
+              finalPoll.push({ id: opt.id, text: inputEl.value.trim(), color: opt.color });
+          }
+      });
+  }
+
   const errMsg = document.getElementById('post-error-msg');
   if (errMsg) errMsg.style.display = 'none';
 
-  // Sécurité anti-crash
-  if (!text && !gifUrlFromTenor && mediaUrlsArray.length === 0 && !audioDataUrl) return;
+  // --- 2. SÉCURITÉ ANTI-CRASH (On autorise l'envoi s'il n'y a qu'un sondage) ---
+  if (!text && !gifUrlFromTenor && mediaUrlsArray.length === 0 && !audioDataUrl && finalPoll.length === 0) return;
 
   const submitBtn = document.querySelector('button[onclick="submitPost()"]');
   const originalBtnText = submitBtn.innerText;
@@ -6090,11 +6146,10 @@ window.submitPost = async function() {
       let isVideo = false;
       let finalGifUrl = "";
 
-      // On route proprement le média
       if (isAudio) {
           finalGifUrl = audioDataUrl;
       } else if (mediaUrlsArray.length > 0) {
-          finalGifUrl = mediaUrlsArray[0].url; // Sauvegarde la 1ère image pour la base
+          finalGifUrl = mediaUrlsArray[0].url; 
           isVideo = mediaUrlsArray[0].isVideo;
       } else if (gifUrlFromTenor) {
           finalGifUrl = gifUrlFromTenor;
@@ -6104,52 +6159,53 @@ window.submitPost = async function() {
       const partyClass = await getUserPartyClass(currentUser.uid);
       const userColor = await getUserMixedColor(currentUser.uid);
 
+      // --- 3. PRÉPARATION DES DONNÉES ---
+      const postData = {
+          uid: currentUser.uid,
+          pseudo: pseudoUser,
+          partyClass: partyClass,
+          userColor: userColor,
+          text: text,
+          gifUrl: finalGifUrl,
+          mediaUrls: mediaUrlsArray, 
+          isVideo: isVideo,
+          isAudio: isAudio, 
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          likes: [],
+          dislikes: []
+      };
+
+      // Si un sondage a été créé, on l'ajoute à la base de données
+      if (finalPoll.length > 0) {
+          postData.poll = finalPoll;
+          postData.pollVotes = {};
+      }
+
+      // --- 4. ENVOI À FIREBASE ---
       if (window.mainReplyTarget) {
           const target = window.mainReplyTarget;
-          await db.collection("posts").doc(target.postId).collection("comments").add({
-              uid: currentUser.uid,
-              pseudo: pseudoUser,
-              partyClass: partyClass,
-              userColor: userColor,
-              text: text,
-              gifUrl: finalGifUrl, 
-              mediaUrls: mediaUrlsArray, // Support des 4 images !
-              isVideo: isVideo,
-              isAudio: isAudio,
-              parentId: target.commentId,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              likes: [],
-              dislikes: []
-          });
-
+          postData.parentId = target.commentId;
+          
+          await db.collection("posts").doc(target.postId).collection("comments").add(postData);
           await db.collection("posts").doc(target.postId).set({ commentCount: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+          
           openAncestors(target.postId, target.commentId);
           cancelMainReply(); 
       } else {
-          await db.collection("posts").add({
-              uid: currentUser.uid,
-              pseudo: pseudoUser,
-              partyClass: partyClass,
-              userColor: userColor,
-              text: text,
-              gifUrl: finalGifUrl,
-              mediaUrls: mediaUrlsArray, // Support des 4 images !
-              isVideo: isVideo,
-              isAudio: isAudio, 
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              likes: [],
-              dislikes: [],
-              commentCount: 0
-          });
+          postData.commentCount = 0;
+          await db.collection("posts").add(postData);
       }
 
+      // --- 5. NETTOYAGE APRÈS PUBLICATION ---
       extractAndCountHashtags(text);
-      textEl.value = '';
+      if(textMobile) textMobile.value = '';
+      if(textPC) textPC.value = '';
       document.getElementById('post-text').dispatchEvent(new Event('input'));
       
       if (typeof removeSelectedGif === 'function') removeSelectedGif('post');
       if (typeof removeSelectedMedia === 'function') removeSelectedMedia();
       if (typeof removeSelectedAudio === 'function') removeSelectedAudio(); 
+      if (typeof closeAndResetPollCreator === 'function') closeAndResetPollCreator(); // Réinitialise l'UI du sondage
       
       closeMobileComposer();
 
@@ -6600,13 +6656,22 @@ window.seekAudio = function(e, id) {
       btnSim.classList.remove('active');
       btnProf.classList.remove('active');
 
-      const mobileSort = document.getElementById('mobileFeedSortSelect'); // <-- Nouveau nom !
+      const mobileSort = document.getElementById('mobileFeedSortSelect');
 
       if (tabName === 'simulator') {
         document.body.classList.add('mobile-show-sim');
         btnSim.classList.add('active');
         document.getElementById('mobile-top-title').innerText = "Simulateur";
-        if(mobileSort) mobileSort.style.display = 'none';
+        
+        /* -- CORRECTION TRI (Cache tout) -- */
+        if(mobileSort) {
+            if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
+                mobileSort.parentNode.style.display = 'none';
+            } else {
+                mobileSort.style.display = 'none';
+            }
+        }
+        
         document.getElementById('mainContent')?.scrollTo(0, 0);
         setTimeout(() => { if (typeof renderMaps === 'function') renderMaps(); }, 50);
       } 
@@ -6614,13 +6679,32 @@ window.seekAudio = function(e, id) {
         document.body.classList.add('mobile-show-profile');
         btnProf.classList.add('active');
         document.getElementById('mobile-top-title').innerText = "Mon profil";
-        if(mobileSort) mobileSort.style.display = 'none';
+        
+        /* -- CORRECTION TRI (Cache tout) -- */
+        if(mobileSort) {
+            if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
+                mobileSort.parentNode.style.display = 'none';
+            } else {
+                mobileSort.style.display = 'none';
+            }
+        }
+        
         document.getElementById('mainContent')?.scrollTo(0, 0);
       } 
       else { 
         btnCom.classList.add('active');
         document.getElementById('mobile-top-title').innerText = "Fil d'actualité";
-        if(mobileSort) mobileSort.style.display = 'block';
+        
+        /* -- CORRECTION TRI (N'affiche QUE le menu custom s'il existe) -- */
+        if(mobileSort) {
+            if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
+                mobileSort.parentNode.style.display = 'inline-block';
+                mobileSort.style.display = 'none'; /* Garde le natif caché ! */
+            } else {
+                mobileSort.style.display = 'block';
+            }
+        }
+        
         document.getElementById('chat-feed')?.scrollTo(0, 0);
       }
     }
@@ -6679,32 +6763,27 @@ window.prepareMainReply = function(postId, commentId, pseudo) {
 
 // --- GESTION DU SCROLL MOBILE ET ANIMATIONS ---
 (function initMobileScroll() {
-    let lastScrollY = 0;
-    const scrollThreshold = 15; // Tolérance pour éviter de clignoter au moindre pixel
+    let lastScrollY = window.scrollY;
+    const scrollThreshold = 10; // Sensibilité
 
     function handleScroll(e) {
         if (window.innerWidth > 768) return; 
-        if (document.body.classList.contains('mobile-composer-open')) return;
-
+        
         const currentScrollY = e.target.scrollTop || window.scrollY;
 
-        // CORRECTION DU BUG DE REBOND : Ancrage solide en haut de l'écran
-        if (currentScrollY <= 0) {
+        // Si on est tout en haut, on affiche toujours les barres
+        if (currentScrollY <= 50) {
             document.body.classList.remove('nav-hidden');
-            lastScrollY = 0;
             return;
         }
 
+        // Si on descend (vers le bas) -> On cache
         if (currentScrollY > lastScrollY + scrollThreshold) {
             document.body.classList.add('nav-hidden');
-            document.body.classList.remove('scrolling-up');
-        } else if (currentScrollY < lastScrollY - scrollThreshold) {
+        } 
+        // Si on remonte (vers le haut) -> On réaffiche et on GARDE affiché
+        else if (currentScrollY < lastScrollY - scrollThreshold) {
             document.body.classList.remove('nav-hidden');
-            if (currentScrollY > 60) { 
-                document.body.classList.add('scrolling-up');
-            } else {
-                document.body.classList.remove('scrolling-up');
-            }
         }
         
         lastScrollY = currentScrollY;
@@ -6766,7 +6845,25 @@ window.closeAllMobileMenus = function() {
     // Exemple : document.getElementById('login-modal')?.classList.remove('show');
 };
 
-// Affiche l'historique des votes directement dans l'onglet Mon Profil
+window.currentProfileTour = 'T1';
+
+window.toggleProfileTour = function() {
+    window.currentProfileTour = (window.currentProfileTour === 'T1') ? 'T2' : 'T1';
+    const btn = document.getElementById('toggle-history-tour');
+    if (btn) {
+        // Alterne le texte du bouton comme sur l'autre page
+        btn.innerHTML = window.currentProfileTour === 'T1' ? '2<sup>nd</sup> Tour' : '1<sup>er</sup> Tour';
+        btn.style.background = "var(--accent)";
+        btn.style.color = "var(--bg)";
+        setTimeout(() => { btn.style.background = "transparent"; btn.style.color = "var(--accent)"; }, 200);
+    }
+    if (currentUser) {
+        db.collection("users").doc(currentUser.uid).get().then(doc => {
+            if (doc.exists) window.renderMyProfileHistory(doc.data());
+        });
+    }
+};
+
 window.renderMyProfileHistory = function(userData) {
     const listContainer = document.getElementById('my-profile-history-list');
     if (!listContainer) return;
@@ -6776,6 +6873,7 @@ window.renderMyProfileHistory = function(userData) {
         return;
     }
 
+    const tour = window.currentProfileTour || 'T1';
     const dateMajorite = new Date(userData.dob);
     dateMajorite.setFullYear(dateMajorite.getFullYear() + 18);
     const years = ['2022', '2017', '2012', '2007', '2002', '1995'];
@@ -6787,7 +6885,8 @@ window.renderMyProfileHistory = function(userData) {
         const elecDate = new Date(`${year}-04-20`);
         if (elecDate >= dateMajorite) {
             hasEligibleElections = true;
-            const histKey = `pres_${year}_T1`; // On affiche le 1er tour par défaut
+            // Utilise la variable dynamique au lieu de 'T1' en dur !
+            const histKey = `pres_${year}_${tour}`; 
             const rawVote = userData.history && userData.history[histKey] ? userData.history[histKey] : '';
             
             let displayVote = "Non renseigné";
@@ -6795,14 +6894,14 @@ window.renderMyProfileHistory = function(userData) {
             
             if (rawVote === 'ABS') displayVote = 'Abstention';
             else if (rawVote === 'BLANC') displayVote = 'Vote Blanc';
-            else if (rawVote && HISTORICAL_DATA[year] && HISTORICAL_DATA[year]['T1'].candidats[rawVote]) {
-                const candName = HISTORICAL_DATA[year]['T1'].candidats[rawVote];
+            else if (rawVote && HISTORICAL_DATA[year] && HISTORICAL_DATA[year][tour].candidats[rawVote]) {
+                const candName = HISTORICAL_DATA[year][tour].candidats[rawVote];
                 displayVote = `${candName} (${getPartyShortName(rawVote, year)})`;
                 voteColor = COULEURS[rawVote] || 'var(--text)';
             }
 
             html += `<div class="inline-vote-item">
-                        <strong style="color: var(--text);">${year}</strong> 
+                        <strong style="color: var(--text);">${year} <small style="color:var(--text-dim); font-size:9px;">${tour}</small></strong> 
                         <span style="color: ${voteColor}; font-weight: bold; text-align: right;">${displayVote}</span>
                      </div>`;
         }
@@ -6811,35 +6910,7 @@ window.renderMyProfileHistory = function(userData) {
     if (!hasEligibleElections) {
         html = `<span style="font-size: 11px; color: var(--text-dim); font-style: italic; text-align: center;">Pas en âge de voter lors des élections passées.</span>`;
     }
-    
     listContainer.innerHTML = html;
-};
-
-window.currentProfileTour = 'T1';
-
-window.toggleProfileTour = function() {
-    window.currentProfileTour = (window.currentProfileTour === 'T1') ? 'T2' : 'T1';
-    const btn = document.getElementById('toggle-history-tour');
-    if (btn) {
-        btn.innerText = window.currentProfileTour;
-        btn.style.background = "var(--accent)";
-        btn.style.color = "var(--bg)";
-        setTimeout(() => { btn.style.background = "transparent"; btn.style.color = "var(--accent)"; }, 200);
-    }
-    // Recharge les données pour appliquer le changement
-    if (currentUser) {
-        db.collection("users").doc(currentUser.uid).get().then(doc => {
-            if (doc.exists) window.renderMyProfileHistory(doc.data());
-        });
-    }
-};
-
-// Modifiez le début de renderMyProfileHistory() pour utiliser currentProfileTour :
-const originalRenderMyProfile = window.renderMyProfileHistory;
-window.renderMyProfileHistory = function(userData) {
-    // Si la fonction n'utilise pas currentProfileTour, remplacez la ligne du histKey :
-    // const histKey = `pres_${year}_${window.currentProfileTour}`;
-    originalRenderMyProfile(userData); 
 };
 
 </script>
