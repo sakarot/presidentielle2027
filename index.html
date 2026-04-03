@@ -4384,7 +4384,7 @@ window.openUserProfile = async function(pseudoToFind) {
             <div class="profile-modal-content" onclick="event.stopPropagation()">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <h2 style="margin:0;">@${pseudoToFind} <span style="font-size:0.6em; color:var(--text-dim);">(${age} ans)</span></h2>
-                    <button onclick="document.getElementById('profile-modal').remove()" style="background:none; border:none; color:var(--text-dim); font-size:1.5em; cursor:pointer;">&times;</button>
+                    <button class="edit-pseudo-btn" onclick="document.getElementById('profile-modal').remove()" title="Fermer" style="font-size: 20px; padding: 0; line-height: 1;">×</button>
                 </div>
                 <div class="profile-bio">"${bio}"</div>
                 <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
