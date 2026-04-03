@@ -4455,18 +4455,8 @@ window.saveHistoryEditor = function() {
         history: historyUpdates
     }, { merge: true }).then(() => {
         document.getElementById('history-modal').remove();
-        const bioText = document.getElementById('user-bio-text');
-        const oldText = bioText.innerText;
-        bioText.innerText = "Historique sauvegardé !";
-        bioText.style.color = "var(--EELV)";
-        setTimeout(() => {
-            bioText.innerText = oldText;
-            bioText.style.color = "var(--text-dim)";
-        }, 2000);
-    }).catch(err => {
-        console.error("Erreur de sauvegarde :", err);
-        alert("Erreur lors de la sauvegarde.");
-    });
+
+    })
 };
 
 function getMixedUserColor(currentVote, historyVotesArray) {
