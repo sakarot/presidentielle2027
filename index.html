@@ -4112,22 +4112,59 @@ function deletePost(postId) {
   }).catch(e => console.error("Erreur de suppression :", e));
 }
 
-function deleteComment(postId, commentId) {
+window.deleteComment = async function(postId, commentId) {
   if (!currentUser) return;
-  const commentRef = db.collection("posts").doc(postId).collection("comments").doc(commentId);
   
-  commentRef.get().then(doc => {
-    if (doc.exists) {
-      decrementHashtags(doc.data().text); 
-    }
-    return commentRef.delete();
-  }).then(() => {
-      // NOUVEAU : Décrémente le compteur total
-      db.collection("posts").doc(postId).set({
-          commentCount: firebase.firestore.FieldValue.increment(-1)
+  const commentsRef = db.collection("posts").doc(postId).collection("comments");
+  
+  try {
+      // 1. Récupérer tous les commentaires du post pour analyser l'arbre
+      const snapshot = await commentsRef.get();
+      const allComments = [];
+      snapshot.forEach(doc => allComments.push({ id: doc.id, ...doc.data() }));
+
+      // 2. Trouver le commentaire visé ET toutes ses réponses (récursivement)
+      let idsToDelete = new Set();
+      idsToDelete.add(commentId);
+
+      function findChildren(parentId) {
+          allComments.forEach(c => {
+              if (c.parentId === parentId && !idsToDelete.has(c.id)) {
+                  idsToDelete.add(c.id);
+                  findChildren(c.id); // Cherche les réponses aux réponses
+              }
+          });
+      }
+      findChildren(commentId);
+
+      // 3. Retirer les hashtags de tous les commentaires qu'on va supprimer
+      const commentsToDelete = allComments.filter(c => idsToDelete.has(c.id));
+      commentsToDelete.forEach(c => {
+          if (c.text) decrementHashtags(c.text);
+      });
+
+      // 4. Supprimer tous ces commentaires d'un seul coup (Batch)
+      const batch = db.batch();
+      idsToDelete.forEach(id => {
+          batch.delete(commentsRef.doc(id));
+      });
+      
+      // 5. Déduire le nombre EXACT de commentaires supprimés du Post parent
+      batch.set(db.collection("posts").doc(postId), {
+          commentCount: firebase.firestore.FieldValue.increment(-idsToDelete.size)
       }, { merge: true });
-  }).catch(e => console.error("Erreur de suppression :", e));
-}
+
+      await batch.commit();
+
+      // Nettoyage visuel si on a supprimé le commentaire qu'on était en train de cibler
+      if (window.focusedCommentId && window.focusedCommentId[postId] === commentId) {
+          window.focusedCommentId[postId] = null;
+      }
+
+  } catch (error) {
+      console.error("Erreur de suppression en cascade :", error);
+  }
+};
 
 function toggleComments(postId) {
   const el = document.getElementById(`comments-container-${postId}`);
@@ -4152,8 +4189,6 @@ function toggleComments(postId) {
           if (replyBtn) {
               replyBtn.innerHTML = `${ICON_REPLIES} ${allComments.length}`;
           }
-          
-          db.collection("posts").doc(postId).set({ commentCount: allComments.length }, { merge: true }); 
 
           renderPostComments(postId);
         });
