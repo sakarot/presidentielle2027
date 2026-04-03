@@ -731,8 +731,17 @@ body.light-mode .sticky-chat-footer {
     font-size: 13px; 
 }
   .hashtag-pill { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: bold; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
-  .hashtag-count { background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 10px; font-size: 9px; }
-  
+  .hashtag-count { background: var(--bg); padding: 2px 6px; border-radius: 10px; font-size: 9px; }
+  .hashtag-count:hover {
+    background: var(--text-dim);
+	color: var(--bg) !important;
+     /* Optionnel : pour garder le texte lisible sur le bleu gris */
+}
+
+.hashtag-pill:hover {
+    background: var(--text) !important;
+}
+
   .hashtag-link { color: var(--text); cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace; transition: all 0.2s; }
   .hashtag-link.h-LO:hover { color: #ffcccc; text-shadow: 0 0 8px rgba(255,204,204,0.4); }
   .hashtag-link.h-PCF:hover { color: #ffb3b3; text-shadow: 0 0 8px rgba(255,179,179,0.4); }
@@ -746,7 +755,7 @@ body.light-mode .sticky-chat-footer {
   .hashtag-link.h-RN:hover { color: var(--RN); text-shadow: 0 0 8px var(--RN); }
   .hashtag-link.h-RQ:hover { color: var(--RQ); text-shadow: 0 0 8px var(--RQ); }
   
-  .hashtag-pill.active-filter { background: rgba(255, 255, 255, 0.2) !important; border-color: var(--text) !important; box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
+ .hashtag-pill.active-filter {  background: var(--text-dim) !important; border-color: var(--text) !important; box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); } 
 
   .community-sidebar { transition: margin-right 0.3s ease; }
   body.sidebar-closed .community-sidebar { margin-right: -340px; }	
