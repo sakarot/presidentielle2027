@@ -613,7 +613,7 @@ body.light-mode .sticky-chat-footer {
   .minimal-gif-btn3.active { background: var(--accent) ; color: var(--bg) ; opacity: 1; }
   .minimal-gif-btn2:hover { background: var(--text); opacity: 1; border-color: rgba(255,255,255,0.3); }
   .minimal-gif-btn2.active { background: --bg; color: var(--accent); border-color: var(--accent); opacity: 1; }
-  .minimal-gif-btn:hover { color: var(--text); opacity: 1; border-color: rgba(255,255,255,0.3); }
+  .minimal-gif-btn:hover { color: var(--text); opacity: 1; border-color: var(--text); }
   .minimal-gif-btn.active { color: var(--accent); border-color: var(--accent); opacity: 1; }
   
   /* --- MENU DÉROULANT PERSONNALISÉ --- */
@@ -1056,6 +1056,35 @@ body.light-mode .sticky-chat-footer {
     display: none !important; /* Chrome, Safari et Opera */
 }
 
+/* LECTEUR AUDIO
+.custom-audio-wrap {
+    display: flex; align-items: center; background: var(--surface2); padding: 6px 12px; 
+    border-radius: 20px; border: 1px solid var(--border); margin-top: 6px; width: 100%; max-width: 300px;
+}
+.custom-audio-play-btn {
+    background: var(--accent); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; 
+    display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 12px;
+}
+.custom-audio-spectrum {
+    display: flex; align-items: center; gap: 2px; margin-left: 10px; flex: 1; height: 20px; overflow: hidden;
+}
+.audio-bar {
+    background: var(--text-dim); width: 3px; border-radius: 2px; height: 4px; transition: height 0.1s;
+}
+.audio-bar.playing {
+    animation: bounceBar 0.5s infinite alternate ease-in-out;
+    background: var(--accent);
+}
+@keyframes bounceBar {
+    0% { height: 4px; }
+    100% { height: 18px; }
+}
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
 </style>
 </head>
 <body>
@@ -1380,6 +1409,15 @@ body.light-mode .sticky-chat-footer {
         </div>
       </div>
       
+<div style="padding: 12px 16px 0 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed color-mix(in srgb, var(--text-dim) 30%, transparent); padding-bottom: 12px;">
+        <span style="font-size: 12px; font-weight: bold; color: var(--text-dim);">Fil d'actualité</span>
+        <select id="feedSortSelect" class="minimal-gif-btn4" onchange="setFeedSort(this.value)">
+          <option value="recent" selected>Récents</option>
+          <option value="trending">Tendances</option>
+          <option value="popular">Populaires</option>
+        </select>
+      </div>
+	  
       <div class="chat-feed" id="chat-feed">
         <div style="text-align:center; color:var(--text-dim); font-size: 12px; margin-top: 20px;">Chargement des posts...</div>
       </div>
@@ -1407,7 +1445,7 @@ body.light-mode .sticky-chat-footer {
     <button class="gif-preview-close" onclick="removeSelectedGif('post')">✖</button>
 </div>
           
-          <textarea id="post-text" placeholder="Exprimez-vous sur l'élection..."></textarea>
+          <textarea id="post-text" placeholder="Tisser sa toile..."></textarea>
           
         <div class="poll-creator" id="poll-creator-box">
            <div id="poll-options-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
@@ -1416,30 +1454,55 @@ body.light-mode .sticky-chat-footer {
            
            <button class="minimal-gif-btn" onclick="addPollOption()" style="align-self: flex-start; margin-top: 4px;">+ Choix</button>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
           
-          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
+          <div style="display: flex; flex-direction: row; gap: 8px; align-items: center;">
+		  
+		  <button class="minimal-gif-btn" id="btn-camera" onclick="openSmartCamera()" title="Prendre une photo" style="display: flex; align-items: center; justify-content: center; padding: 2px 6px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+            </button>
+            <input type="file" id="mobile-camera-input" accept="image/*, video/*" capture="environment" style="display: none;" onchange="handleMediaUpload(this)">
             
-            <button class="minimal-gif-btn" id="btn-toggle-poll" onclick="togglePollCreator()" title="Ajouter un sondage" style="display: flex; align-items: center; gap: 6px;">
+            <button class="minimal-gif-btn" id="btn-upload-media" onclick="document.getElementById('media-upload-input').click()" title="Ajouter une image ou vidéo" style="display: flex; align-items: center; justify-content: center; padding: 2px 6px;">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                <rect x="4" y="14" width="4" height="6" rx="1"/>
-                <rect x="10" y="10" width="4" height="10" rx="1"/>
-                <rect x="16" y="6" width="4" height="14" rx="1"/>
+                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
               </svg>
             </button>
+            <input type="file" id="media-upload-input" accept="image/*, video/*" style="display: none;" onchange="handleMediaUpload(this)">
 
-            <div class="gif-picker-container" id="gif-picker-post">
-              <button class="minimal-gif-btn" id="gif-btn-post" onclick="toggleGifDropdown('post')" title="Ajouter un GIF">GIF</button>
+<div class="gif-picker-container" id="gif-picker-post" style="display: flex;">
+        <button class="minimal-gif-btn" id="gif-btn-post" onclick="toggleGifDropdown('post')" title="Ajouter un GIF" 
+                style="display: flex; align-items: center; justify-content: center; padding: 2px 6px; font-size: 10px; font-weight: bold; line-height: 14px; height: 20px; min-width: 26px;">
+            GIF
+        </button>
               <div class="gif-dropdown" id="gif-dropdown-post">
                 <input type="text" id="gif-search-post" class="gif-search-input" placeholder="Rechercher sur Tenor..." oninput="debounceGifSearch('post')">
                 <div id="gif-results-post" class="gif-grid"></div>
               </div>
             </div>
 
+            <button class="minimal-gif-btn" id="btn-toggle-poll" onclick="togglePollCreator()" title="Ajouter un sondage" style="display: flex; align-items: center; justify-content: center; padding: 2px 6px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                <rect x="4" y="14" width="4" height="6" rx="1"/>
+                <rect x="10" y="10" width="4" height="10" rx="1"/>
+                <rect x="16" y="6" width="4" height="14" rx="1"/>
+              </svg>
+            </button>
+			
           </div>
           
-          <button class="minimal-gif-btn2" onclick="submitPost()">Publier</button>
+          <button class="minimal-gif-btn2" onclick="submitPost()">Tisser</button>
         </div>
+		
+		<div id="webcam-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; flex-direction:column; align-items:center; justify-content:center;">
+            <video id="webcam-video" autoplay playsinline style="max-width:90%; max-height:70vh; border-radius:8px; background:#000; transform: scaleX(-1); border: 2px solid var(--border);"></video>
+            <div style="margin-top:20px; display:flex; gap:20px; align-items: center;">
+                <button class="minimal-gif-btn" onclick="closeWebcam()">Annuler</button>
+                <button class="minimal-gif-btn2" onclick="captureWebcam()" style="border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; font-size: 20px;" title="Prendre la photo">📸</button>
+            </div>
+            <canvas id="webcam-canvas" style="display:none;"></canvas>
+        </div>
+		<div id="post-error-msg" style="color: #ff4d4d; font-size: 11px; margin-top: 8px; display: none; font-weight: bold; text-align: right;"></div>
         </div>
       </div>
 
@@ -2307,6 +2370,13 @@ const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="currentColor" width="14" heig
 const ICON_CROSS = `<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
 const VALID_HASHTAGS = ['LO','PCF','LFI','EELV','PS','REN','HZ','LR','DF','RN','RQ'];
 const ICON_SHARE = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>`;
+const ICON_PLAY = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+  <path d="M8 5v14l11-7z"/>
+</svg>`;
+
+const ICON_PAUSE = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+</svg>`;
 
 auth.onAuthStateChanged(user => {
   currentUser = user;
@@ -2344,6 +2414,18 @@ auth.onAuthStateChanged(user => {
             hBtn.title = "Masquer les tendances";
           }
         }
+		
+		if (prefs.feedSort) {
+            window.currentFeedSort = prefs.feedSort;
+            localStorage.setItem('feedSort', prefs.feedSort); // Synchronise le local
+            const sortSelect = document.getElementById('feedSortSelect');
+            if (sortSelect) {
+                sortSelect.value = prefs.feedSort;
+                syncCustomSelectUI('feedSortSelect'); // Met à jour l'affichage du menu déroulant
+            }
+            renderFeed(); // Met à jour l'affichage des posts
+        }
+		
       } else {
         // Nouveau compte = pas encore de doc de prefs = thème par défaut
         applyTheme('dark');
@@ -2833,6 +2915,24 @@ function setHashtagFilter(tag) {
   renderFeed();
 }
 
+window.currentFeedSort = 'recent'; // Tri par défaut
+
+window.setFeedSort = function(mode) {
+    window.currentFeedSort = mode;
+    
+    // 1. Sauvegarde locale (immédiate)
+    localStorage.setItem('feedSort', mode);
+    
+    // 2. Sauvegarde en base de données (si l'utilisateur est connecté)
+    if (currentUser) {
+        db.collection("user_prefs").doc(currentUser.uid).set({
+            feedSort: mode
+        }, { merge: true }).catch(err => console.error("Erreur de sauvegarde du tri :", err));
+    }
+
+    renderFeed(); // Recharge le fil avec le nouveau tri
+};
+
 function renderFeed() {
   const feed = document.getElementById('chat-feed');
   const savedTexts = {};
@@ -2852,12 +2952,41 @@ function renderFeed() {
   if (window.currentHashtagFilter) {
     const regex = new RegExp(`#${window.currentHashtagFilter}\\b`, 'i');
     postsToRender = postsToRender.filter(p => p.text && regex.test(p.text));
-    postsToRender.sort((a, b) => {
-      const scoreA = (a.likes || []).length - (a.dislikes || []).length;
-      const scoreB = (b.likes || []).length - (b.dislikes || []).length;
-      return scoreB - scoreA;
-    });
   }
+
+  // --- APPLICATION DU TRI (Récents, Tendances, Populaires) ---
+  postsToRender.sort((a, b) => {
+      // 1. On sécurise la date (si le post vient tout juste d'être créé et n'a pas encore de timestamp serveur)
+      const timeA = a.timestamp ? (typeof a.timestamp.toMillis === 'function' ? a.timestamp.toMillis() : new Date(a.timestamp).getTime()) : Date.now();
+      const timeB = b.timestamp ? (typeof b.timestamp.toMillis === 'function' ? b.timestamp.toMillis() : new Date(b.timestamp).getTime()) : Date.now();
+      
+      if (window.currentFeedSort === 'recent') {
+          return timeB - timeA; // Du plus récent au plus ancien
+      } 
+      else if (window.currentFeedSort === 'popular') {
+          // Score brut : (Likes - Dislikes) + (Nombre de commentaires * 1.5)
+          const scoreA = (a.likes || []).length - (a.dislikes || []).length + (a.commentCount || 0) * 1.5;
+          const scoreB = (b.likes || []).length - (b.dislikes || []).length + (b.commentCount || 0) * 1.5;
+          
+          if (scoreB === scoreA) return timeB - timeA; // Départage par date si égalité
+          return scoreB - scoreA;
+      } 
+      else if (window.currentFeedSort === 'trending') {
+          // Algorithme "Hot" (façon Reddit) : Le score est divisé par l'âge du post
+          const ageHoursA = Math.max((Date.now() - timeA) / (1000 * 60 * 60), 0.1);
+          const ageHoursB = Math.max((Date.now() - timeB) / (1000 * 60 * 60), 0.1);
+          
+          const scoreA = (a.likes || []).length - (a.dislikes || []).length + (a.commentCount || 0) * 2;
+          const scoreB = (b.likes || []).length - (b.dislikes || []).length + (b.commentCount || 0) * 2;
+          
+          // Pénalité temporelle : Un post vieux de 10h a besoin de beaucoup plus de likes pour battre un post d'il y a 10 minutes
+          const hotA = scoreA / Math.pow(ageHoursA + 2, 1.5);
+          const hotB = scoreB / Math.pow(ageHoursB + 2, 1.5);
+          
+          if (hotB === hotA) return timeB - timeA;
+          return hotB - hotA;
+      }
+  });
 
   if (window.currentFriendFilter) {
     let filterName = window.currentFriendFilter === 'ALL' ? "Tous mes amis" : "Ami spécifique";
@@ -2883,7 +3012,17 @@ function renderFeed() {
     let hasLiked = currentUser ? (post.likes || []).includes(currentUser.uid) : false;
     let hasDisliked = currentUser ? (post.dislikes || []).includes(currentUser.uid) : false;
     
-    let imgHtml = post.gifUrl ? `<img src="${post.gifUrl}" class="post-img" onerror="this.style.display='none'" alt="GIF">` : '';
+    let imgHtml = '';
+    if (post.gifUrl) {
+       if (post.isVideo) {
+           imgHtml = `<video src="${post.gifUrl}" class="post-img" controls style="max-height: 280px; border-radius: 8px; margin-top: 8px; width: 100%; object-fit: cover; background: #000;"></video>`;
+       } else if (post.isAudio) {
+           // NOUVEAU LECTEUR AUDIO
+           imgHtml = buildCustomAudioPlayerHTML(post.gifUrl, post.id);
+       } else {
+           imgHtml = `<img src="${post.gifUrl}" class="post-img" onerror="this.style.display='none'" alt="Image/GIF">`;
+       }
+    }
     let textHtml = post.text ? `<div class="post-body">${formatText(post.text)}</div>` : '';
 	
 	let pollHtml = generatePollHtml(post, postId);
@@ -3085,83 +3224,6 @@ async function getUserPartyClass(uid) {
     if (voteDoc.exists && voteDoc.data().parti) return 'p-' + voteDoc.data().parti;
   } catch (e) { console.error(e); }
   return '';
-}
-
-async function submitPost() {
-  if (!currentUser) return alert("Connectez-vous pour participer.");
-  const textEl = document.getElementById('post-text');
-  const text = textEl.value.trim();
-  const gifUrl = selectedGifs['post'] || "";
-
-  let pollData = [];
-  const isPollActive = document.getElementById('poll-creator-box').style.display === 'flex';
-  
-  if (isPollActive) {
-    currentPollOptions.forEach(opt => {
-      const inputEl = document.getElementById(`input_${opt.id}`);
-      if (inputEl && inputEl.value.trim() !== '') {
-        pollData.push({ id: opt.id, color: opt.color, text: inputEl.value.trim() });
-      }
-    });
-    if (pollData.length < 2) {
-      const errMsg = document.getElementById('poll-error-msg');
-      if (errMsg) {
-        errMsg.innerText = "Il faut mettre 2 choix minimum.";
-        errMsg.style.display = 'block';
-      }
-      return;
-    }
-  }
-
-  if (!text && !gifUrl && pollData.length === 0) return;
-  const errMsg = document.getElementById('poll-error-msg');
-  if (errMsg) errMsg.style.display = 'none';
-
-  const partyClass = await getUserPartyClass(currentUser.uid);
-  const pseudoUser = currentUser.displayName || currentUser.email.split('@')[0];
-  const userColor = await getUserMixedColor(currentUser.uid);
-  
- if (window.mainReplyTarget) {
-    const target = window.mainReplyTarget;
-    db.collection("posts").doc(target.postId).collection("comments").add({
-    uid: currentUser.uid,
-    pseudo: currentUser.displayName || currentUser.email.split('@')[0],
-    partyClass: partyClass,
-    userColor: userColor, 
-    text: text,
-      gifUrl: gifUrl,
-      poll: pollData,       
-      pollVotes: {},        
-      parentId: target.commentId,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      likes: [],
-      dislikes: []
-    }).then(() => {
-      extractAndCountHashtags(text);
-      textEl.value = '';
-      removeSelectedGif('post');
-      cancelMainReply();
-      closeAndResetPollCreator();
-    });
-  } else {
-    db.collection("posts").add({
-      uid: currentUser.uid,
-      pseudo: pseudoUser,
-      partyClass: partyClass,
-      text: text,
-      gifUrl: gifUrl,
-      poll: pollData,       
-      pollVotes: {},        
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      likes: [],
-      dislikes: []
-    }).then(() => {
-      extractAndCountHashtags(text);
-      textEl.value = '';
-      removeSelectedGif('post');
-      closeAndResetPollCreator();
-    });
-  }
 }
 
 function closeAndResetPollCreator() {
@@ -3555,6 +3617,17 @@ function triggerLogin(event) {
       }
     });
   }
+  
+  const savedSort = localStorage.getItem('feedSort');
+    if (savedSort) {
+        window.currentFeedSort = savedSort;
+        const sortSelect = document.getElementById('feedSortSelect');
+        if (sortSelect) {
+            sortSelect.value = savedSort;
+            // Pas besoin de syncCustomSelectUI ici, car buildCustomSelect s'exécute juste après au chargement
+        }
+    }
+  
 });
 let isRegisterMode = false;
 
@@ -4040,7 +4113,17 @@ function renderPostComments(postId) {
 function buildCommentNodeHtml(c, allComments, isRoot, focusPath = [], focusId = null, depth = 0) {
     let hasLiked = currentUser ? (c.likes || []).includes(currentUser.uid) : false;
     let hasDisliked = currentUser ? (c.dislikes || []).includes(currentUser.uid) : false;
-    let imgHtml = c.gifUrl ? `<img src="${c.gifUrl}" class="post-img" style="max-height: 120px;" onerror="this.style.display='none'">` : '';
+   let imgHtml = '';
+    if (c.gifUrl) {
+       if (c.isVideo) {
+           imgHtml = `<video src="${c.gifUrl}" class="post-img" controls style="max-height: 180px; width: 100%; object-fit: cover; background: #000; border-radius: 8px; margin-top: 6px;"></video>`;
+       } else if (c.isAudio) {
+           // NOUVEAU LECTEUR AUDIO POUR LES COMMENTAIRES
+           imgHtml = buildCustomAudioPlayerHTML(c.gifUrl, c.id);
+       } else {
+           imgHtml = `<img src="${c.gifUrl}" class="post-img" style="max-height: 150px; border-radius: 8px; margin-top: 6px;" onerror="this.style.display='none'">`;
+       }
+    }
     
     let textHtml = c.text ? `<div class="post-body" style="margin-bottom: 6px;">${formatText(c.text)}</div>` : '';
     const pc = c.partyClass || '';
@@ -4911,6 +4994,382 @@ function buildElectionLists(data) {
 
     return result;
 }
+
+window.selectedMediaFile = null;
+window.selectedMediaDataUrl = null;
+
+// --- NOUVEAU : Fonction magique de compression d'image ---
+function compressImageToBase64(file, callback) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = event => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            // Redimensionne intelligemment si l'image est immense (ex: 4K)
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 1200;
+            if (width > height && width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+            } else if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            let quality = 0.9;
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+            // Baisse la qualité jusqu'à ce que le poids (Base64) passe sous ~700Ko
+            // 700 Ko en Base64 = environ 930 000 caractères
+            while (dataUrl.length > 930000 && quality > 0.1) {
+                quality -= 0.1;
+                dataUrl = canvas.toDataURL('image/jpeg', quality);
+            }
+
+            callback(dataUrl);
+        }
+    };
+}
+
+// --- 2. COMPRESSEUR DE VIDÉO (Hack WebM sans serveur avec Décompte) ---
+function compressVideoToBase64(file, errMsg, callback) {
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(file);
+    video.muted = true; // Obligatoire pour charger la vidéo caché
+    video.setAttribute('playsinline', '');
+    
+    let timerInterval = null; // Variable pour stocker notre minuteur
+
+    // Fonction interne pour bien nettoyer le minuteur avant de rendre le résultat
+    const finishCompression = (result, errorText) => {
+        if (timerInterval) clearInterval(timerInterval);
+        callback(result, errorText);
+    };
+
+    video.onloadedmetadata = () => {
+        // Bloque les vidéos de plus de 30 secondes
+        if (video.duration > 30) {
+            return finishCompression(null, "Vidéo refusée (> 30s).");
+        }
+
+        // On compresse la résolution
+        const maxWidth = 320; 
+        let width = video.videoWidth;
+        let height = video.videoHeight;
+        if (width > maxWidth) {
+            height = Math.round(height * (maxWidth / width));
+            width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        let stream;
+        try { stream = canvas.captureStream(15); } // 15 FPS pour alléger
+        catch (e) { return finishCompression(null, "Compression vidéo non supportée sur ce navigateur."); }
+
+        let recorder;
+        try {
+            // On force un bitrate très bas (100 kbps)
+            if (MediaRecorder.isTypeSupported('video/webm')) {
+                recorder = new MediaRecorder(stream, { mimeType: 'video/webm', videoBitsPerSecond: 100000 });
+            } else {
+                recorder = new MediaRecorder(stream, { videoBitsPerSecond: 100000 }); // Fallback Safari (mp4)
+            }
+        } catch (e) { recorder = new MediaRecorder(stream); }
+
+        const chunks = [];
+        recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+        recorder.onstop = () => {
+            const compressedBlob = new Blob(chunks, { type: recorder.mimeType });
+            if (compressedBlob.size > 700 * 1024) {
+                finishCompression(null, "Même compressée, la vidéo fait plus de 0.7 Mo.");
+            } else {
+                const reader = new FileReader();
+                reader.onloadend = () => finishCompression(reader.result, null);
+                reader.readAsDataURL(compressedBlob);
+            }
+        };
+
+        // Lancer la lecture secrète
+        video.play().then(() => {
+            recorder.start();
+            
+            // --- SYSTÈME DE DÉCOMPTE ---
+            if (errMsg) {
+                let timeLeft = Math.round(video.duration);
+                errMsg.innerText = `Compression vidéo... (Patientez ${timeLeft}s)`;
+                errMsg.style.color = 'var(--accent)';
+                errMsg.style.display = 'block';
+                
+                // Mise à jour du texte chaque seconde
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft < 0) timeLeft = 0; // Sécurité pour ne pas aller dans les négatifs
+                    errMsg.innerText = `Compression vidéo... (Patientez ${timeLeft}s)`;
+                }, 1000);
+            }
+            
+            const drawFrame = () => {
+                if (!video.paused && !video.ended) {
+                    ctx.drawImage(video, 0, 0, width, height);
+                    requestAnimationFrame(drawFrame);
+                }
+            };
+            drawFrame();
+        }).catch(err => finishCompression(null, "Erreur de lecture vidéo interne."));
+
+        video.onended = () => recorder.stop();
+    };
+    
+    video.onerror = () => finishCompression(null, "Format vidéo non lisible.");
+}
+
+// --- 3. LE GESTIONNAIRE PRINCIPAL ---
+window.handleMediaUpload = function(input) {
+    const errMsg = document.getElementById('post-error-msg');
+    if (errMsg) errMsg.style.display = 'none';
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const isVideo = file.type.startsWith('video/');
+        const submitBtn = document.querySelector('button[onclick="submitPost()"]');
+        
+        // Retire le GIF Tenor s'il y en a un
+        if(typeof removeSelectedGif === 'function') removeSelectedGif('post');
+        
+        window.selectedMediaFile = file;
+
+        // Affiche l'aperçu instantané
+        const localPreviewUrl = URL.createObjectURL(file);
+        const previewWrap = document.getElementById('post-gif-preview-wrap');
+        
+        if (isVideo) {
+            previewWrap.innerHTML = `
+                <video src="${localPreviewUrl}" style="height: 80px; border-radius: 6px; border: 1px solid var(--border);" autoplay muted loop playsinline></video>
+                <button class="gif-preview-close" onclick="removeSelectedMedia()">✖</button>
+            `;
+            
+            // Lancement de la compression vidéo
+            if (file.size > 700 * 1024) {
+                if (submitBtn) submitBtn.disabled = true; // Bloque le clic pendant la compression
+                
+                compressVideoToBase64(file, errMsg, (compressedDataUrl, errorText) => {
+                    if (submitBtn) submitBtn.disabled = false;
+                    
+                    if (errorText) {
+                        if (errMsg) { errMsg.innerText = errorText; errMsg.style.color = '#ff4d4d'; }
+                        removeSelectedMedia(); // Annule le fichier
+                    } else {
+                        window.selectedMediaDataUrl = compressedDataUrl;
+                        if (errMsg) { errMsg.innerText = "✓ Vidéo compressée"; errMsg.style.color = 'var(--EELV)'; }
+                    }
+                });
+            } else {
+                const reader = new FileReader();
+                reader.onload = e => window.selectedMediaDataUrl = e.target.result;
+                reader.readAsDataURL(file);
+            }
+
+        } else {
+            previewWrap.innerHTML = `
+                <img src="${localPreviewUrl}" style="height: 80px; border-radius: 6px; border: 1px solid var(--border); object-fit: cover;">
+                <button class="gif-preview-close" onclick="removeSelectedMedia()">✖</button>
+            `;
+            
+            // Lancement de la compression Image
+            if (file.size > 700 * 1024) {
+                if (submitBtn) submitBtn.disabled = true;
+                
+                compressImageToBase64(file, (compressedDataUrl) => {
+                    if (submitBtn) submitBtn.disabled = false;
+                    window.selectedMediaDataUrl = compressedDataUrl;
+                    if (errMsg) { errMsg.innerText = "✓ Image compressée"; errMsg.style.color = 'var(--EELV)'; }
+                });
+            } else {
+                const reader = new FileReader();
+                reader.onload = e => window.selectedMediaDataUrl = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        previewWrap.style.display = 'flex';
+    }
+};
+
+window.removeSelectedMedia = function() {
+    window.selectedMediaFile = null;
+    window.selectedMediaDataUrl = null;
+    const input = document.getElementById('media-upload-input');
+    if(input) input.value = '';
+    
+    const previewWrap = document.getElementById('post-gif-preview-wrap');
+    if (previewWrap) {
+        previewWrap.style.display = 'none';
+        previewWrap.innerHTML = `<img id="post-gif-preview"><button class="gif-preview-close" onclick="removeSelectedGif('post')">✖</button>`;
+    }
+};
+
+window.submitPost = async function() {
+  if (!currentUser) return alert("Connectez-vous pour publier.");
+
+  const textEl = document.getElementById('post-text');
+  const text = textEl.value.trim();
+
+  const gifUrlFromTenor = selectedGifs['post'] || "";
+  // On utilise notre fichier compressé magique !
+  const mediaDataUrl = window.selectedMediaDataUrl; 
+
+  const errMsg = document.getElementById('post-error-msg');
+  if (errMsg) errMsg.style.display = 'none';
+
+  if (!text && !gifUrlFromTenor && !mediaDataUrl) return;
+
+  const submitBtn = document.querySelector('button[onclick="submitPost()"]');
+  const originalBtnText = submitBtn.innerText;
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Publication...";
+
+  try {
+      let finalMediaUrl = mediaDataUrl || gifUrlFromTenor;
+      let isVideo = window.selectedMediaFile && window.selectedMediaFile.type.startsWith('video/');
+      let isAudio = window.selectedMediaFile && window.selectedMediaFile.type.startsWith('audio/');
+
+      const pseudoUser = currentUser.displayName || currentUser.email.split('@')[0];
+      const partyClass = await getUserPartyClass(currentUser.uid);
+      const userColor = await getUserMixedColor(currentUser.uid);
+
+      if (window.mainReplyTarget) {
+          const target = window.mainReplyTarget;
+          await db.collection("posts").doc(target.postId).collection("comments").add({
+              uid: currentUser.uid,
+              pseudo: pseudoUser,
+              partyClass: partyClass,
+              userColor: userColor,
+              text: text,
+              gifUrl: finalMediaUrl,
+              isVideo: isVideo,
+              parentId: target.commentId,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              likes: [],
+              dislikes: []
+          });
+
+          await db.collection("posts").doc(target.postId).set({
+              commentCount: firebase.firestore.FieldValue.increment(1)
+          }, { merge: true });
+
+          openAncestors(target.postId, target.commentId);
+          cancelMainReply(); // <--- CORRECTION DU CRASH ICI !
+      } else {
+          await db.collection("posts").add({
+              uid: currentUser.uid,
+              pseudo: pseudoUser,
+              partyClass: partyClass,
+              userColor: userColor,
+              text: text,
+              gifUrl: finalMediaUrl,
+              isVideo: isVideo,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              likes: [],
+              dislikes: [],
+              commentCount: 0
+          });
+      }
+
+      extractAndCountHashtags(text);
+      textEl.value = '';
+      if (typeof removeSelectedGif === 'function') removeSelectedGif('post');
+      if (typeof removeSelectedMedia === 'function') removeSelectedMedia();
+
+      const charCountEl = document.getElementById('char-count');
+      if (charCountEl) {
+          charCountEl.textContent = '0 / 300';
+          charCountEl.style.color = 'var(--text-dim)';
+      }
+
+  } catch (error) {
+      console.error("Erreur de publication :", error);
+      if (errMsg) {
+          errMsg.innerText = "Erreur d'envoi. Le fichier est probablement trop lourd pour la base de données.";
+          errMsg.style.color = '#ff4d4d';
+          errMsg.style.display = 'block';
+      }
+  } finally {
+      submitBtn.innerText = originalBtnText;
+      submitBtn.disabled = false;
+  }
+};
+
+window.webcamStream = null;
+
+window.openSmartCamera = async function() {
+    // 1. Détecter si on est sur téléphone
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // Sur mobile, on ouvre le vrai appareil photo natif
+        document.getElementById('mobile-camera-input').click();
+    } else {
+        // Sur PC, on allume la webcam dans le site
+        const modal = document.getElementById('webcam-modal');
+        const video = document.getElementById('webcam-video');
+        try {
+            window.webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = window.webcamStream;
+            modal.style.display = 'flex';
+        } catch (err) {
+            alert("Impossible d'accéder à la webcam. Vérifiez vos autorisations.");
+        }
+    }
+};
+
+window.closeWebcam = function() {
+    const modal = document.getElementById('webcam-modal');
+    modal.style.display = 'none';
+    if (window.webcamStream) {
+        window.webcamStream.getTracks().forEach(track => track.stop()); // Éteint la lumière de la webcam
+        window.webcamStream = null;
+    }
+};
+
+window.captureWebcam = function() {
+    const video = document.getElementById('webcam-video');
+    const canvas = document.getElementById('webcam-canvas');
+    const context = canvas.getContext('2d');
+
+    // On prépare la "toile" à la taille de la vidéo
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // On applique un effet miroir (pour que ce soit naturel comme sur Snapchat)
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // On transforme la photo en vrai fichier
+    canvas.toBlob(blob => {
+        const file = new File([blob], "webcam_capture.jpg", { type: "image/jpeg" });
+        
+        // On triche un peu : on fait croire à ta fonction de compression que ça vient du bouton "+" !
+        const fakeInput = { files: [file], value: '' };
+        window.handleMediaUpload(fakeInput);
+        
+        closeWebcam();
+    }, 'image/jpeg', 0.9); // Qualité de 90%
+};
 
 </script>
 </body>
