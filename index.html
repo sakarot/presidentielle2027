@@ -1867,7 +1867,10 @@ body.light-mode #mobile-feed-header {
             <div id="inline-history-container" style="display: none; flex-direction: column; width: 100%; margin-top: 16px;">
                 <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 8px;">
                     <span style="font-size: 13px; font-weight: bold; color: var(--text);">Historique de vote</span>
-                    <button class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px;" onclick="openHistoryEditor()">Modifier</button>
+                  <div style="display: flex; gap: 4px;">
+    <button id="toggle-history-tour" class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px; border-color: var(--accent); color: var(--accent);" onclick="toggleProfileTour()">T1 / T2</button>
+    <button class="minimal-gif-btn" style="font-size: 10px; padding: 2px 6px;" onclick="openHistoryEditor()">Modifier</button>
+</div>
                 </div>
                 <div id="my-profile-history-list" class="vote-history-list" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
                     <span style="font-size: 11px; color: var(--text-dim); font-style: italic; text-align: center;">Chargement...</span>
