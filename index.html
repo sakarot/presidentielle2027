@@ -7921,11 +7921,20 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             return;
         }
 
-        // Application du ralentisseur
-        const deltaY = (currentScrollY - lastScrollY) * SCROLL_SPEED;
+       let rawDelta = currentScrollY - lastScrollY;
         
-        topBarOffset -= deltaY; 
-        bottomBarOffset += deltaY; 
+        // PROTECTION : Ignore les bonds géants causés par le changement d'onglet
+        // (Un décalage > 150px en un instant signifie qu'on a changé de conteneur de scroll)
+        if (Math.abs(rawDelta) > 150) {
+            lastScrollY = currentScrollY;
+            return;
+        }
+
+        const deltaY = rawDelta * SCROLL_SPEED;
+        // -----------------------------
+        
+        topBarOffset -= deltaY;
+        bottomBarOffset += deltaY;
 
         if (topBarOffset > 0) topBarOffset = 0;
         if (topBarOffset < -topBarHeight) topBarOffset = -topBarHeight;
