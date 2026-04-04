@@ -128,16 +128,28 @@ body.light-mode .logo-wrapper svg circle[r="4"] {
     fill: #1B263B !important; 
 }
 
-body.light-mode .title-block h1,
 body.light-mode .chat-header,
 body.light-mode .tt-stats-val,
 body.light-mode .tt-header,
-body.light-mode .poll-tooltip,
-body.light-mode .map-tooltip {
+body.light-mode .poll-tooltip,{
     color: var(--text) !important;
 	background: var(--bg) !important;
 	backdrop-filter: blur(4px);
     border: 1px solid var(--border);
+}
+
+body.light-mode .map-tooltip {
+    color: var(--text) !important;
+	background: var(--bg) !important;
+	backdrop-filter: blur(4px);
+    border: none !important;
+}
+
+/* Rend le titre principal propre en mode clair */
+body.light-mode .title-block h1 {
+    color: var(--text) !important;
+    background: transparent !important;
+    border: none !important;
 }
 
 /* Rend le texte des posts lisible en mode clair, SANS cadre autour */
