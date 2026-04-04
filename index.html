@@ -1944,7 +1944,8 @@ body.light-mode #mobile-feed-header {
         padding-top: 70px !important;
     }
     
-    /* ── CAROUSEL TWITTER SWIPE (V2 - Position sauvegardée et Profil corrigé) ── */
+/* ── CAROUSEL TWITTER SWIPE (V4 - Barres parfaites et zone de saisie isolée) ── */
+
     body.twitter-swipe-enabled {
         overflow: hidden;
     }
@@ -1955,6 +1956,7 @@ body.light-mode #mobile-feed-header {
         height: 100dvh;
     }
 
+    /* Les panneaux coulissants deviennent des blocs absolus */
     body.twitter-swipe-enabled #communitySidebar, 
     body.twitter-swipe-enabled #mainContent, 
     body.twitter-swipe-enabled #profileWrapper {
@@ -1962,27 +1964,41 @@ body.light-mode #mobile-feed-header {
         top: 0;
         width: 100vw !important;
         height: 100dvh !important;
-        display: flex !important;
-        flex-direction: column;
+        display: block !important;
         visibility: visible !important;
         transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         will-change: transform;
+        box-sizing: border-box !important;
     }
 
-    /* Le défilement indépendant de chaque onglet (Garde la position en mémoire !) */
+    /*  CORRECTION: La zone de texte (Footer) glisse AVEC l'onglet communauté ! */
+    body.twitter-swipe-enabled #communityFooter {
+        position: absolute !important;
+        bottom: 58px !important; /* Juste au-dessus de la nav du bas */
+        left: 0;
+        width: 100vw !important;
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+        z-index: 40;
+    }
+
+    /* Le défilement indépendant (seul #chat-feed scroll sur le 1er onglet) */
+    body.twitter-swipe-enabled #communitySidebar { overflow: hidden !important; }
+    
     body.twitter-swipe-enabled #mainContent, 
     body.twitter-swipe-enabled #profileWrapper {
         overflow-y: auto !important;
         overflow-x: hidden !important;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 80px !important; /* Laisse la place à la bottom-nav */
     }
 
+    /* Position sur la bande */
     body.twitter-swipe-enabled #communitySidebar { left: 0; }
+    body.twitter-swipe-enabled #communityFooter { left: 0; } /* Attaché au ruban 0 */
     body.twitter-swipe-enabled #mainContent { left: 100vw; background: var(--bg); }
     body.twitter-swipe-enabled #profileWrapper { left: 200vw; background: var(--bg); }
 
-    /* Rendre les panneaux visibles */
+    /* Rendre les éléments visibles */
     body.twitter-swipe-enabled #mobile-profile-section { display: flex !important; }
     body.twitter-swipe-enabled .controls-panel,
     body.twitter-swipe-enabled .t2-card,
@@ -1991,10 +2007,14 @@ body.light-mode #mobile-feed-header {
     body.twitter-swipe-enabled .maps-grid { display: grid !important; }
     body.twitter-swipe-enabled .site-header { display: none !important; }
 
-    /* ── CORRECTION DU DESIGN DU PROFIL ── */
+    /* Laisse de la place sous les contenus pour ne pas être caché par la barre du bas */
+    body.twitter-swipe-enabled #mainContent .container,
     body.twitter-swipe-enabled #profileWrapper .container {
         padding-top: 70px !important;
+        padding-bottom: 80px !important; 
     }
+
+    /* Beauté du Profil */
     body.twitter-swipe-enabled #profileWrapper #mobile-profile-section {
         flex-direction: column;
         width: 100% !important;
@@ -2013,63 +2033,19 @@ body.light-mode #mobile-feed-header {
         width: 100%;
         box-sizing: border-box;
     }
-    body.twitter-swipe-enabled #profileWrapper .vote-panel-right {
-        border-left: none !important;
-        border-top: 1px solid var(--border);
-        text-align: center;
-    }
-    body.twitter-swipe-enabled #profileWrapper .vote-panel-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-    body.twitter-swipe-enabled #profileWrapper .vote-panel-left {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        text-align: center;
-    }
-    body.twitter-swipe-enabled #profileWrapper #voter-profile-view {
-        align-items: center !important;
-        width: 100%;
-    }
-    body.twitter-swipe-enabled #profileWrapper .username-container {
-        padding: 8px 20px !important;
-        border-radius: 20px !important;
-    }
-    body.twitter-swipe-enabled #profileWrapper #user-display-name {
-        font-size: 18px !important;
-    }
-    body.twitter-swipe-enabled #profileWrapper #bio-display-container {
-        margin-left: 0 !important;
-        justify-content: center;
-    }
-    body.twitter-swipe-enabled #profileWrapper #user-bio-text {
-        max-width: 100%;
-        white-space: normal;
-    }
-    body.twitter-swipe-enabled #profileWrapper #vote-2027-title {
-        display: block !important;
-    }
-    body.twitter-swipe-enabled #profileWrapper #vote-2027-container {
-        margin-top: 24px !important;
-        width: 100%;
-        border-top: 1px dashed rgba(255,255,255,0.1);
-        padding-top: 20px;
-    }
-    body.twitter-swipe-enabled #profileWrapper #inline-history-container {
-        display: flex !important;
-        border-top: 1px dashed rgba(255,255,255,0.1);
-        padding-top: 20px;
-    }
-    body.twitter-swipe-enabled #profileWrapper #desktop-history-btn {
-        display: none !important;
-    }
-    body.twitter-swipe-enabled #profileWrapper #community-leaderboard {
-        align-items: center;
-    }
+    body.twitter-swipe-enabled #profileWrapper .vote-panel-right { border-left: none !important; border-top: 1px solid var(--border); text-align: center; }
+    body.twitter-swipe-enabled #profileWrapper .vote-panel-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    body.twitter-swipe-enabled #profileWrapper .vote-panel-left { display: flex; flex-direction: column; align-items: center; width: 100%; text-align: center; }
+    body.twitter-swipe-enabled #profileWrapper #voter-profile-view { align-items: center !important; width: 100%; }
+    body.twitter-swipe-enabled #profileWrapper .username-container { padding: 8px 20px !important; border-radius: 20px !important; }
+    body.twitter-swipe-enabled #profileWrapper #user-display-name { font-size: 18px !important; }
+    body.twitter-swipe-enabled #profileWrapper #bio-display-container { margin-left: 0 !important; justify-content: center; }
+    body.twitter-swipe-enabled #profileWrapper #user-bio-text { max-width: 100%; white-space: normal; }
+    body.twitter-swipe-enabled #profileWrapper #vote-2027-title { display: block !important; }
+    body.twitter-swipe-enabled #profileWrapper #vote-2027-container { margin-top: 24px !important; width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px; }
+    body.twitter-swipe-enabled #profileWrapper #inline-history-container { display: flex !important; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px; }
+    body.twitter-swipe-enabled #profileWrapper #desktop-history-btn { display: none !important; }
+    body.twitter-swipe-enabled #profileWrapper #community-leaderboard { align-items: center; }
 }
 
 </style>
@@ -8013,18 +7989,18 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
-// --- GESTION DU SWIPE TWITTER (V3 - Glissement fluide & Scroll des barres) ---
+// --- GESTION DU SWIPE TWITTER (V4 - Glissement fluide & Scroll Sécurisé) ---
 (function initTwitterSwipe() {
     if (window.innerWidth > 768) return;
 
-    // 1. Activer le CSS du Carousel
     document.body.classList.add('twitter-swipe-enabled');
     document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
 
-    // 2. Isoler le Profil du Simulateur
     const profileSection = document.getElementById('mobile-profile-section');
     const mainContent = document.getElementById('mainContent');
     const communitySidebar = document.getElementById('communitySidebar');
+    // 🔥 La zone de texte a été isolée pour la balader au doigt
+    const communityFooter = document.getElementById('communityFooter');
     let profileWrapper = document.getElementById('profileWrapper');
 
     if (profileSection && mainContent && !profileWrapper) {
@@ -8037,10 +8013,15 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         mainContent.parentNode.insertBefore(profileWrapper, mainContent.nextSibling);
     }
 
-    const panels = [communitySidebar, mainContent, profileWrapper];
+    // Le groupe 0 inclut maintenant la sidebar ET sa zone de texte !
+    const panels = [
+        [communitySidebar, communityFooter],
+        [mainContent],
+        [profileWrapper]
+    ];
     let currentTabIndex = 0;
 
-    // 3. CLONAGE DE LA BARRE DU BAS
+    // CLONAGE DE LA BARRE DU BAS (Désactive les vieux scripts récalcitrants)
     let bottomNav = document.querySelector('.bottom-nav');
     if (bottomNav) {
         let newBottomNav = bottomNav.cloneNode(true);
@@ -8055,59 +8036,96 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         });
     }
 
-    // ---------------------------------------------------------
-    // 4. PRÉPARATION DES BARRES POUR LE SCROLL (Haut & Bas)
-    // ---------------------------------------------------------
+    // VARIABLES DES BARRES À MASQUER
     const activeBottomNav = document.querySelector('.bottom-nav');
-    const topTitle = document.getElementById('mobile-top-title');
-    // On cible le parent du titre (la barre du haut complète)
-    const activeTopBar = topTitle ? topTitle.closest('div, header') : document.querySelector('.mobile-top-bar');
+    const topBar = document.getElementById('mobile-feed-header');
+    const topLogo = document.getElementById('mobile-top-logo');
 
-    // On ajoute une transition CSS fluide en JS pour s'assurer qu'elle y est
     if (activeBottomNav) activeBottomNav.style.transition = 'transform 0.3s ease-in-out';
-    if (activeTopBar) activeTopBar.style.transition = 'transform 0.3s ease-in-out';
+    if (topBar) topBar.style.transition = 'transform 0.3s ease-in-out';
+    if (topLogo) topLogo.style.transition = 'transform 0.3s ease-in-out';
 
-    // 5. Fonction d'animation et de gestion d'interface
     function animateToTab(index) {
         currentTabIndex = index;
         const offset = -index * 100;
         
-        // Mouvement du swipe
-        panels.forEach(p => {
-            if (p) {
-                p.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
-                p.style.transform = `translateX(${offset}vw)`;
-            }
+        panels.forEach((group) => {
+            group.forEach(p => {
+                if (p) {
+                    p.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                    // Force l'accélération matérielle pour un glissement plus fluide
+                    p.style.transform = `translate3d(${offset}vw, 0, 0)`;
+                }
+            });
         });
         
-        // UI des boutons du bas
         const tabs = ['community', 'simulator', 'profile'];
         const navButtons = document.querySelectorAll('.bottom-nav button');
         navButtons.forEach(btn => btn.classList.remove('active'));
         const targetBtn = document.querySelector(`.bottom-nav button[data-tab="${tabs[index]}"]`);
         if (targetBtn) targetBtn.classList.add('active');
         
-        // Changement du titre
+        const topTitle = document.getElementById('mobile-top-title');
         const titles = ["L'Araignée", "Simulateur", "Mon Profil"];
         if (topTitle) topTitle.innerText = titles[index];
         
-        // Refresh de la carte
         if (index === 1 && typeof renderMaps === 'function') {
             setTimeout(renderMaps, 300);
         }
 
-        // SCROLL INTELLIGENT AU CHANGEMENT D'ONGLET :
-        // Si le nouvel onglet est tout en haut, on force les barres à réapparaître.
-        // Sinon, on maintient l'état dans lequel elles étaient (cachées ou visibles).
-        if (panels[index] && panels[index].scrollTop <= 50) {
-            if (activeBottomNav) activeBottomNav.style.transform = 'translateY(0)';
-            if (activeTopBar) activeTopBar.style.transform = 'translateY(0)';
-        }
+        showBars(); // Par sécurité, on affiche les barres au changement d'onglet
     }
 
     animateToTab(0);
 
-    // 6. Mécanique de glissement natif (Touch)
+    // ---------------------------------------------------------
+    // NOUVEAU SYSTÈME DE SCROLL (Gère les 3 onglets de force)
+    // ---------------------------------------------------------
+    let lastScrollY = [0, 0, 0];
+    const scrollContainers = [
+        document.getElementById('chat-feed'), // L'onglet Communauté
+        mainContent,                          // L'onglet Simulateur
+        profileWrapper                        // L'onglet Profil
+    ];
+
+    function showBars() {
+        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
+        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
+        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
+    }
+
+    function hideBars() {
+        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 150%, 0)', 'important');
+        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, -150%, 0)', 'important');
+        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, -150%, 0)', 'important');
+    }
+
+    scrollContainers.forEach((container, index) => {
+        if (!container) return;
+        container.addEventListener('scroll', () => {
+            // Seul l'onglet affiché a le droit d'agir sur les barres
+            if (currentTabIndex !== index) return;
+            if (document.body.classList.contains('mobile-composer-open')) return;
+
+            let currentY = container.scrollTop;
+            if (currentY <= 0) currentY = 0;
+
+            // Si on descend (et qu'on a passé 60px)
+            if (currentY > lastScrollY[index] && currentY > 60) {
+                hideBars();
+            } 
+            // Si on remonte
+            else if (currentY < lastScrollY[index]) {
+                showBars();
+            }
+            
+            lastScrollY[index] = currentY;
+        }, { passive: true });
+    });
+
+    // ---------------------------------------------------------
+    // MÉCANIQUE DE GLISSEMENT (TOUCHER)
+    // ---------------------------------------------------------
     let startX = 0, startY = 0, currentX = 0;
     let isSwiping = false, isHorizontalSwipe = null;
     const swipeThreshold = window.innerWidth * 0.15;
@@ -8152,20 +8170,24 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
         if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === panels.length - 1 && deltaX < 0)) {
             const resistDelta = deltaX * 0.25;
-            panels.forEach(p => {
-                if (p) {
-                    p.style.transition = 'none';
-                    p.style.transform = `translateX(calc(${-currentTabIndex * 100}vw + ${resistDelta}px))`;
-                }
+            panels.forEach(group => {
+                group.forEach(p => {
+                    if (p) {
+                        p.style.transition = 'none';
+                        p.style.transform = `translate3d(calc(${-currentTabIndex * 100}vw + ${resistDelta}px), 0, 0)`;
+                    }
+                });
             });
             return;
         }
 
-        panels.forEach(p => {
-            if (p) {
-                p.style.transition = 'none';
-                p.style.transform = `translateX(calc(${-currentTabIndex * 100}vw + ${deltaX}px))`;
-            }
+        panels.forEach(group => {
+            group.forEach(p => {
+                if (p) {
+                    p.style.transition = 'none';
+                    p.style.transform = `translate3d(calc(${-currentTabIndex * 100}vw + ${deltaX}px), 0, 0)`;
+                }
+            });
         });
     }, { passive: true });
 
@@ -8174,47 +8196,13 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         isSwiping = false;
 
         const deltaX = currentX - startX;
-        
         if (Math.abs(deltaX) > swipeThreshold) {
-            if (deltaX < 0 && currentTabIndex < panels.length - 1) {
-                currentTabIndex++; 
-            } else if (deltaX > 0 && currentTabIndex > 0) {
-                currentTabIndex--; 
-            }
+            if (deltaX < 0 && currentTabIndex < panels.length - 1) currentTabIndex++; 
+            else if (deltaX > 0 && currentTabIndex > 0) currentTabIndex--; 
         }
-        
         animateToTab(currentTabIndex);
     });
-
-    // ---------------------------------------------------------
-    // 7. GESTION DU MASQUAGE DES BARRES AU SCROLL 
-    // ---------------------------------------------------------
-    let lastScrollY = [0, 0, 0]; // On garde en mémoire le scroll des 3 onglets
-
-    panels.forEach((panel, index) => {
-        if (!panel) return;
-        panel.addEventListener('scroll', () => {
-            // Seul l'onglet actuellement affiché à l'écran a le droit de masquer/afficher les barres
-            if (currentTabIndex !== index) return; 
-
-            let currentY = panel.scrollTop;
-
-            // Si on scrolle vers le bas (et qu'on a passé les 50 premiers pixels)
-            if (currentY > lastScrollY[index] && currentY > 50) {
-                if (activeBottomNav) activeBottomNav.style.transform = 'translateY(150%)';
-                if (activeTopBar) activeTopBar.style.transform = 'translateY(-150%)';
-            } 
-            // Si on scrolle vers le haut
-            else if (currentY < lastScrollY[index]) {
-                if (activeBottomNav) activeBottomNav.style.transform = 'translateY(0)';
-                if (activeTopBar) activeTopBar.style.transform = 'translateY(0)';
-            }
-            
-            lastScrollY[index] = currentY <= 0 ? 0 : currentY; // Empêche les bugs de rebond sur iOS
-        }, { passive: true });
-    });
 })();
-
 
 </script>
 <div id="mobile-menu-backdrop" onclick="closeAllMobileMenus()"></div>
