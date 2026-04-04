@@ -7349,98 +7349,9 @@ window.prepareMainReply = function(postId, commentId, pseudo) {
     document.body.classList.add('mobile-composer-open');
 };
 
-// --- GESTION DU SCROLL MOBILE ET ANIMATIONS (AU DOIGT) ---
-(function initMobileScroll() {
-    let lastScrollY = window.scrollY || 0;
-    let topBarOffset = 0;
-    let bottomBarOffset = 0;
-    let ticking = false;
 
-    // VITESSE D'ANIMATION (0.4 = beaucoup plus lent et doux que le doigt)
-    const SCROLL_SPEED = 0.4;
-
-    function updateBars() {
-        const topBar = document.getElementById('mobile-feed-header');
-        const bottomBar = document.querySelector('.bottom-nav');
-        const topLogo = document.getElementById('mobile-top-logo');
-        
-        if (topBar) {
-            topBar.style.setProperty('transition', 'none', 'important');
-            topBar.style.setProperty('transform', `translateY(${topBarOffset}px)`, 'important');
-        }
-        
-        if (topLogo) {
-            topLogo.style.setProperty('transition', 'none', 'important');
-            topLogo.style.setProperty('transform', `translateX(-50%) translateY(${topBarOffset}px)`, 'important');
-        }
-
-        if (bottomBar) {
-            if (document.body.classList.contains('mobile-composer-open')) {
-                bottomBar.style.setProperty('transition', 'transform 0.3s ease-in-out', 'important');
-                bottomBar.style.setProperty('transform', 'translateY(100%)', 'important');
-            } else {
-                bottomBar.style.setProperty('transition', 'none', 'important');
-                // Utilisation de translate3d pour forcer l'accélération matérielle (Evite les bugs Safari)
-                bottomBar.style.setProperty('transform', `translate3d(0, ${bottomBarOffset}px, 0)`, 'important');
-            }
-        }
-        ticking = false;
-    }
-
-    function handleScroll(e) {
-        if (window.innerWidth > 768) return;
-        if (document.body.classList.contains('mobile-composer-open')) return;
-
-        let currentScrollY = window.scrollY;
-        if (e.target && e.target.scrollTop !== undefined) {
-            currentScrollY = e.target.scrollTop;
-        }
-        if (currentScrollY < 0) currentScrollY = 0;
-
-        const topBar = document.getElementById('mobile-feed-header');
-        const bottomBar = document.querySelector('.bottom-nav');
-        
-        const topBarHeight = topBar ? topBar.offsetHeight : 60;
-        const bottomBarHeight = bottomBar ? bottomBar.offsetHeight + (parseInt(window.getComputedStyle(bottomBar).paddingBottom) || 0) : 80;
-
-        if (currentScrollY <= 0) {
-            topBarOffset = 0; bottomBarOffset = 0;
-            lastScrollY = currentScrollY;
-            if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
-            return;
-        }
-
-        // Application du ralentisseur
-        const deltaY = (currentScrollY - lastScrollY) * SCROLL_SPEED;
-        
-        topBarOffset -= deltaY; 
-        bottomBarOffset += deltaY; 
-
-        if (topBarOffset > 0) topBarOffset = 0;
-        if (topBarOffset < -topBarHeight) topBarOffset = -topBarHeight;
-        
-        if (bottomBarOffset < 0) bottomBarOffset = 0;
-        if (bottomBarOffset > bottomBarHeight) bottomBarOffset = bottomBarHeight;
-
-        lastScrollY = currentScrollY;
-
-        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
-    }
-
-    const chatFeed = document.getElementById('chat-feed');
-    if (chatFeed) chatFeed.addEventListener('scroll', handleScroll, { passive: true });
-    const mainContent = document.getElementById('mainContent');
-    if (mainContent) mainContent.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    window.resetNavBars = function() {
-        topBarOffset = 0; bottomBarOffset = 0; lastScrollY = 0; 
-        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
-    };
-
-    // FORCE L'AFFICHAGE COMPLET AU CHARGEMENT (Règle le bug Safari du premier lancement)
-    setTimeout(window.resetNavBars, 150);
-})();
+    
+    
 
 // 1. Affiche le fond (uniquement sur mobile)
 window.showMenuBackdrop = function() {
@@ -7989,7 +7900,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
-// --- GESTION DU SWIPE TWITTER (V4 - Glissement fluide & Scroll Sécurisé) ---
+// --- GESTION DU SWIPE TWITTER (V5 - Swipe + Scroll Fluide Pixel par Pixel) ---
 (function initTwitterSwipe() {
     if (window.innerWidth > 768) return;
 
@@ -7999,10 +7910,10 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     const profileSection = document.getElementById('mobile-profile-section');
     const mainContent = document.getElementById('mainContent');
     const communitySidebar = document.getElementById('communitySidebar');
-    // 🔥 La zone de texte a été isolée pour la balader au doigt
     const communityFooter = document.getElementById('communityFooter');
     let profileWrapper = document.getElementById('profileWrapper');
 
+    // 1. ISOLER LE PROFIL
     if (profileSection && mainContent && !profileWrapper) {
         profileWrapper = document.createElement('div');
         profileWrapper.id = 'profileWrapper';
@@ -8013,7 +7924,6 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         mainContent.parentNode.insertBefore(profileWrapper, mainContent.nextSibling);
     }
 
-    // Le groupe 0 inclut maintenant la sidebar ET sa zone de texte !
     const panels = [
         [communitySidebar, communityFooter],
         [mainContent],
@@ -8021,7 +7931,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     ];
     let currentTabIndex = 0;
 
-    // CLONAGE DE LA BARRE DU BAS (Désactive les vieux scripts récalcitrants)
+    // 2. CLONAGE DE LA BARRE DU BAS
     let bottomNav = document.querySelector('.bottom-nav');
     if (bottomNav) {
         let newBottomNav = bottomNav.cloneNode(true);
@@ -8036,15 +7946,11 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         });
     }
 
-    // VARIABLES DES BARRES À MASQUER
     const activeBottomNav = document.querySelector('.bottom-nav');
     const topBar = document.getElementById('mobile-feed-header');
     const topLogo = document.getElementById('mobile-top-logo');
 
-    if (activeBottomNav) activeBottomNav.style.transition = 'transform 0.3s ease-in-out';
-    if (topBar) topBar.style.transition = 'transform 0.3s ease-in-out';
-    if (topLogo) topLogo.style.transition = 'transform 0.3s ease-in-out';
-
+    // 3. FONCTION DE GLISSEMENT DES ONGLETS
     function animateToTab(index) {
         currentTabIndex = index;
         const offset = -index * 100;
@@ -8053,7 +7959,6 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             group.forEach(p => {
                 if (p) {
                     p.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
-                    // Force l'accélération matérielle pour un glissement plus fluide
                     p.style.transform = `translate3d(${offset}vw, 0, 0)`;
                 }
             });
@@ -8073,58 +7978,105 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             setTimeout(renderMaps, 300);
         }
 
-        showBars(); // Par sécurité, on affiche les barres au changement d'onglet
+        // Afficher les barres en douceur au changement d'onglet
+        resetBars();
     }
 
     animateToTab(0);
 
     // ---------------------------------------------------------
-    // NOUVEAU SYSTÈME DE SCROLL (Gère les 3 onglets de force)
+    // 4. SCROLL "PETIT À PETIT" UNIFIÉ POUR LES 3 ONGLETS
     // ---------------------------------------------------------
     let lastScrollY = [0, 0, 0];
+    let topBarOffset = 0;
+    let bottomBarOffset = 0;
+    let ticking = false;
+    const SCROLL_SPEED = 0.4; // Vitesse de masquage
+
     const scrollContainers = [
-        document.getElementById('chat-feed'), // L'onglet Communauté
-        mainContent,                          // L'onglet Simulateur
-        profileWrapper                        // L'onglet Profil
+        document.getElementById('chat-feed'), // Communauté
+        mainContent,                          // Simulateur
+        profileWrapper                        // Profil
     ];
 
-    function showBars() {
-        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
-        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
-        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
+    function updateBars() {
+        if (topBar) {
+            topBar.style.setProperty('transition', 'none', 'important');
+            topBar.style.setProperty('transform', `translateY(${topBarOffset}px)`, 'important');
+        }
+        if (topLogo) {
+            topLogo.style.setProperty('transition', 'none', 'important');
+            topLogo.style.setProperty('transform', `translateX(-50%) translateY(${topBarOffset}px)`, 'important');
+        }
+        if (activeBottomNav) {
+            if (document.body.classList.contains('mobile-composer-open')) {
+                activeBottomNav.style.setProperty('transition', 'transform 0.3s ease-in-out', 'important');
+                activeBottomNav.style.setProperty('transform', 'translateY(100%)', 'important');
+            } else {
+                activeBottomNav.style.setProperty('transition', 'none', 'important');
+                activeBottomNav.style.setProperty('transform', `translate3d(0, ${bottomBarOffset}px, 0)`, 'important');
+            }
+        }
+        ticking = false;
     }
 
-    function hideBars() {
-        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 150%, 0)', 'important');
-        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, -150%, 0)', 'important');
-        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, -150%, 0)', 'important');
+    function resetBars() {
+        topBarOffset = 0;
+        bottomBarOffset = 0;
+        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
     }
+
+    // Expose cette fonction pour qu'elle puisse être utilisée par tes autres scripts
+    window.resetNavBars = resetBars;
 
     scrollContainers.forEach((container, index) => {
         if (!container) return;
-        container.addEventListener('scroll', () => {
-            // Seul l'onglet affiché a le droit d'agir sur les barres
+        
+        // Initialiser la position mémoire
+        lastScrollY[index] = container.scrollTop || 0;
+
+        container.addEventListener('scroll', (e) => {
+            // Seul l'onglet actuellement affiché à l'écran peut bouger les barres
             if (currentTabIndex !== index) return;
             if (document.body.classList.contains('mobile-composer-open')) return;
 
             let currentY = container.scrollTop;
-            if (currentY <= 0) currentY = 0;
+            if (currentY < 0) currentY = 0;
 
-            // Si on descend (et qu'on a passé 60px)
-            if (currentY > lastScrollY[index] && currentY > 60) {
-                hideBars();
-            } 
-            // Si on remonte
-            else if (currentY < lastScrollY[index]) {
-                showBars();
+            const topBarHeight = topBar ? topBar.offsetHeight : 60;
+            const bottomBarHeight = activeBottomNav ? activeBottomNav.offsetHeight + (parseInt(window.getComputedStyle(activeBottomNav).paddingBottom) || 0) : 80;
+
+            // Si on est tout en haut, on reset les barres
+            if (currentY <= 0) {
+                topBarOffset = 0;
+                bottomBarOffset = 0;
+                lastScrollY[index] = currentY;
+                if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
+                return;
             }
-            
+
+            // Calcul du décalage (Scroll doux pixel par pixel)
+            const deltaY = (currentY - lastScrollY[index]) * SCROLL_SPEED;
+            topBarOffset -= deltaY;
+            bottomBarOffset += deltaY;
+
+            // Limites pour ne pas que les barres aillent trop loin hors écran
+            if (topBarOffset > 0) topBarOffset = 0;
+            if (topBarOffset < -topBarHeight) topBarOffset = -topBarHeight;
+            if (bottomBarOffset < 0) bottomBarOffset = 0;
+            if (bottomBarOffset > bottomBarHeight) bottomBarOffset = bottomBarHeight;
+
             lastScrollY[index] = currentY;
+
+            if (!ticking) {
+                window.requestAnimationFrame(updateBars);
+                ticking = true;
+            }
         }, { passive: true });
     });
 
     // ---------------------------------------------------------
-    // MÉCANIQUE DE GLISSEMENT (TOUCHER)
+    // 5. MÉCANIQUE DE GLISSEMENT (TOUCHER)
     // ---------------------------------------------------------
     let startX = 0, startY = 0, currentX = 0;
     let isSwiping = false, isHorizontalSwipe = null;
@@ -8168,6 +8120,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
         if (!isHorizontalSwipe) return;
 
+        // Effet résistance aux extrémités
         if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === panels.length - 1 && deltaX < 0)) {
             const resistDelta = deltaX * 0.25;
             panels.forEach(group => {
@@ -8181,6 +8134,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             return;
         }
 
+        // Glissement des rubans
         panels.forEach(group => {
             group.forEach(p => {
                 if (p) {
@@ -8203,6 +8157,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         animateToTab(currentTabIndex);
     });
 })();
+
 
 </script>
 <div id="mobile-menu-backdrop" onclick="closeAllMobileMenus()"></div>
