@@ -2028,6 +2028,32 @@ body.light-mode #mobile-feed-header {
     body.twitter-swipe-enabled #profileWrapper #inline-history-container { display: flex !important; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px; }
     body.twitter-swipe-enabled #profileWrapper #desktop-history-btn { display: none !important; }
     body.twitter-swipe-enabled #profileWrapper #community-leaderboard { align-items: center; }
+	
+/* 1. Zone de saisie : On la pousse vers le bas avec une marge négative plafonnée à 60px */
+body.twitter-swipe-enabled #communityFooter {
+    bottom: 60px !important;
+    /* Descend au maximum de 60px, ce qui l'arrête très exactement au fond de l'écran (0px) */
+    margin-bottom: calc(-1 * min(var(--bottom-offset, 0px), 60px)) !important;
+    
+    /* TRÈS IMPORTANT : On enlève le transform pour ne plus bloquer le swipe horizontal JS */
+    transform: none; 
+}
+
+/* 2. Bouton + : Positionné plus haut, il descend de 60px max pour garder son écart parfait */
+#mobile-fab-post {
+    bottom: 80px !important;
+    margin-bottom: calc(-1 * min(var(--bottom-offset, 0px), 60px)) !important;
+    transform: none !important; /* Annule définitivement nos vieux tests */
+}
+
+/* 3. On remet les animations du bouton + (Uniquement sur la taille pour éviter les bugs) */
+#mobile-fab-post:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+#mobile-fab-post:active { 
+    transform: scale(0.9) !important; 
+}
 }
 
 
@@ -7917,7 +7943,9 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
                 bottomBar.style.setProperty('transform', `translate3d(0, ${bottomBarOffset}px, 0)`, 'important');
             }
         }
-        ticking = false;
+// On envoie simplement la valeur exacte sans limite artificielle
+    document.documentElement.style.setProperty('--bottom-offset', `${bottomBarOffset}px`);
+    ticking = false;
     }
 
     function handleScroll(e) {
