@@ -164,7 +164,6 @@ body.light-mode .gif-search-input {
 
 
 
-body.light-mode .map-tooltip, 
 body.light-mode .poll-tooltip {
     background: var(--surface) !important;
 }
@@ -433,10 +432,11 @@ body.light-mode .sticky-chat-footer {
   .legend-color { width: 12px; height: 12px; border-radius: 3px; }
   
  .map-tooltip {
+ color: var(--text) !important;
+	background: var(--bg) !important;
+	backdrop-filter: blur(4px);
+    border: 1px solid var(--border);
   position: fixed;
-  background: rgba(22, 22, 28, 0.97);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--border);
   padding: 12px 14px;
   border-radius: 8px;
   font-family: 'DM Sans', sans-serif;
@@ -822,6 +822,31 @@ body.light-mode .sticky-chat-footer {
 }
 
 @media (max-width: 768px) {
+
+/* ── BANDEAU DES STATS SUR UNE SEULE LIGNE (Mobile) ── */
+    .global-stats-row {
+        flex-wrap: nowrap !important; /* Interdit de passer à la ligne suivante */
+        justify-content: space-between !important; /* Répartit l'espace équitablement */
+        gap: 4px !important; /* Réduit l'écart entre chaque bloc */
+        padding: 10px 8px !important; /* Réduit un peu les marges internes */
+    }
+    
+    .stat-item {
+        align-items: center !important; /* Centre le texte pour que ce soit plus esthétique */
+        text-align: center !important;
+        min-width: 0; /* Permet aux éléments de rétrécir si besoin */
+    }
+    
+    .stat-lbl {
+        font-size: 7.5px !important; /* Réduit la taille des titres (Inscrits, etc.) */
+        letter-spacing: 0 !important; /* Enlève l'espacement large des lettres */
+        white-space: nowrap !important; /* Empêche "Blancs & Nuls" de se couper en deux */
+    }
+    
+    .stat-val {
+        font-size: 10px !important; /* Réduit la taille des gros chiffres */
+    }
+
 #pc-reset{ display: none !important; }
 
 	#mobile-top-title {
@@ -3225,7 +3250,7 @@ function update() {
     <div class="stat-item"><span class="stat-lbl">Inscrits</span><span class="stat-val">${stats.inscrits.toLocaleString('fr-FR')}</span></div>
     <div class="stat-item"><span class="stat-lbl">Abstention</span><span class="stat-val" style="color:var(--text-dim)">${stats.abs.toLocaleString('fr-FR')} (${absPct}%)</span></div>
     <div class="stat-item"><span class="stat-lbl">Blancs & Nuls</span><span class="stat-val" style="color:var(--text-dim)">${stats.blancs.toLocaleString('fr-FR')}</span></div>
-    <div class="stat-item"><span class="stat-lbl">Exprimés (100%)</span><span class="stat-val" style="color:var(--accent)">${stats.exp.toLocaleString('fr-FR')}</span></div>
+    <div class="stat-item"><span class="stat-lbl">Exprimés</span><span class="stat-val" style="color:var(--accent)">${stats.exp.toLocaleString('fr-FR')}</span></div>
   `;
   updateMapColors();
 }
