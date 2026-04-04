@@ -7981,6 +7981,7 @@ window.resetNavBars = function() {
     // 🔥 La zone de texte a été isolée pour la balader au doigt
     const communityFooter = document.getElementById('communityFooter');
     let profileWrapper = document.getElementById('profileWrapper');
+	
 
     if (profileSection && mainContent && !profileWrapper) {
         profileWrapper = document.createElement('div');
@@ -8058,6 +8059,9 @@ window.resetNavBars = function() {
 if (typeof window.resetNavBars === 'function') {
         window.resetNavBars();
     }
+	if (index === 2 && typeof window.switchProfileTab === 'function') {
+            window.switchProfileTab('posts');
+        }
 }
 animateToTab(0);
 
