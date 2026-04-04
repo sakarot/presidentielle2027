@@ -7949,6 +7949,21 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
     };
 
+window.resetNavBars = function() {
+        topBarOffset = 0;
+        bottomBarOffset = 0;
+        lastScrollY = 0;
+        if (!ticking) {
+            window.requestAnimationFrame(updateBars);
+            ticking = true;
+        }
+    };
+    
+    // NOUVEAU : Permet d'attacher le système fluide aux éléments créés en JS
+    window.attachSmoothScroll = function(element) {
+        if (element) element.addEventListener('scroll', handleScroll, { passive: true });
+    };
+
     // FORCE L'AFFICHAGE COMPLET AU CHARGEMENT (Règle le bug Safari du premier lancement)
     setTimeout(window.resetNavBars, 150);
 })();
@@ -7975,6 +7990,9 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         container.appendChild(profileSection);
         profileWrapper.appendChild(container);
         mainContent.parentNode.insertBefore(profileWrapper, mainContent.nextSibling);
+		if (typeof window.attachSmoothScroll === 'function') {
+            window.attachSmoothScroll(profileWrapper);
+        }
     }
 
     // Le groupe 0 inclut maintenant la sidebar ET sa zone de texte !
@@ -8037,55 +8055,11 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             setTimeout(renderMaps, 300);
         }
 
-        showBars(); // Par sécurité, on affiche les barres au changement d'onglet
+if (typeof window.resetNavBars === 'function') {
+        window.resetNavBars();
     }
-
-    animateToTab(0);
-
-    // ---------------------------------------------------------
-    // NOUVEAU SYSTÈME DE SCROLL (Gère les 3 onglets de force)
-    // ---------------------------------------------------------
-    let lastScrollY = [0, 0, 0];
-    const scrollContainers = [
-        document.getElementById('chat-feed'), // L'onglet Communauté
-        mainContent,                          // L'onglet Simulateur
-        profileWrapper                        // L'onglet Profil
-    ];
-
-    function showBars() {
-        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
-        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
-        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
-    }
-
-    function hideBars() {
-        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 150%, 0)', 'important');
-        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, -150%, 0)', 'important');
-        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, -150%, 0)', 'important');
-    }
-
-    scrollContainers.forEach((container, index) => {
-        if (!container) return;
-        container.addEventListener('scroll', () => {
-            // Seul l'onglet affiché a le droit d'agir sur les barres
-            if (currentTabIndex !== index) return;
-            if (document.body.classList.contains('mobile-composer-open')) return;
-
-            let currentY = container.scrollTop;
-            if (currentY <= 0) currentY = 0;
-
-            // Si on descend (et qu'on a passé 60px)
-            if (currentY > lastScrollY[index] && currentY > 60) {
-                hideBars();
-            } 
-            // Si on remonte
-            else if (currentY < lastScrollY[index]) {
-                showBars();
-            }
-            
-            lastScrollY[index] = currentY;
-        }, { passive: true });
-    });
+}
+animateToTab(0);
 
     // ---------------------------------------------------------
     // MÉCANIQUE DE GLISSEMENT (TOUCHER)
