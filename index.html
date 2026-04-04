@@ -1944,8 +1944,7 @@ body.light-mode #mobile-feed-header {
         padding-top: 70px !important;
     }
     
-    /* ── CAROUSEL TWITTER SWIPE (Nouveau système de navigation) ── */
-    /* Active le mode verrouillé sur l'écran */
+    /* ── CAROUSEL TWITTER SWIPE (V2 - Position sauvegardée et Profil corrigé) ── */
     body.twitter-swipe-enabled {
         overflow: hidden;
     }
@@ -1956,7 +1955,6 @@ body.light-mode #mobile-feed-header {
         height: 100dvh;
     }
 
-    /* Les 3 onglets deviennent des panneaux absolus alignés horizontalement */
     body.twitter-swipe-enabled #communitySidebar, 
     body.twitter-swipe-enabled #mainContent, 
     body.twitter-swipe-enabled #profileWrapper {
@@ -1967,39 +1965,111 @@ body.light-mode #mobile-feed-header {
         display: flex !important;
         flex-direction: column;
         visibility: visible !important;
-        overflow-y: auto !important;
         transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         will-change: transform;
-        padding-bottom: 70px !important; /* Laisse la place à la barre du bas */
     }
 
-    /* Positionnement initial sur le ruban (0, 100vw, 200vw) */
-    body.twitter-swipe-enabled #communitySidebar { 
-        background: var(--surface); 
-        left: 0; 
-    }
-    body.twitter-swipe-enabled #mainContent { 
-        background: var(--bg); 
-        left: 100vw; 
-        display: block !important; 
-    }
-    body.twitter-swipe-enabled #profileWrapper { 
-        background: var(--bg); 
-        left: 200vw; 
-        display: block !important; 
+    /* Le défilement indépendant de chaque onglet (Garde la position en mémoire !) */
+    body.twitter-swipe-enabled #mainContent, 
+    body.twitter-swipe-enabled #profileWrapper {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 80px !important; /* Laisse la place à la bottom-nav */
     }
 
-    /* On annule les anciens masquages car le changement se fait par positionnement */
+    body.twitter-swipe-enabled #communitySidebar { left: 0; }
+    body.twitter-swipe-enabled #mainContent { left: 100vw; background: var(--bg); }
+    body.twitter-swipe-enabled #profileWrapper { left: 200vw; background: var(--bg); }
+
+    /* Rendre les panneaux visibles */
     body.twitter-swipe-enabled #mobile-profile-section { display: flex !important; }
     body.twitter-swipe-enabled .controls-panel,
     body.twitter-swipe-enabled .t2-card,
     body.twitter-swipe-enabled .data-table-card { display: block !important; }
     body.twitter-swipe-enabled .main-grid,
     body.twitter-swipe-enabled .maps-grid { display: grid !important; }
-    
-    /* Masquer la grosse bannière PC qui fait doublon */
     body.twitter-swipe-enabled .site-header { display: none !important; }
 
+    /* ── CORRECTION DU DESIGN DU PROFIL ── */
+    body.twitter-swipe-enabled #profileWrapper .container {
+        padding-top: 70px !important;
+    }
+    body.twitter-swipe-enabled #profileWrapper #mobile-profile-section {
+        flex-direction: column;
+        width: 100% !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    body.twitter-swipe-enabled #profileWrapper #mobile-profile-section > div {
+        background: var(--surface2);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.05);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    body.twitter-swipe-enabled #profileWrapper .vote-panel-right {
+        border-left: none !important;
+        border-top: 1px solid var(--border);
+        text-align: center;
+    }
+    body.twitter-swipe-enabled #profileWrapper .vote-panel-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    body.twitter-swipe-enabled #profileWrapper .vote-panel-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        text-align: center;
+    }
+    body.twitter-swipe-enabled #profileWrapper #voter-profile-view {
+        align-items: center !important;
+        width: 100%;
+    }
+    body.twitter-swipe-enabled #profileWrapper .username-container {
+        padding: 8px 20px !important;
+        border-radius: 20px !important;
+    }
+    body.twitter-swipe-enabled #profileWrapper #user-display-name {
+        font-size: 18px !important;
+    }
+    body.twitter-swipe-enabled #profileWrapper #bio-display-container {
+        margin-left: 0 !important;
+        justify-content: center;
+    }
+    body.twitter-swipe-enabled #profileWrapper #user-bio-text {
+        max-width: 100%;
+        white-space: normal;
+    }
+    body.twitter-swipe-enabled #profileWrapper #vote-2027-title {
+        display: block !important;
+    }
+    body.twitter-swipe-enabled #profileWrapper #vote-2027-container {
+        margin-top: 24px !important;
+        width: 100%;
+        border-top: 1px dashed rgba(255,255,255,0.1);
+        padding-top: 20px;
+    }
+    body.twitter-swipe-enabled #profileWrapper #inline-history-container {
+        display: flex !important;
+        border-top: 1px dashed rgba(255,255,255,0.1);
+        padding-top: 20px;
+    }
+    body.twitter-swipe-enabled #profileWrapper #desktop-history-btn {
+        display: none !important;
+    }
+    body.twitter-swipe-enabled #profileWrapper #community-leaderboard {
+        align-items: center;
+    }
 }
 
 </style>
@@ -7949,8 +8019,11 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
     // 1. Activer le CSS du Carousel
     document.body.classList.add('twitter-swipe-enabled');
+    
+    // Nettoie les anciennes classes qui cassaient le scroll
+    document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
 
-    // 2. Isoler le Profil du Simulateur au chargement pour qu'ils glissent côte à côte
+    // 2. Isoler le Profil du Simulateur
     const profileSection = document.getElementById('mobile-profile-section');
     const mainContent = document.getElementById('mainContent');
     const communitySidebar = document.getElementById('communitySidebar');
@@ -7959,62 +8032,83 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     if (profileSection && mainContent && !profileWrapper) {
         profileWrapper = document.createElement('div');
         profileWrapper.id = 'profileWrapper';
-        profileWrapper.className = 'main-content'; // Pour hériter du style de scroll
         
         const container = document.createElement('div');
         container.className = 'container';
-        container.style.paddingTop = '70px'; // Sous la barre flottante du haut
         
         container.appendChild(profileSection);
         profileWrapper.appendChild(container);
         
-        // On place ce nouvel onglet juste après le simulateur
         mainContent.parentNode.insertBefore(profileWrapper, mainContent.nextSibling);
     }
 
     const panels = [communitySidebar, mainContent, profileWrapper];
     let currentTabIndex = 0;
 
-    // 3. Fonction pour animer les rubans
+    // 3. CLONAGE DE LA BARRE DU BAS (Désactive l'ancienne fonction "switchTab" qui remettait le scroll à zéro)
+    let bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        let newBottomNav = bottomNav.cloneNode(true);
+        bottomNav.parentNode.replaceChild(newBottomNav, bottomNav);
+        
+        const newNavButtons = newBottomNav.querySelectorAll('button');
+        newNavButtons.forEach((btn, index) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); // Annule les comportements natifs
+                animateToTab(index);
+            });
+        });
+    }
+
+    // 4. Fonction pour animer les rubans et gérer l'UI (titres et boutons)
     function animateToTab(index) {
         currentTabIndex = index;
         const offset = -index * 100;
+        
+        // Mouvement fluide du swipe
         panels.forEach(p => {
             if (p) {
                 p.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
                 p.style.transform = `translateX(${offset}vw)`;
             }
         });
+        
+        // Mise à jour visuelle des boutons en bas (couleurs active)
+        const tabs = ['community', 'simulator', 'profile'];
+        const navButtons = document.querySelectorAll('.bottom-nav button');
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        const targetBtn = document.querySelector(`.bottom-nav button[data-tab="${tabs[index]}"]`);
+        if (targetBtn) targetBtn.classList.add('active');
+        
+        // Mise à jour du titre en haut
+        const titles = ["L'Araignée", "Simulateur", "Mon Profil"];
+        const titleEl = document.getElementById('mobile-top-title');
+        if (titleEl) titleEl.innerText = titles[index];
+        
+        // Redessiner la carte géographique si on est sur le simulateur
+        if (index === 1 && typeof renderMaps === 'function') {
+            setTimeout(renderMaps, 300);
+        }
     }
 
-    // 4. Synchronisation visuelle si on clique sur la barre du bas
-    const navButtons = document.querySelectorAll('.bottom-nav button');
-    navButtons.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            animateToTab(index);
-        });
-    });
+    // Initialisation
+    animateToTab(0);
 
-    // 5. Initialisation au lancement selon la classe du body
-    if (document.body.classList.contains('mobile-show-profile')) animateToTab(2);
-    else if (document.body.classList.contains('mobile-show-sim')) animateToTab(1);
-    else animateToTab(0);
-
-    // 6. Mécanique de glissement natif (Touch)
+    // 5. Mécanique de glissement natif (Touch)
     let startX = 0, startY = 0, currentX = 0;
     let isSwiping = false, isHorizontalSwipe = null;
-    const swipeThreshold = window.innerWidth * 0.15; // 15% de l'écran pour valider le changement
+    const swipeThreshold = window.innerWidth * 0.15;
 
     document.addEventListener('touchstart', (e) => {
         if (window.innerWidth > 768) return;
         
-        // Bloquer le swipe sur les éléments qui s'utilisent au doigt (sliders, menus, grilles, carte)
+        // Bloquer le swipe sur les éléments interactifs
         if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || 
             e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || 
             e.target.closest('.maps-grid') || e.target.closest('.chart-card') || 
             e.target.closest('.data-table-card')) return;
 
-        // Bloquer le swipe sur un tableau qui a son propre scroll horizontal
+        // Autoriser le scroll horizontal des tableaux
         let el = e.target;
         while (el && el !== document.body) {
             if (el.scrollWidth > el.clientWidth && !el.classList.contains('page-wrapper')) return;
@@ -8035,7 +8129,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         const deltaY = e.touches[0].clientY - startY;
 
         if (isHorizontalSwipe === null) {
-            if (Math.abs(deltaX) > Math.abs(deltaY) * 1.2) { // tolérance pour ne pas bloquer les scrolls un peu diagonaux
+            if (Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
                 isHorizontalSwipe = true;
             } else {
                 isHorizontalSwipe = false;
@@ -8046,7 +8140,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
         if (!isHorizontalSwipe) return;
 
-        // Effet de résistance (élastique) aux deux bords de l'application
+        // Effet résistance aux extrémités
         if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === panels.length - 1 && deltaX < 0)) {
             const resistDelta = deltaX * 0.25;
             panels.forEach(p => {
@@ -8058,7 +8152,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             return;
         }
 
-        // Glissement parfait calqué sur le mouvement du doigt 
+        // Glissement pur calqué sur le doigt
         panels.forEach(p => {
             if (p) {
                 p.style.transition = 'none';
@@ -8073,21 +8167,15 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
         const deltaX = currentX - startX;
         
-        // Validation du glissement : si la force est suffisante, on change l'onglet
+        // Si le swipe est assez grand, on passe à l'onglet suivant/précédent
         if (Math.abs(deltaX) > swipeThreshold) {
             if (deltaX < 0 && currentTabIndex < panels.length - 1) {
-                currentTabIndex++; // Slide gauche = Onglet suivant
+                currentTabIndex++; 
             } else if (deltaX > 0 && currentTabIndex > 0) {
-                currentTabIndex--; // Slide droit = Onglet précédent
+                currentTabIndex--; 
             }
         }
         
-        // On simule le clic sur la nav du bas pour changer la couleur du bouton ciblé proprement
-        const tabs = ['community', 'simulator', 'profile'];
-        const btnToClick = document.querySelector(`.bottom-nav button[data-tab="${tabs[currentTabIndex]}"]`);
-        if (btnToClick) btnToClick.click();
-        
-        // Finalise l'animation vers la position bloquée (-100vw, -200vw etc...)
         animateToTab(currentTabIndex);
     });
 })();
