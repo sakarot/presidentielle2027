@@ -29,83 +29,6 @@
 .desktop-only { display: flex; }
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
-	/* --- GESTION DU SWIPE (Rendu 100% Mobile) --- */
-  /* --- GESTION DU SWIPE (Rendu Parfait & Natif) --- */
-  #communitySidebar, 
-  #mainContent, 
-  body > #mobile-profile-section {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100dvh !important;
-      background: var(--bg) !important;
-      z-index: 10 !important;
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
-      margin: 0 !important;
-      padding-bottom: 70px !important; /* Place pour la barre du bas */
-      will-change: transform;
-      -webkit-overflow-scrolling: touch;
-  }
-
-  #communitySidebar { z-index: 12 !important; }
-
-  /* Maintient les marges de l'en-tête mobile (L'Araignée) */
-  #mainContent .container {
-      padding-top: 70px !important;
-      padding-bottom: 20px !important;
-  }
-
-  /* Style du Profil (Désormais extrait à la racine du body) */
-  body > #mobile-profile-section {
-      padding-top: 70px !important;
-      flex-direction: column !important;
-  }
-
-  /* Rendu "Cartes" pour le profil */
-  body > #mobile-profile-section > div {
-      background: var(--surface2) !important;
-      border-radius: 16px !important;
-      padding: 20px !important;
-      margin: 0 16px 16px 16px !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-      border: 1px solid rgba(255,255,255,0.05) !important;
-      box-sizing: border-box !important;
-      width: calc(100vw - 32px) !important;
-  }
-
-  /* ---- 1. GESTION DU MASQUAGE EXTRÊME (Hors Swipe) ---- */
-  body:not(.is-swiping):not(.mobile-show-sim) #mainContent,
-  body:not(.is-swiping):not(.mobile-show-profile) > #mobile-profile-section,
-  body.mobile-show-sim:not(.is-swiping) #communitySidebar,
-  body.mobile-show-profile:not(.is-swiping) #communitySidebar {
-      display: none !important; 
-      transform: none !important;
-  }
-
-  /* ---- 2. AFFICHAGE STANDARD DES ONGLETS ---- */
-  body:not(.is-swiping):not(.mobile-show-sim):not(.mobile-show-profile) #communitySidebar {
-      display: flex !important;
-      flex-direction: column !important;
-  }
-  body.mobile-show-sim:not(.is-swiping) #mainContent {
-      display: block !important;
-  }
-  body.mobile-show-profile:not(.is-swiping) > #mobile-profile-section {
-      display: flex !important;
-  }
-
-  /* ---- 3. AFFICHAGE PENDANT LE SWIPE (Mode Panorama) ---- */
-  body.is-swiping { overflow: hidden !important; }
-  
-  body.is-swiping #communitySidebar { display: flex !important; flex-direction: column !important; }
-  body.is-swiping #mainContent { display: block !important; }
-  body.is-swiping > #mobile-profile-section { display: flex !important; }
-
-  /* On cache l'en-tête PC pendant le swipe */
-  body.is-swiping .site-header,
-  body.is-swiping .desktop-history-btn { display: none !important; }
 }
 
 #profile-tabs-container{ display: none !important; }
@@ -7952,107 +7875,78 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
-// --- GESTION DU SWIPE (GLISSEMENT) DEFINITIVE ET PARFAITE (60 FPS) ---
+// --- GESTION DU SWIPE (GLISSEMENT) POUR CHANGER D'ONGLET ---
 (function initSwipeTabs() {
-    let startX = 0, startY = 0, currentX = 0;
-    let isSwiping = false, isHorizontalSwipe = null;
-    const swipeThreshold = 60; 
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let isSwiping = false;
+    let isHorizontalSwipe = null;
+    const swipeThreshold = 80; // Distance en pixels pour valider le changement
     const tabs = ['community', 'simulator', 'profile'];
     let currentTabIndex = 0;
-    
-    let containers = [null, null, null];
 
-    // LA CLÉ EST ICI : Extrait le profil du simulateur pour qu'ils ne se parasitent plus
-    function ensureProfileExtracted() {
-        if (window.innerWidth <= 768) {
-            const prof = document.getElementById('mobile-profile-section');
-            if (prof && prof.parentElement !== document.body) {
-                document.body.appendChild(prof);
-            }
-        }
-    }
-
-    function getContainerByIndex(index) {
-        if (index === 0) return document.getElementById('communitySidebar');
-        if (index === 1) return document.getElementById('mainContent');
-        if (index === 2) return document.getElementById('mobile-profile-section');
-        return null;
+    function getActiveContainer() {
+        if (document.body.classList.contains('mobile-show-profile')) return document.getElementById('mobile-profile-section');
+        if (document.body.classList.contains('mobile-show-sim')) return document.getElementById('mainContent');
+        return document.getElementById('communitySidebar');
     }
 
     document.addEventListener('touchstart', (e) => {
         if (window.innerWidth > 768) return;
         
-        // Bloque le swipe sur les éléments interactifs (boutons, sliders, carte...)
-        if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || e.target.closest('.maps-grid') || e.target.closest('.chart-card') || e.target.closest('#history-modal') || e.target.closest('.poll-creator')) return;
+        // Bloque le swipe si on est dans un menu, sur un slider, sur une carte géographique ou si on crée un post
+        if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || e.target.closest('.maps-grid') || e.target.closest('.chart-card')) return;
 
-        // Laisse le défilement naturel sur les tableaux
+        // Bloque le swipe si l'élément touché possède son propre scroll horizontal (comme le tableau de données)
         let el = e.target;
         while (el && el !== document.body) {
             if (el.scrollWidth > el.clientWidth && !el.classList.contains('page-wrapper')) return;
             el = el.parentElement;
         }
 
-        ensureProfileExtracted();
-
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         isSwiping = true;
-        isHorizontalSwipe = null;
+        isHorizontalSwipe = null; // On ne sait pas encore l'axe principal du geste
         
+        // Détection de l'onglet de départ
         if (document.body.classList.contains('mobile-show-profile')) currentTabIndex = 2;
         else if (document.body.classList.contains('mobile-show-sim')) currentTabIndex = 1;
         else currentTabIndex = 0;
-
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
         if (!isSwiping) return;
         
         currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
         const deltaX = currentX - startX;
-        const deltaY = e.touches[0].clientY - startY;
+        const deltaY = currentY - startY;
 
+        // Calcule si l'utilisateur glisse horizontalement ou verticalement
         if (isHorizontalSwipe === null) {
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 8) {
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 isHorizontalSwipe = true;
-                
-                // MAGIE : Retirer ces classes annule les règles CSS qui vidaient le simulateur
-                document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
-                document.body.classList.add('is-swiping');
-                
-                containers = [getContainerByIndex(0), getContainerByIndex(1), getContainerByIndex(2)];
-                
-                // Positionne les 3 fenêtres exactement là où elles doivent être
-                containers.forEach((c, i) => {
-                    if (!c) return;
-                    c.style.setProperty('transition', 'none', 'important');
-                    let offset = (i - currentTabIndex) * window.innerWidth;
-                    c.style.setProperty('transform', `translate3d(${offset}px, 0, 0)`, 'important');
-                });
-
-            } else if (Math.abs(deltaY) > 8) {
-                isHorizontalSwipe = false;
-                isSwiping = false; 
-                return;
             } else {
-                return; 
+                isHorizontalSwipe = false;
+                isSwiping = false; // Abandon, on laisse le navigateur scroller verticalement
+                return;
             }
         }
 
         if (!isHorizontalSwipe) return;
 
-        // Effet "élastique" si on swipe aux extrémités
-        let resistanceDelta = deltaX;
-        if (currentTabIndex === 0 && deltaX > 0) resistanceDelta = deltaX * 0.25;
-        if (currentTabIndex === tabs.length - 1 && deltaX < 0) resistanceDelta = deltaX * 0.25;
+        // Bloque l'étirement excessif aux extrémités (pas d'onglet avant le premier ni après le dernier)
+        if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === tabs.length - 1 && deltaX < 0)) return;
 
-        // Translation purement matérielle (Fluide et au pixel près)
-        containers.forEach((c, i) => {
-            if (!c) return;
-            let offset = (i - currentTabIndex) * window.innerWidth;
-            c.style.setProperty('transform', `translate3d(${offset + resistanceDelta}px, 0, 0)`, 'important');
-        });
-        
+        // Mouvement de translation progressif sous le doigt
+        const container = getActiveContainer();
+        if (container) {
+            container.style.transition = 'none';
+            container.style.transform = `translateX(${deltaX}px)`;
+            container.style.opacity = 1 - (Math.abs(deltaX) / (window.innerWidth * 1.2)); // S'efface légèrement
+        }
     }, { passive: true });
 
     document.addEventListener('touchend', (e) => {
@@ -8060,39 +7954,35 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         isSwiping = false;
         
         const deltaX = currentX - startX;
-        
-        let newTabIndex = currentTabIndex;
-        if (deltaX < -swipeThreshold && currentTabIndex < tabs.length - 1) {
-            newTabIndex = currentTabIndex + 1;
-        } else if (deltaX > swipeThreshold && currentTabIndex > 0) {
-            newTabIndex = currentTabIndex - 1;
-        }
+        const container = getActiveContainer();
 
-        // Fin de l'animation avec un effet "Snap" natif
-        containers.forEach((c, i) => {
-            if (!c) return;
-            c.style.setProperty('transition', 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', 'important');
-            let finalOffset = (i - newTabIndex) * window.innerWidth;
-            c.style.setProperty('transform', `translate3d(${finalOffset}px, 0, 0)`, 'important');
-        });
-
-        setTimeout(() => {
-            document.body.classList.remove('is-swiping');
-            containers.forEach(c => {
-                if (c) {
-                    c.style.removeProperty('transform');
-                    c.style.removeProperty('transition');
-                }
-            });
+        if (container) {
+            container.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // On remet l'animation pour finir la glissade
             
-            // Simule un clic sur l'icône du bas pour rétablir les bonnes couleurs et états
-            const btn = document.querySelector(`.bottom-nav button[data-tab="${tabs[newTabIndex]}"]`);
-            if (btn) btn.click();
-            else {
-                if (newTabIndex === 1) document.body.classList.add('mobile-show-sim');
-                else if (newTabIndex === 2) document.body.classList.add('mobile-show-profile');
+            if (Math.abs(deltaX) > swipeThreshold) {
+                // Changement d'onglet validé
+                if (deltaX < 0 && currentTabIndex < tabs.length - 1) {
+                    container.style.transform = `translateX(-100vw)`; // On le chasse vers la gauche
+                    container.style.opacity = 0;
+                    setTimeout(() => {
+                        container.style.transform = ''; container.style.opacity = '';
+                        document.querySelector(`.bottom-nav button[data-tab="${tabs[currentTabIndex + 1]}"]`).click();
+                    }, 250);
+                } else if (deltaX > 0 && currentTabIndex > 0) {
+                    container.style.transform = `translateX(100vw)`; // On le chasse vers la droite
+                    container.style.opacity = 0;
+                    setTimeout(() => {
+                        container.style.transform = ''; container.style.opacity = '';
+                        document.querySelector(`.bottom-nav button[data-tab="${tabs[currentTabIndex - 1]}"]`).click();
+                    }, 250);
+                } else {
+                    container.style.transform = 'translateX(0)'; container.style.opacity = 1;
+                }
+            } else {
+                // Geste trop court -> On rebondit à la position initiale
+                container.style.transform = 'translateX(0)'; container.style.opacity = 1;
             }
-        }, 300);
+        }
     });
 })();
 
