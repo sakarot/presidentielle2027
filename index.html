@@ -30,12 +30,14 @@
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
 	/* --- GESTION DU SWIPE (Rendu 100% Mobile) --- */
+  /* --- GESTION DU SWIPE (Rendu 100% Mobile & Ultra Fluide) --- */
   body.is-swiping {
       overflow: hidden !important;
   }
   
   body.is-swiping #communitySidebar,
   body.is-swiping #mainContent,
+  body.is-swiping > #voter-profile-view,
   body.is-swiping > #mobile-profile-section {
       position: fixed !important;
       top: 0 !important;
@@ -44,10 +46,11 @@
       height: 100dvh !important;
       z-index: 80 !important;
       background: var(--bg) !important;
-      transition: none !important;
       box-sizing: border-box !important;
-      overflow: hidden !important;
       margin: 0 !important;
+      /* Optimisation de la fluidité via carte graphique (GPU) */
+      will-change: transform;
+      -webkit-backface-visibility: hidden;
   }
   
   body.is-swiping #communitySidebar {
@@ -59,20 +62,25 @@
       display: block !important;
   }
   
-  /* On cache l'en-tête PC pendant le swipe du simulateur */
-  body.is-swiping .site-header {
+  /* On cache les éléments PC */
+  body.is-swiping .site-header,
+  body.is-swiping .desktop-history-btn {
       display: none !important;
   }
   
-  /* Le bloc Profil (déplacé dans le body pendant le swipe) */
+  /* Le bloc Profil (déplacé temporairement pendant le swipe) */
+  body.is-swiping > #voter-profile-view,
   body.is-swiping > #mobile-profile-section {
       display: flex !important;
       flex-direction: column !important;
       padding: 70px 0 0 0 !important;
       border: none !important;
+      overflow-y: auto !important;
   }
   
-  body.is-swiping > #mobile-profile-section > div {
+  /* Style interne du profil pour forcer le design des "cartes" mobiles */
+  body.is-swiping > #voter-profile-view > div:not(#profile-tabs-container):not(.post-card),
+  body.is-swiping > #mobile-profile-section > div:not(#profile-tabs-container):not(.post-card) {
       background: var(--surface2) !important;
       border-radius: 16px !important;
       padding: 20px !important;
@@ -7927,32 +7935,29 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
-// --- GESTION DU SWIPE (GLISSEMENT) POUR CHANGER D'ONGLET AVEC APERÇU FLUIDE ---
+// --- GESTION DU SWIPE (GLISSEMENT) ULTRA FLUIDE ---
 (function initSwipeTabs() {
     let startX = 0, startY = 0, currentX = 0;
     let isSwiping = false, isHorizontalSwipe = null;
-    const swipeThreshold = 80; 
+    const swipeThreshold = 60; // Plus réactif
     const tabs = ['community', 'simulator', 'profile'];
     let currentTabIndex = 0;
     
-    let currentContainer = null;
-    let targetContainer = null;
-    let swipeDirection = 0; 
-    
+    let containers = [null, null, null];
     let profileOriginalParent = null;
     let profileOriginalNextSibling = null;
 
     function getContainerByIndex(index) {
         if (index === 0) return document.getElementById('communitySidebar');
         if (index === 1) return document.getElementById('mainContent');
-        if (index === 2) return document.getElementById('mobile-profile-section');
+        if (index === 2) return document.getElementById('voter-profile-view') || document.getElementById('mobile-profile-section');
         return null;
     }
 
     document.addEventListener('touchstart', (e) => {
         if (window.innerWidth > 768) return;
         
-        // Bloque le swipe si on interagit avec des menus, sliders, cartes, modals ou textes
+        // Bloque le swipe si interaction avec menus, sliders, modals...
         if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || e.target.closest('.maps-grid') || e.target.closest('.chart-card') || e.target.closest('#history-modal')) return;
 
         let el = e.target;
@@ -7965,48 +7970,53 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         startY = e.touches[0].clientY;
         isSwiping = true;
         isHorizontalSwipe = null;
-        targetContainer = null;
-        swipeDirection = 0;
         
+        // Cible la position actuelle
         if (document.body.classList.contains('mobile-show-profile')) currentTabIndex = 2;
         else if (document.body.classList.contains('mobile-show-sim')) currentTabIndex = 1;
         else currentTabIndex = 0;
 
-        currentContainer = getContainerByIndex(currentTabIndex);
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-        if (!isSwiping || !currentContainer) return;
+        if (!isSwiping) return;
         
         currentX = e.touches[0].clientX;
         const deltaX = currentX - startX;
         const deltaY = e.touches[0].clientY - startY;
 
+        // Détection de l'axe au bout de 8px de mouvement
         if (isHorizontalSwipe === null) {
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 8) {
                 isHorizontalSwipe = true;
                 
-                // 1. On extrait le profil pour le rendre indépendant du simulateur
-                const profileSec = document.getElementById('mobile-profile-section');
+                // 1. Extraction propre du profil pour le rendre indépendant
+                const profileSec = getContainerByIndex(2);
                 if (profileSec && profileSec.parentElement !== document.body) {
                     profileOriginalParent = profileSec.parentElement;
                     profileOriginalNextSibling = profileSec.nextSibling;
                     document.body.appendChild(profileSec);
                 }
                 
-                // 2. On désactive les classes qui forcent le "display: none" des onglets
-                document.body.classList.remove('mobile-show-profile', 'mobile-show-sim');
+                // 2. Activation du mode Swipe
                 document.body.classList.add('is-swiping');
                 
-                // 3. On cache les 3 conteneurs hors de l'écran par sécurité
-                [0, 1, 2].forEach(i => {
-                    const c = getContainerByIndex(i);
-                    if (c && i !== currentTabIndex) {
-                        c.style.setProperty('transform', 'translateX(200vw)', 'important');
+                // 3. Pré-chargement des vues dans le GPU
+                containers = [getContainerByIndex(0), getContainerByIndex(1), getContainerByIndex(2)];
+                
+                containers.forEach((c, i) => {
+                    if (!c) return;
+                    c.style.setProperty('transition', 'none', 'important');
+                    if (i === currentTabIndex) {
+                        c.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
+                    } else if (i < currentTabIndex) {
+                        c.style.setProperty('transform', 'translate3d(-100vw, 0, 0)', 'important');
+                    } else {
+                        c.style.setProperty('transform', 'translate3d(100vw, 0, 0)', 'important');
                     }
                 });
 
-            } else if (Math.abs(deltaY) > 10) {
+            } else if (Math.abs(deltaY) > 8) {
                 isHorizontalSwipe = false;
                 isSwiping = false; 
                 return;
@@ -8017,90 +8027,64 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
         if (!isHorizontalSwipe) return;
 
-        // Bloque aux extrémités
-        if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === tabs.length - 1 && deltaX < 0)) return;
+        // Effet de résistance élastique aux extrémités
+        let resistanceDelta = deltaX;
+        if (currentTabIndex === 0 && deltaX > 0) resistanceDelta = deltaX * 0.25;
+        if (currentTabIndex === tabs.length - 1 && deltaX < 0) resistanceDelta = deltaX * 0.25;
 
-        const newDirection = deltaX < 0 ? -1 : 1;
-        
-        // Si on change de direction en cours de route
-        if (targetContainer && swipeDirection !== newDirection) {
-            targetContainer.style.setProperty('transform', 'translateX(200vw)', 'important');
-            targetContainer = null;
-        }
-        
-        swipeDirection = newDirection;
-        
-        if (!targetContainer) {
-            targetContainer = getContainerByIndex(currentTabIndex - swipeDirection);
-        }
-
-        // DEPLACEMENT EN DIRECT
-        currentContainer.style.setProperty('transform', `translateX(${deltaX}px)`, 'important');
-
-        if (targetContainer) {
-            const offset = swipeDirection === -1 ? window.innerWidth : -window.innerWidth;
-            targetContainer.style.setProperty('transform', `translateX(${offset + deltaX}px)`, 'important');
-        }
+        // Déplacement ultra fluide (translate3d)
+        containers.forEach((c, i) => {
+            if (!c) return;
+            let baseOffset = (i - currentTabIndex) * window.innerWidth;
+            c.style.setProperty('transform', `translate3d(${baseOffset + resistanceDelta}px, 0, 0)`, 'important');
+        });
         
     }, { passive: true });
 
     document.addEventListener('touchend', (e) => {
-        if (!isSwiping || !isHorizontalSwipe || !currentContainer) return;
+        if (!isSwiping || !isHorizontalSwipe) return;
         isSwiping = false;
         
         const deltaX = currentX - startX;
         
-        if (Math.abs(deltaX) > swipeThreshold && targetContainer) {
-            // ---> SUCCÈS : L'animation va jusqu'au bout
-            const offset = swipeDirection === -1 ? -window.innerWidth : window.innerWidth;
-            
-            currentContainer.style.setProperty('transition', 'transform 0.3s ease-out', 'important');
-            targetContainer.style.setProperty('transition', 'transform 0.3s ease-out', 'important');
-            
-            currentContainer.style.setProperty('transform', `translateX(${offset}px)`, 'important');
-            targetContainer.style.setProperty('transform', `translateX(0px)`, 'important');
-            
-            setTimeout(() => {
-                cleanupSwipe();
-                const btn = document.querySelector(`.bottom-nav button[data-tab="${tabs[currentTabIndex - swipeDirection]}"]`);
-                if(btn) btn.click();
-            }, 300);
-
-        } else {
-            // ---> ÉCHEC (Swipe trop court) : On rebondit sur la page d'origine
-            currentContainer.style.setProperty('transition', 'transform 0.3s ease-out', 'important');
-            currentContainer.style.setProperty('transform', 'translateX(0px)', 'important');
-            
-            if (targetContainer) {
-                const offset = swipeDirection === -1 ? window.innerWidth : -window.innerWidth;
-                targetContainer.style.setProperty('transition', 'transform 0.3s ease-out', 'important');
-                targetContainer.style.setProperty('transform', `translateX(${offset}px)`, 'important');
-            }
-            
-            setTimeout(() => {
-                cleanupSwipe();
-                // Rétablit l'état d'origine
-                if (currentTabIndex === 1) document.body.classList.add('mobile-show-sim');
-                else if (currentTabIndex === 2) document.body.classList.add('mobile-show-profile');
-            }, 300);
+        // Détermine la nouvelle page de destination
+        let newTabIndex = currentTabIndex;
+        if (deltaX < -swipeThreshold && currentTabIndex < tabs.length - 1) {
+            newTabIndex = currentTabIndex + 1;
+        } else if (deltaX > swipeThreshold && currentTabIndex > 0) {
+            newTabIndex = currentTabIndex - 1;
         }
-        
-        targetContainer = null;
-        currentContainer = null;
+
+        // Animation d'amorti (cubic-bezier pour un effet "Snap" natif)
+        containers.forEach((c, i) => {
+            if (!c) return;
+            c.style.setProperty('transition', 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', 'important');
+            let finalOffset = (i - newTabIndex) * window.innerWidth;
+            c.style.setProperty('transform', `translate3d(${finalOffset}px, 0, 0)`, 'important');
+        });
+
+        // Fin de l'animation
+        setTimeout(() => {
+            cleanupSwipe();
+            if (newTabIndex !== currentTabIndex) {
+                // Clique virtuellement sur l'icône du menu du bas
+                const btn = document.querySelector(`.bottom-nav button[data-tab="${tabs[newTabIndex]}"]`);
+                if(btn) btn.click();
+            }
+        }, 300);
     });
 
     function cleanupSwipe() {
         document.body.classList.remove('is-swiping');
-        [0, 1, 2].forEach(i => {
-            const c = getContainerByIndex(i);
+        containers.forEach(c => {
             if (c) {
                 c.style.removeProperty('transform');
                 c.style.removeProperty('transition');
             }
         });
         
-        // On remet le profil à sa place dans le simulateur
-        const profileSec = document.getElementById('mobile-profile-section');
+        // Remet le profil à sa place initiale
+        const profileSec = getContainerByIndex(2);
         if (profileSec && profileOriginalParent) {
             profileOriginalParent.insertBefore(profileSec, profileOriginalNextSibling);
             profileOriginalParent = null;
