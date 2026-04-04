@@ -130,17 +130,27 @@ body.light-mode .logo-wrapper svg circle[r="4"] {
 
 body.light-mode .title-block h1,
 body.light-mode .chat-header,
-body.light-mode .post-body,
 body.light-mode .tt-stats-val,
 body.light-mode .tt-header,
-body.light-mode .t2-bar-left,
-body.light-mode .t2-bar-right,
 body.light-mode .poll-tooltip,
 body.light-mode .map-tooltip {
     color: var(--text) !important;
 	background: var(--bg) !important;
 	backdrop-filter: blur(4px);
     border: 1px solid var(--border);
+}
+
+/* Rend le texte des posts lisible en mode clair, SANS cadre autour */
+body.light-mode .post-body {
+    color: var(--text) !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Le fond des barres restera Rouge et Bleu, on force juste le texte à rester Blanc */
+body.light-mode .t2-bar-left,
+body.light-mode .t2-bar-right {
+    color: #FFFFFF !important; 
 }
 
 /* --- GESTION DES PSEUDOS (Couleurs des partis conservées) --- */
@@ -189,9 +199,9 @@ body.light-mode .data-table-card {
     background: var(--surface);
 }
 
-body.light-mode .post-card, {
+body.light-mode .post-card {
     background: var(--bg) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Optionnel : ombre légère pour le relief */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
 }
 body.light-mode .vote-panel-container,
 body.light-mode .chart-card {
