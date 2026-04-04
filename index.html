@@ -8027,50 +8027,54 @@ window.resetNavBars = function() {
     if (activeBottomNav) activeBottomNav.style.transition = 'transform 0.3s ease-in-out';
     if (topBar) topBar.style.transition = 'transform 0.3s ease-in-out';
     if (topLogo) topLogo.style.transition = 'transform 0.3s ease-in-out';
-
-    function animateToTab(index) {
-        currentTabIndex = index;
-        const offset = -index * 100;
-        
-        panels.forEach((group) => {
-            group.forEach(p => {
-                if (p) {
-                    p.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
-                    // Force l'accélération matérielle pour un glissement plus fluide
-                    p.style.transform = `translate3d(${offset}vw, 0, 0)`;
-                }
-            });
+    let initialNavResetDone = false;
+   function animateToTab(index) {
+    currentTabIndex = index;
+    const offset = -index * 100;
+    panels.forEach((group) => {
+        group.forEach(p => {
+            if (p) {
+                // 2. Fluidifier la transition : On allonge légèrement la durée (0.4s) et on utilise une courbe plus douce
+                p.style.transition = 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)'; 
+                p.style.transform = `translate3d(${offset}vw, 0, 0)`;
+            }
         });
-        
-        const tabs = ['community', 'simulator', 'profile'];
-        const navButtons = document.querySelectorAll('.bottom-nav button');
-        navButtons.forEach(btn => btn.classList.remove('active'));
-        const targetBtn = document.querySelector(`.bottom-nav button[data-tab="${tabs[index]}"]`);
-        if (targetBtn) targetBtn.classList.add('active');
-        
-        const topTitle = document.getElementById('mobile-top-title');
-        const titles = ["L'Araignée", "Simulateur", "Mon Profil"];
-        if (topTitle) topTitle.innerText = titles[index];
-        
-        if (index === 1 && typeof renderMaps === 'function') {
-            setTimeout(renderMaps, 300);
-        }
+    });
 
-if (typeof window.resetNavBars === 'function') {
-        window.resetNavBars();
+    const tabs = ['community', 'simulator', 'profile'];
+    const navButtons = document.querySelectorAll('.bottom-nav button');
+    navButtons.forEach(btn => btn.classList.remove('active'));
+    const targetBtn = document.querySelector(`.bottom-nav button[data-tab="${tabs[index]}"]`);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    const topTitle = document.getElementById('mobile-top-title');
+    const titles = ["L'Araignée", "Simulateur", "Mon Profil"];
+    if (topTitle) topTitle.innerText = titles[index];
+
+    if (index === 1 && typeof renderMaps === 'function') {
+        setTimeout(renderMaps, 300);
     }
-	if (index === 2 && typeof window.switchProfileTab === 'function') {
-            window.switchProfileTab('posts');
+
+    // NOUVELLE LOGIQUE POUR LES BARRES : 
+    // Ne s'affiche par défaut qu'au premier chargement de l'onglet communauté
+    if (typeof window.resetNavBars === 'function') {
+        if (!initialNavResetDone && index === 0) {
+            window.resetNavBars();
+            initialNavResetDone = true;
         }
+    }
+
+    if (index === 2 && typeof window.switchProfileTab === 'function') {
+        window.switchProfileTab('posts');
+    }
 }
 animateToTab(0);
 
-    // ---------------------------------------------------------
-    // MÉCANIQUE DE GLISSEMENT (TOUCHER)
-    // ---------------------------------------------------------
-    let startX = 0, startY = 0, currentX = 0;
-    let isSwiping = false, isHorizontalSwipe = null;
-    const swipeThreshold = window.innerWidth * 0.15;
+   let startX = 0, startY = 0, currentX = 0;
+let isSwiping = false, isHorizontalSwipe = null;
+
+// Modifiez le seuil ici (ex: 8% au lieu de 15%) pour un déclenchement très facile
+const swipeThreshold = window.innerWidth * 0.08;
 
     document.addEventListener('touchstart', (e) => {
         if (window.innerWidth > 768) return;
