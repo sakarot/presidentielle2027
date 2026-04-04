@@ -7861,6 +7861,98 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
+(function initMobileScroll() {
+    let lastScrollY = window.scrollY || 0;
+    let topBarOffset = 0;
+    let bottomBarOffset = 0;
+    let ticking = false;
+
+    // VITESSE D'ANIMATION (0.4 = beaucoup plus lent et doux que le doigt)
+    const SCROLL_SPEED = 0.4;
+
+    function updateBars() {
+        const topBar = document.getElementById('mobile-feed-header');
+        const bottomBar = document.querySelector('.bottom-nav');
+        const topLogo = document.getElementById('mobile-top-logo');
+        
+        if (topBar) {
+            topBar.style.setProperty('transition', 'none', 'important');
+            topBar.style.setProperty('transform', `translateY(${topBarOffset}px)`, 'important');
+        }
+        
+        if (topLogo) {
+            topLogo.style.setProperty('transition', 'none', 'important');
+            topLogo.style.setProperty('transform', `translateX(-50%) translateY(${topBarOffset}px)`, 'important');
+        }
+
+        if (bottomBar) {
+            if (document.body.classList.contains('mobile-composer-open')) {
+                bottomBar.style.setProperty('transition', 'transform 0.3s ease-in-out', 'important');
+                bottomBar.style.setProperty('transform', 'translateY(100%)', 'important');
+            } else {
+                bottomBar.style.setProperty('transition', 'none', 'important');
+                // Utilisation de translate3d pour forcer l'accélération matérielle (Evite les bugs Safari)
+                bottomBar.style.setProperty('transform', `translate3d(0, ${bottomBarOffset}px, 0)`, 'important');
+            }
+        }
+        ticking = false;
+    }
+
+    function handleScroll(e) {
+        if (window.innerWidth > 768) return;
+        if (document.body.classList.contains('mobile-composer-open')) return;
+
+        let currentScrollY = window.scrollY;
+        if (e.target && e.target.scrollTop !== undefined) {
+            currentScrollY = e.target.scrollTop;
+        }
+        if (currentScrollY < 0) currentScrollY = 0;
+
+        const topBar = document.getElementById('mobile-feed-header');
+        const bottomBar = document.querySelector('.bottom-nav');
+        
+        const topBarHeight = topBar ? topBar.offsetHeight : 60;
+        const bottomBarHeight = bottomBar ? bottomBar.offsetHeight + (parseInt(window.getComputedStyle(bottomBar).paddingBottom) || 0) : 80;
+
+        if (currentScrollY <= 0) {
+            topBarOffset = 0; bottomBarOffset = 0;
+            lastScrollY = currentScrollY;
+            if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
+            return;
+        }
+
+        // Application du ralentisseur
+        const deltaY = (currentScrollY - lastScrollY) * SCROLL_SPEED;
+        
+        topBarOffset -= deltaY; 
+        bottomBarOffset += deltaY; 
+
+        if (topBarOffset > 0) topBarOffset = 0;
+        if (topBarOffset < -topBarHeight) topBarOffset = -topBarHeight;
+        
+        if (bottomBarOffset < 0) bottomBarOffset = 0;
+        if (bottomBarOffset > bottomBarHeight) bottomBarOffset = bottomBarHeight;
+
+        lastScrollY = currentScrollY;
+
+        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
+    }
+
+    const chatFeed = document.getElementById('chat-feed');
+    if (chatFeed) chatFeed.addEventListener('scroll', handleScroll, { passive: true });
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) mainContent.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    window.resetNavBars = function() {
+        topBarOffset = 0; bottomBarOffset = 0; lastScrollY = 0; 
+        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
+    };
+
+    // FORCE L'AFFICHAGE COMPLET AU CHARGEMENT (Règle le bug Safari du premier lancement)
+    setTimeout(window.resetNavBars, 150);
+})();
+	
 // --- GESTION DU SWIPE TWITTER (V4 - Glissement fluide & Scroll Sécurisé) ---
 (function initTwitterSwipe() {
     if (window.innerWidth > 768) return;
