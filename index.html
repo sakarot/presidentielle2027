@@ -30,65 +30,45 @@
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
 	/* --- GESTION DU SWIPE (Rendu 100% Mobile) --- */
-  /* --- GESTION DU SWIPE (Rendu 100% Mobile & Ultra Fluide) --- */
+  /* --- GESTION DU SWIPE (Rendu Parfait & Natif) --- */
   body.is-swiping {
       overflow: hidden !important;
   }
   
   body.is-swiping #communitySidebar,
-  body.is-swiping #mainContent,
-  body.is-swiping > #voter-profile-view,
-  body.is-swiping > #mobile-profile-section {
+  body.is-swiping #mainContent {
       position: fixed !important;
-      top: 0 !important;
+      top: 0 !important; 
       left: 0 !important;
-      width: 100vw !important;
+      width: 100vw !important; 
       height: 100dvh !important;
       z-index: 80 !important;
       background: var(--bg) !important;
-      box-sizing: border-box !important;
-      margin: 0 !important;
-      /* Optimisation de la fluidité via carte graphique (GPU) */
       will-change: transform;
-      -webkit-backface-visibility: hidden;
+      margin: 0 !important; 
+      padding: 0 !important;
   }
   
-  body.is-swiping #communitySidebar {
+  body.is-swiping #communitySidebar { display: flex !important; flex-direction: column !important; }
+  body.is-swiping #mainContent { display: block !important; }
+  
+  /* Le Profil reste dans le Simulateur, mais on le décale d'un écran vers la droite ! */
+  body.is-swiping #voter-profile-view,
+  body.is-swiping #mobile-profile-section {
       display: flex !important;
+      position: absolute !important;
+      top: 0 !important; 
+      left: 0 !important;
+      width: 100vw !important; 
+      height: 100dvh !important;
+      background: var(--bg) !important;
       flex-direction: column !important;
-  }
-  
-  body.is-swiping #mainContent {
-      display: block !important;
-  }
-  
-  /* On cache les éléments PC */
-  body.is-swiping .site-header,
-  body.is-swiping .desktop-history-btn {
-      display: none !important;
-  }
-  
-  /* Le bloc Profil (déplacé temporairement pendant le swipe) */
-  body.is-swiping > #voter-profile-view,
-  body.is-swiping > #mobile-profile-section {
-      display: flex !important;
-      flex-direction: column !important;
-      padding: 70px 0 0 0 !important;
-      border: none !important;
+      padding-top: 70px !important;
       overflow-y: auto !important;
   }
   
-  /* Style interne du profil pour forcer le design des "cartes" mobiles */
-  body.is-swiping > #voter-profile-view > div:not(#profile-tabs-container):not(.post-card),
-  body.is-swiping > #mobile-profile-section > div:not(#profile-tabs-container):not(.post-card) {
-      background: var(--surface2) !important;
-      border-radius: 16px !important;
-      padding: 20px !important;
-      margin: 0 16px 16px 16px !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-      width: calc(100vw - 32px) !important;
-      box-sizing: border-box !important;
-  }
+  body.is-swiping .site-header,
+  body.is-swiping .desktop-history-btn { display: none !important; }
 }
 
 #profile-tabs-container{ display: none !important; }
@@ -7935,18 +7915,16 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
-// --- GESTION DU SWIPE (GLISSEMENT) ULTRA FLUIDE ---
+// --- GESTION DU SWIPE (GLISSEMENT) ULTRA FLUIDE ET IDENTIQUE ---
 (function initSwipeTabs() {
     let startX = 0, startY = 0, currentX = 0;
     let isSwiping = false, isHorizontalSwipe = null;
-    const swipeThreshold = 60; // Plus réactif
+    const swipeThreshold = 60; 
     const tabs = ['community', 'simulator', 'profile'];
     let currentTabIndex = 0;
     
     let containers = [null, null, null];
-    let profileOriginalParent = null;
-    let profileOriginalNextSibling = null;
-
+    
     function getContainerByIndex(index) {
         if (index === 0) return document.getElementById('communitySidebar');
         if (index === 1) return document.getElementById('mainContent');
@@ -7957,7 +7935,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     document.addEventListener('touchstart', (e) => {
         if (window.innerWidth > 768) return;
         
-        // Bloque le swipe si interaction avec menus, sliders, modals...
+        // Bloque le swipe sur les menus, modals, sliders, etc.
         if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || e.target.closest('.maps-grid') || e.target.closest('.chart-card') || e.target.closest('#history-modal')) return;
 
         let el = e.target;
@@ -7971,7 +7949,7 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         isSwiping = true;
         isHorizontalSwipe = null;
         
-        // Cible la position actuelle
+        // Détection de l'onglet actif
         if (document.body.classList.contains('mobile-show-profile')) currentTabIndex = 2;
         else if (document.body.classList.contains('mobile-show-sim')) currentTabIndex = 1;
         else currentTabIndex = 0;
@@ -7985,36 +7963,22 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         const deltaX = currentX - startX;
         const deltaY = e.touches[0].clientY - startY;
 
-        // Détection de l'axe au bout de 8px de mouvement
         if (isHorizontalSwipe === null) {
             if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 8) {
                 isHorizontalSwipe = true;
                 
-                // 1. Extraction propre du profil pour le rendre indépendant
-                const profileSec = getContainerByIndex(2);
-                if (profileSec && profileSec.parentElement !== document.body) {
-                    profileOriginalParent = profileSec.parentElement;
-                    profileOriginalNextSibling = profileSec.nextSibling;
-                    document.body.appendChild(profileSec);
-                }
+                // MAGIE ICI : On force l'activation des classes mobiles pour garantir un affichage 100% identique !
+                document.body.classList.add('mobile-show-profile', 'mobile-show-sim', 'is-swiping');
                 
-                // 2. Activation du mode Swipe
-                document.body.classList.add('is-swiping');
-                
-                // 3. Pré-chargement des vues dans le GPU
                 containers = [getContainerByIndex(0), getContainerByIndex(1), getContainerByIndex(2)];
                 
-                containers.forEach((c, i) => {
-                    if (!c) return;
-                    c.style.setProperty('transition', 'none', 'important');
-                    if (i === currentTabIndex) {
-                        c.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
-                    } else if (i < currentTabIndex) {
-                        c.style.setProperty('transform', 'translate3d(-100vw, 0, 0)', 'important');
-                    } else {
-                        c.style.setProperty('transform', 'translate3d(100vw, 0, 0)', 'important');
-                    }
-                });
+                // Coupe les transitions pour coller au doigt
+                if(containers[0]) containers[0].style.setProperty('transition', 'none', 'important');
+                if(containers[1]) containers[1].style.setProperty('transition', 'none', 'important');
+                if(containers[2]) containers[2].style.setProperty('transition', 'none', 'important');
+                
+                // Le profil (2) est fixé à l'intérieur du simulateur (1) à exactement 1 écran vers la droite
+                if(containers[2]) containers[2].style.setProperty('transform', 'translate3d(100vw, 0, 0)', 'important');
 
             } else if (Math.abs(deltaY) > 8) {
                 isHorizontalSwipe = false;
@@ -8027,17 +7991,21 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
 
         if (!isHorizontalSwipe) return;
 
-        // Effet de résistance élastique aux extrémités
+        // Résistance aux extrémités (effet élastique)
         let resistanceDelta = deltaX;
         if (currentTabIndex === 0 && deltaX > 0) resistanceDelta = deltaX * 0.25;
         if (currentTabIndex === tabs.length - 1 && deltaX < 0) resistanceDelta = deltaX * 0.25;
 
-        // Déplacement ultra fluide (translate3d)
-        containers.forEach((c, i) => {
-            if (!c) return;
-            let baseOffset = (i - currentTabIndex) * window.innerWidth;
-            c.style.setProperty('transform', `translate3d(${baseOffset + resistanceDelta}px, 0, 0)`, 'important');
-        });
+        // Déplacement du panorama complet
+        if(containers[0]) {
+            let offset0 = (0 - currentTabIndex) * window.innerWidth;
+            containers[0].style.setProperty('transform', `translate3d(${offset0 + resistanceDelta}px, 0, 0)`, 'important');
+        }
+        if(containers[1]) {
+            let offset1 = (1 - currentTabIndex) * window.innerWidth;
+            containers[1].style.setProperty('transform', `translate3d(${offset1 + resistanceDelta}px, 0, 0)`, 'important');
+        }
+        // Pas besoin de bouger le Profil (containers[2]), car étant à l'intérieur de mainContent, il suit tout seul !
         
     }, { passive: true });
 
@@ -8047,7 +8015,6 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
         
         const deltaX = currentX - startX;
         
-        // Détermine la nouvelle page de destination
         let newTabIndex = currentTabIndex;
         if (deltaX < -swipeThreshold && currentTabIndex < tabs.length - 1) {
             newTabIndex = currentTabIndex + 1;
@@ -8055,41 +8022,44 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
             newTabIndex = currentTabIndex - 1;
         }
 
-        // Animation d'amorti (cubic-bezier pour un effet "Snap" natif)
-        containers.forEach((c, i) => {
-            if (!c) return;
-            c.style.setProperty('transition', 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', 'important');
-            let finalOffset = (i - newTabIndex) * window.innerWidth;
-            c.style.setProperty('transform', `translate3d(${finalOffset}px, 0, 0)`, 'important');
-        });
+        // Animation de glissement final fluide
+        if(containers[0]) containers[0].style.setProperty('transition', 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', 'important');
+        if(containers[1]) containers[1].style.setProperty('transition', 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', 'important');
+        
+        if(containers[0]) {
+            let finalOffset0 = (0 - newTabIndex) * window.innerWidth;
+            containers[0].style.setProperty('transform', `translate3d(${finalOffset0}px, 0, 0)`, 'important');
+        }
+        if(containers[1]) {
+            let finalOffset1 = (1 - newTabIndex) * window.innerWidth;
+            containers[1].style.setProperty('transform', `translate3d(${finalOffset1}px, 0, 0)`, 'important');
+        }
 
-        // Fin de l'animation
+        // Nettoyage et application du vrai changement
         setTimeout(() => {
-            cleanupSwipe();
+            cleanupSwipe(newTabIndex);
             if (newTabIndex !== currentTabIndex) {
-                // Clique virtuellement sur l'icône du menu du bas
+                // Déclenche le bouton du bas pour que le reste de votre application suive l'état
                 const btn = document.querySelector(`.bottom-nav button[data-tab="${tabs[newTabIndex]}"]`);
-                if(btn) btn.click();
+                if(btn) btn.click(); 
             }
         }, 300);
     });
 
-    function cleanupSwipe() {
+    function cleanupSwipe(newTabIndex) {
         document.body.classList.remove('is-swiping');
+        // On retire les forçages, et on ne garde que la classe de l'onglet actif (si annulation ou réussite)
+        document.body.classList.remove('mobile-show-profile', 'mobile-show-sim');
+        
+        if (newTabIndex === 1) document.body.classList.add('mobile-show-sim');
+        else if (newTabIndex === 2) document.body.classList.add('mobile-show-profile');
+
         containers.forEach(c => {
             if (c) {
                 c.style.removeProperty('transform');
                 c.style.removeProperty('transition');
             }
         });
-        
-        // Remet le profil à sa place initiale
-        const profileSec = getContainerByIndex(2);
-        if (profileSec && profileOriginalParent) {
-            profileOriginalParent.insertBefore(profileSec, profileOriginalNextSibling);
-            profileOriginalParent = null;
-            profileOriginalNextSibling = null;
-        }
     }
 })();
 
