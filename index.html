@@ -31,6 +31,8 @@
     .desktop-only { display: none !important; }
 }
 
+#profile-tabs-container{ display: none !important; }
+
 .theme-toggle-btn {
     position: absolute;
     top: 24px;
@@ -1777,6 +1779,8 @@ body.light-mode #mobile-feed-header {
         width: 100%;
         box-sizing: border-box;
     }
+	
+	#profile-tabs-container{ display: block !important; }
 
 }
 
@@ -1819,7 +1823,7 @@ body.light-mode #mobile-feed-header {
 
 <div class="page-wrapper">
 
-  <div id="mobile-feed-header" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed color-mix(in srgb, var(--text-dim) 30%, transparent); background: transparent; position: relative; z-index: 150; transition: transform 0.3s ease-in-out;">
+  <div id="mobile-feed-header" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: none; background: transparent; position: relative; z-index: 150; transition: transform 0.3s ease-in-out;">
     <div style="display: flex; align-items: center; gap: 8px;">
         <button class="minimal-gif-btn mobile-only-flex" id="mobile-theme-btn" onclick="toggleTheme()" title="Changer le thème" style="padding: 4px; display: none;">
             <svg class="icon-sun-clone" viewBox="0 0 24 24" width="16" height="16" style="display: block; fill: currentColor;"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z"></path></svg>
@@ -1998,6 +2002,8 @@ body.light-mode #mobile-feed-header {
             <div id="desktop-history-btn" style="margin-left: 4px; margin-top: 10px;">
               <button class="minimal-gif-btn" style="font-size: 10px; padding: 4px 8px;" onclick="openHistoryEditor()">Historique de vote</button>
             </div>
+			
+
           </div>
           
           <div id="vote-2027-container" style="display: flex; flex-direction: column; gap: 6px; margin-top: 16px;">
@@ -2035,6 +2041,16 @@ body.light-mode #mobile-feed-header {
             <span style="font-size: 11px; color: var(--text-dim); font-style: italic;">Aucun vote pour l'instant...</span>
           </div>
         </div>
+					<div id="profile-tabs-container" style="width: 100%; margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+    
+
+		    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <button id="tab-my-posts" class="minimal-gif-btn3 active" style="flex: 1;" onclick="switchProfileTab('posts')">Mes posts</button>
+        <button id="tab-my-replies" class="minimal-gif-btn3" style="flex: 1;" onclick="switchProfileTab('replies')">Mes réponses</button>
+    </div>
+	    <div id="profile-posts-tab" style="display: flex; flex-direction: column; gap: 8px;"></div>
+    <div id="profile-replies-tab" style="display: none; flex-direction: column; gap: 8px;"></div>
+</div>
       </div>
 
  <div class="controls-panel">
@@ -2253,7 +2269,7 @@ body.light-mode #mobile-feed-header {
         <button type="button" class="delete-btn" onclick="removeSelectedAudio()" style="margin-left: auto; flex-shrink: 0;">✖</button>
     </div>
           
-          <textarea id="post-text" placeholder="Tisse ta toile..."></textarea>
+          <textarea id="post-text" placeholder="Tisse ta toile..." maxlength="256"></textarea>
           
         <div class="poll-creator" id="poll-creator-box">
            <div id="poll-options-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
@@ -4049,44 +4065,46 @@ function renderFeed() {
 // HASHTAGS & POST
 // ==========================================
 
-function formatText(txt) {
-  if (!txt) return '';
-  let escaped = txt.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  
-  // 1. Détection des liens
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  let urls = [];
-  escaped = escaped.replace(urlRegex, (match) => {
-      urls.push(match);
-      return `<a href="${match}" target="_blank" rel="noopener noreferrer" class="post-link" onclick="event.stopPropagation()">${match}</a>`;
-  });
-
-  // 2. Détection des Hashtags
-  escaped = escaped.replace(/#([a-zA-Z]+)/gi, (match, p1) => {
-    let upper = p1.toUpperCase();
-    if (VALID_HASHTAGS.includes(upper)) {
-       return `<span class="hashtag-link h-${upper}" onclick="event.stopPropagation(); setHashtagFilter('${upper}')">${match}</span>`;
-    }
-    return match;
-  });
-  
-  escaped = escaped.replace(/\n/g, '<br>');
-
-  // 3. Si un lien est trouvé, on prépare la boîte pour le Link Preview
-  if (urls.length > 0) {
-      const previewId = 'preview-' + Math.random().toString(36).substr(2, 9);
-      escaped += `<div class="link-preview-wrapper" id="${previewId}">
-                     <div class="link-preview-loading">Chargement de l'aperçu du lien...</div>
-                  </div>`;
-      // On lance la récupération en asynchrone
-      setTimeout(() => fetchLinkPreview(urls[0], previewId), 50);
-  }
-  
-  escaped = escaped.replace(/@([a-zA-Z0-9_-]+)/g, (match, p1) => {
-    return `<span class="mention-link" onclick="event.stopPropagation(); window.openUserProfile(&quot;${p1}&quot;)">${match}</span>`;
-  });
- 
-  return escaped;
+function formatText(txt) { 
+    if (!txt) return '';
+    
+    let escaped = txt.replace(/</g, "&lt;").replace(/>/g, "&gt;"); 
+    
+    // 1. Détection des liens 
+    const urlRegex = /(https?:\/\/[^\s]+)/g; 
+    let urls = [];
+    escaped = escaped.replace(urlRegex, (match) => { 
+        urls.push(match); 
+        // Au lieu de créer un lien <a>, on retourne une chaîne vide pour masquer l'URL
+        return ''; 
+    });
+    
+    // 2. Détection des Hashtags 
+    escaped = escaped.replace(/#([a-zA-Z]+)/gi, (match, p1) => { 
+        let upper = p1.toUpperCase(); 
+        if (VALID_HASHTAGS.includes(upper)) { 
+            return `<span class="hashtag-link h-${upper}" onclick="event.stopPropagation(); setHashtagFilter('${upper}')">${match}</span>`; 
+        } 
+        return match; 
+    });
+    
+    escaped = escaped.replace(/\n/g, '<br>'); 
+    
+    // 3. Si un lien est trouvé, on prépare la boîte pour le Link Preview 
+    if (urls.length > 0) { 
+        const previewId = 'preview-' + Math.random().toString(36).substr(2, 9);
+        escaped += `<div class="link-preview-wrapper" id="${previewId}"> 
+                        <div class="link-preview-loading">Chargement de l'aperçu du lien...</div> 
+                    </div>`;
+        // On lance la récupération en asynchrone (ne prend que le premier lien pour l'aperçu)
+        setTimeout(() => fetchLinkPreview(urls[0], previewId), 50);
+    } 
+    
+    escaped = escaped.replace(/@([a-zA-Z0-9_-]+)/g, (match, p1) => { 
+        return `<span class="mention-link" onclick="event.stopPropagation(); window.openUserProfile(&quot;${p1}&quot;)">${match}</span>`; 
+    }); 
+    
+    return escaped;
 }
 
 // Nouvelle fonction pour récupérer les aperçus (Titre, Image, Description) via Microlink
@@ -5130,17 +5148,37 @@ function setFocusComment(postId, commentId, event) {
         event.stopPropagation();
         // On ne déclenche pas le focus si on clique sur un lien, un bouton ou un hashtag
         if (event.target.closest('button') || event.target.closest('.hashtag-link') || event.target.closest('.poll-option') || event.target.closest('a')) return;
+        
+        // --- 1. CLIC MANUEL (FOCUS) : ON FERME TOUT EN DESSOUS ---
+        const allComments = window.postComments[postId] || [];
+        function closeAllDescendants(parentId) {
+            allComments.filter(c => c.parentId === parentId).forEach(child => {
+                window.openThreads[child.id] = false;
+                closeAllDescendants(child.id); // Récursion pour n+2, n+3...
+            });
+        }
+        
+        // On cache ses réponses directes (n+1)
+        window.openThreads[commentId] = false;
+        // On cache toutes les autres réponses imbriquées
+        closeAllDescendants(commentId);
+        
+    } else {
+        // --- 2. FOCUS PROGRAMMATIQUE (ex: quand on clique sur le bouton "Réponses" exprès pour ouvrir) ---
+        if (commentId) {
+            window.openThreads[commentId] = true;
+        }
     }
     
-    if (window.focusedCommentId[postId] === commentId) return;
-
-    window.focusedCommentId[postId] = commentId; 
-    
-    if (commentId) {
-        window.openThreads[commentId] = true;
+    // Si la carte avait déjà le focus, on arrête ici MAIS on rafraîchit l'affichage 
+    // car on vient probablement de fermer ses enfants au clic !
+    if (window.focusedCommentId[postId] === commentId) {
+        renderPostComments(postId);
+        return;
     }
-
-    renderPostComments(postId); 
+    
+    window.focusedCommentId[postId] = commentId;
+    renderPostComments(postId);
 }
 
 function renderPostComments(postId) {
@@ -5318,41 +5356,45 @@ function buildCommentNodeHtml(c, allComments, isRoot, focusPath = [], focusId = 
 }
 
 function toggleReplies(postId, commentId, event) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     
     const allComments = window.postComments[postId] || [];
     const focusId = window.focusedCommentId[postId] || null;
-    
     let depth = 1;
+
     let current = allComments.find(c => c.id === commentId);
     while (current && current.parentId && current.id !== focusId) {
         depth++;
         current = allComments.find(c => c.id === current.parentId);
     }
-
+    
     const isCurrentlyOpen = window.openThreads[commentId];
 
-    // Focus auto : n+2 = depth 3. On déclenche l'affichage complet.
     if (!isCurrentlyOpen && depth >= 3) {
-        window.openThreads[commentId] = true; 
-        setFocusComment(postId, commentId, null); 
+        window.openThreads[commentId] = true;
+        setFocusComment(postId, commentId, null);
         return;
     }
 
+    // On inverse l'état d'ouverture
     window.openThreads[commentId] = !isCurrentlyOpen;
 
-    // --- NOUVEAU : Si on ferme, on cache TOUS les enfants imbriqués ---
+    // --- FERMETURE FORCÉE ---
     if (isCurrentlyOpen) {
+        // 1. On ferme absolument tous les enfants, petits-enfants, etc.
         function closeAllDescendants(parentId) {
             allComments.filter(c => c.parentId === parentId).forEach(child => {
                 window.openThreads[child.id] = false;
-                closeAllDescendants(child.id); // Récursion
+                closeAllDescendants(child.id); // Récursion pour descendre tout en bas
             });
         }
         closeAllDescendants(commentId);
-        window.focusedCommentId[postId] = null; // Retire le focus pour éviter un affichage bugué
+        
+        // 2. On retire le focus sans exception pour éviter que l'affichage 
+        //    ne force la réouverture des commentaires qu'on vient de cacher.
+        window.focusedCommentId[postId] = null; 
     }
-
+    
     renderPostComments(postId);
 }
 
@@ -6969,6 +7011,7 @@ window.seekAudio = function(e, id) {
         document.body.classList.add('mobile-show-profile');
         btnProf.classList.add('active');
         document.getElementById('mobile-top-title').innerText = "L'Araignée";
+		if (typeof switchProfileTab === 'function') switchProfileTab('posts');
         
         /* -- CORRECTION TRI (Cache tout) -- */
         if(mobileSort) {
@@ -7218,6 +7261,84 @@ const originalRenderPostComments = window.renderPostComments;
 window.renderPostComments = function(postId) {
     if (window.isReacting) return; // Si le bouclier est actif, on annule le redessin !
     if (typeof originalRenderPostComments === 'function') originalRenderPostComments(postId);
+};
+
+// --- ONGLETS PROFIL (POSTS & REPONSES) ---
+window.switchProfileTab = function(tab) {
+    document.getElementById('tab-my-posts').classList.toggle('active', tab === 'posts');
+    document.getElementById('tab-my-replies').classList.toggle('active', tab === 'replies');
+    document.getElementById('profile-posts-tab').style.display = tab === 'posts' ? 'flex' : 'none';
+    document.getElementById('profile-replies-tab').style.display = tab === 'replies' ? 'flex' : 'none';
+    loadUserProfileContent(tab);
+};
+
+window.loadUserProfileContent = function(tab) {
+    if (!currentUser) return;
+    
+    const postsContainer = document.getElementById('profile-posts-tab');
+    const repliesContainer = document.getElementById('profile-replies-tab');
+    
+    if (tab === 'posts') {
+        postsContainer.innerHTML = '<div style="font-size:11px; color:var(--text-dim); text-align:center;">Chargement de vos posts...</div>';
+        // Récupère les posts de l'utilisateur
+        db.collection("posts").where("uid", "==", currentUser.uid)
+          .orderBy("timestamp", "desc").limit(20).get().then(snap => {
+            if (snap.empty) {
+                postsContainer.innerHTML = '<div style="font-size:11px; color:var(--text-dim); text-align:center;">Vous n\'avez publié aucun post.</div>';
+                return;
+            }
+            postsContainer.innerHTML = '';
+            snap.forEach(doc => {
+                const post = { id: doc.id, ...doc.data() };
+                postsContainer.appendChild(createMiniProfileCard(post, 'Post'));
+            });
+        }).catch(err => {
+            console.error(err);
+            postsContainer.innerHTML = '<div style="font-size:11px; color:var(--text-dim); text-align:center;">Une erreur est survenue ou un index Firestore est requis.</div>';
+        });
+    } else {
+        repliesContainer.innerHTML = '<div style="font-size:11px; color:var(--text-dim); text-align:center;">Chargement de vos réponses...</div>';
+        // Récupère les réponses de l'utilisateur avec un collectionGroup
+        db.collectionGroup("comments").where("uid", "==", currentUser.uid)
+          .orderBy("timestamp", "desc").limit(20).get().then(snap => {
+            if (snap.empty) {
+                repliesContainer.innerHTML = '<div style="font-size:11px; color:var(--text-dim); text-align:center;">Vous n\'avez publié aucune réponse.</div>';
+                return;
+            }
+            repliesContainer.innerHTML = '';
+            snap.forEach(doc => {
+                const comment = { id: doc.id, ...doc.data() };
+                repliesContainer.appendChild(createMiniProfileCard(comment, 'Réponse'));
+            });
+        }).catch(err => {
+             console.error("Erreur collectionGroup:", err);
+             repliesContainer.innerHTML = '<div style="font-size:11px; color:var(--text-dim); text-align:center;">Erreur : Index Firestore "collectionGroup" manquant. Veuillez cliquer sur le lien d\'erreur dans la console F12.</div>';
+        });
+    }
+};
+
+window.createMiniProfileCard = function(item, type) {
+    const el = document.createElement('div');
+    el.style.background = 'color-mix(in srgb, var(--text-dim) 5%, transparent)';
+    el.style.border = '1px solid var(--border)';
+    el.style.borderRadius = '8px';
+    el.style.padding = '10px';
+    
+    let textHtml = item.text ? `<div style="margin-top: 6px; font-size: 13px; color: var(--text);">${formatText(item.text)}</div>` : '';
+    let mediaHtml = '';
+    if (item.gifUrl && !item.isAudio && !item.isVideo) {
+        mediaHtml = `<img src="${item.gifUrl}" style="max-height: 80px; border-radius: 4px; margin-top: 6px;">`;
+    }
+    
+    el.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed color-mix(in srgb, var(--text-dim) 30%, transparent); padding-bottom: 6px;">
+            <span style="font-size:11px; font-weight:bold; color:var(--accent); text-transform:uppercase;">${type}</span>
+            <span style="font-size:10px; color:var(--text-dim);">${getRelativeTime(item.timestamp)}</span>
+        </div>
+        ${textHtml}
+        ${mediaHtml}
+    `;
+    return el;
 };
 
 </script>
