@@ -29,6 +29,17 @@
 .desktop-only { display: flex; }
 @media (max-width: 768px) {
     .desktop-only { display: none !important; }
+	
+	.main-content, 
+    #mobile-profile-section {
+        -ms-overflow-style: none;  /* Pour Internet Explorer et Edge */
+        scrollbar-width: none;     /* Pour Firefox */
+    }
+
+    .main-content::-webkit-scrollbar, 
+    #mobile-profile-section::-webkit-scrollbar {
+        display: none;             /* Pour Chrome, Safari et Opera */
+    }
 }
 
 #profile-tabs-container{ display: none !important; }
