@@ -3771,14 +3771,9 @@ function showMsg(elementId, text, color) {
 }
 
 function logoutUser() {
+if (typeof closeAllMobileMenus === 'function') closeAllMobileMenus();
   if (myVoteListener) { myVoteListener(); myVoteListener = null; }
   
-  // 1. On supprime le stockage local et on remet l'interface en sombre instantanément
-  //localStorage.removeItem('theme');
-  //document.body.classList.remove('light-mode');
-  //document.documentElement.classList.remove('light-mode');
-  //updateThemeIcons(false);
-  //if (typeof updateChartsTheme === 'function') updateChartsTheme(false);
 
   // 2. On déconnecte l'utilisateur
   auth.signOut(); 
