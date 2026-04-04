@@ -823,6 +823,31 @@ body.light-mode .sticky-chat-footer {
 
 @media (max-width: 768px) {
 
+
+   /* ── DROM-COM FLUIDES SUR MOBILE ── */
+    .drom-com-container {
+        bottom: 5px !important;
+        left: 5px !important;
+        width: auto !important;
+    }
+    
+    .drom-grid {
+        gap: 1.5vw !important; /* L'écart se réduit proportionnellement */
+    }
+    
+    .drom-box {
+        width: 7vw !important;  /* La taille s'adapte à la largeur de l'écran */
+        height: 7vw !important; /* Forme de carré parfait */
+        max-width: none !important; /* Fait sauter l'ancienne limite bloquante */
+        max-height: none !important;
+    }
+
+    .drom-box svg {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+    }
+
 /* ── BANDEAU DES STATS SUR UNE SEULE LIGNE (Mobile) ── */
     .global-stats-row {
         flex-wrap: nowrap !important; /* Interdit de passer à la ligne suivante */
