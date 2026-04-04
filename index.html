@@ -7861,217 +7861,220 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     return html;
 };
 
-
-            
-    // --- GESTION DU SWIPE TWITTER ET SCROLL (V6 ULTIME) ---
+// --- GESTION DU SWIPE TWITTER (V4 - Glissement fluide & Scroll Sécurisé) ---
 (function initTwitterSwipe() {
     if (window.innerWidth > 768) return;
 
-    // Délai de sécurité pour être sûr que tout le HTML est généré
-    setTimeout(() => {
-        document.body.classList.add('twitter-swipe-enabled');
-        document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
+    document.body.classList.add('twitter-swipe-enabled');
+    document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
 
-        const profileSection = document.getElementById('mobile-profile-section');
-        const mainContent = document.getElementById('mainContent');
-        const communitySidebar = document.getElementById('communitySidebar');
-        let profileWrapper = document.getElementById('profileWrapper');
+    const profileSection = document.getElementById('mobile-profile-section');
+    const mainContent = document.getElementById('mainContent');
+    const communitySidebar = document.getElementById('communitySidebar');
+    // 🔥 La zone de texte a été isolée pour la balader au doigt
+    const communityFooter = document.getElementById('communityFooter');
+    let profileWrapper = document.getElementById('profileWrapper');
 
-        // 1. ISOLATION DU PROFIL
-        if (profileSection && mainContent && !profileWrapper) {
-            profileWrapper = document.createElement('div');
-            profileWrapper.id = 'profileWrapper';
-            const container = document.createElement('div');
-            container.className = 'container';
-            container.appendChild(profileSection);
-            profileWrapper.appendChild(container);
-            mainContent.parentNode.insertBefore(profileWrapper, mainContent.nextSibling);
-        }
+    if (profileSection && mainContent && !profileWrapper) {
+        profileWrapper = document.createElement('div');
+        profileWrapper.id = 'profileWrapper';
+        const container = document.createElement('div');
+        container.className = 'container';
+        container.appendChild(profileSection);
+        profileWrapper.appendChild(container);
+        mainContent.parentNode.insertBefore(profileWrapper, mainContent.nextSibling);
+    }
 
-        // On cible directement les 3 grands onglets pour le swipe ET le scroll
-        const panels = [communitySidebar, mainContent, profileWrapper];
-        let currentTabIndex = 0;
+    // Le groupe 0 inclut maintenant la sidebar ET sa zone de texte !
+    const panels = [
+        [communitySidebar, communityFooter],
+        [mainContent],
+        [profileWrapper]
+    ];
+    let currentTabIndex = 0;
 
-        // 2. CLONAGE DE LA BARRE DU BAS POUR ÉCRASER LES ANCIENS ÉVÉNEMENTS
-        let bottomNav = document.querySelector('.bottom-nav');
-        if (bottomNav) {
-            let newBottomNav = bottomNav.cloneNode(true);
-            bottomNav.parentNode.replaceChild(newBottomNav, bottomNav);
-            
-            newBottomNav.querySelectorAll('button').forEach((btn, index) => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    animateToTab(index);
-                });
+    // CLONAGE DE LA BARRE DU BAS (Désactive les vieux scripts récalcitrants)
+    let bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        let newBottomNav = bottomNav.cloneNode(true);
+        bottomNav.parentNode.replaceChild(newBottomNav, bottomNav);
+        
+        const newNavButtons = newBottomNav.querySelectorAll('button');
+        newNavButtons.forEach((btn, index) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                animateToTab(index);
             });
-        }
+        });
+    }
 
-        const activeBottomNav = document.querySelector('.bottom-nav');
-        const topBar = document.getElementById('mobile-feed-header');
-        const topLogo = document.getElementById('mobile-top-logo');
+    // VARIABLES DES BARRES À MASQUER
+    const activeBottomNav = document.querySelector('.bottom-nav');
+    const topBar = document.getElementById('mobile-feed-header');
+    const topLogo = document.getElementById('mobile-top-logo');
 
-        // 3. ANIMATION DU SWIPE (TRANSFORM)
-        function animateToTab(index) {
-            currentTabIndex = index;
-            const offset = -index * 100;
-            
-            panels.forEach((p) => {
+    if (activeBottomNav) activeBottomNav.style.transition = 'transform 0.3s ease-in-out';
+    if (topBar) topBar.style.transition = 'transform 0.3s ease-in-out';
+    if (topLogo) topLogo.style.transition = 'transform 0.3s ease-in-out';
+
+    function animateToTab(index) {
+        currentTabIndex = index;
+        const offset = -index * 100;
+        
+        panels.forEach((group) => {
+            group.forEach(p => {
                 if (p) {
                     p.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                    // Force l'accélération matérielle pour un glissement plus fluide
                     p.style.transform = `translate3d(${offset}vw, 0, 0)`;
                 }
             });
-            
-            const tabs = ['community', 'simulator', 'profile'];
-            document.querySelectorAll('.bottom-nav button').forEach(btn => btn.classList.remove('active'));
-            const targetBtn = document.querySelector(`.bottom-nav button[data-tab="${tabs[index]}"]`);
-            if (targetBtn) targetBtn.classList.add('active');
-            
-            const topTitle = document.getElementById('mobile-top-title');
-            if (topTitle) topTitle.innerText = ["L'Araignée", "Simulateur", "Mon Profil"][index];
-            
-            if (index === 1 && typeof renderMaps === 'function') setTimeout(renderMaps, 300);
-            
-            resetBars(); // Réinitialise l'état des barres à chaque changement d'onglet
-        }
-
-        animateToTab(0);
-
-        // 4. MOTEUR DE SCROLL FLUIDE (PETIT À PETIT) SUR LES 3 ONGLETS
-        let lastScrollY = [0, 0, 0];
-        let topBarOffset = 0;
-        let bottomBarOffset = 0;
-        let ticking = false;
-
-        function updateBars() {
-            if (topBar) {
-                topBar.style.setProperty('transition', 'none', 'important');
-                topBar.style.setProperty('transform', `translateY(${topBarOffset}px)`, 'important');
-            }
-            if (topLogo) {
-                topLogo.style.setProperty('transition', 'none', 'important');
-                topLogo.style.setProperty('transform', `translateX(-50%) translateY(${topBarOffset}px)`, 'important');
-            }
-            if (activeBottomNav) {
-                activeBottomNav.style.setProperty('transition', 'none', 'important');
-                activeBottomNav.style.setProperty('transform', `translate3d(0, ${bottomBarOffset}px, 0)`, 'important');
-            }
-            ticking = false;
-        }
-
-        function resetBars() {
-            topBarOffset = 0;
-            bottomBarOffset = 0;
-            if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
-        }
-        window.resetNavBars = resetBars; // Expose la fonction au cas où
-
-        panels.forEach((container, index) => {
-            if (!container) return;
-            
-            container.addEventListener('scroll', () => {
-                if (currentTabIndex !== index) return;
-                if (document.body.classList.contains('mobile-composer-open')) return;
-
-                let currentY = container.scrollTop;
-                if (currentY < 0) currentY = 0;
-
-                const topHeight = topBar ? topBar.offsetHeight : 60;
-                const bottomHeight = activeBottomNav ? activeBottomNav.offsetHeight : 80;
-
-                // Tout en haut = barres affichées
-                if (currentY <= 0) {
-                    topBarOffset = 0; bottomBarOffset = 0;
-                } else {
-                    const deltaY = (currentY - lastScrollY[index]) * 0.4; // 0.4 = Vitesse fluide
-                    topBarOffset -= deltaY;
-                    bottomBarOffset += deltaY;
-
-                    // Bloquer les barres à leur hauteur max pour éviter qu'elles partent trop loin
-                    if (topBarOffset > 0) topBarOffset = 0;
-                    if (topBarOffset < -topHeight) topBarOffset = -topHeight;
-                    if (bottomBarOffset < 0) bottomBarOffset = 0;
-                    if (bottomBarOffset > bottomHeight) bottomBarOffset = bottomHeight;
-                }
-
-                lastScrollY[index] = currentY;
-
-                if (!ticking) {
-                    window.requestAnimationFrame(updateBars);
-                    ticking = true;
-                }
-            }, { passive: true });
         });
-
-        // 5. MOTEUR DU SWIPE TACTILE
-        let startX = 0, startY = 0, currentX = 0;
-        let isSwiping = false, isHorizontalSwipe = null;
         
-        document.addEventListener('touchstart', (e) => {
-            if (window.innerWidth > 768) return;
-            
-            // On ignore le swipe sur les grilles, sliders et menus
-            if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || 
-                e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || 
-                e.target.closest('.maps-grid') || e.target.closest('.chart-card') || 
-                e.target.closest('.data-table-card')) return;
+        const tabs = ['community', 'simulator', 'profile'];
+        const navButtons = document.querySelectorAll('.bottom-nav button');
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        const targetBtn = document.querySelector(`.bottom-nav button[data-tab="${tabs[index]}"]`);
+        if (targetBtn) targetBtn.classList.add('active');
+        
+        const topTitle = document.getElementById('mobile-top-title');
+        const titles = ["L'Araignée", "Simulateur", "Mon Profil"];
+        if (topTitle) topTitle.innerText = titles[index];
+        
+        if (index === 1 && typeof renderMaps === 'function') {
+            setTimeout(renderMaps, 300);
+        }
 
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isSwiping = true;
-            isHorizontalSwipe = null;
-        }, { passive: true });
+        showBars(); // Par sécurité, on affiche les barres au changement d'onglet
+    }
 
-        document.addEventListener('touchmove', (e) => {
-            if (!isSwiping) return;
+    animateToTab(0);
 
-            currentX = e.touches[0].clientX;
-            const deltaX = currentX - startX;
-            const deltaY = e.touches[0].clientY - startY;
+    // ---------------------------------------------------------
+    // NOUVEAU SYSTÈME DE SCROLL (Gère les 3 onglets de force)
+    // ---------------------------------------------------------
+    let lastScrollY = [0, 0, 0];
+    const scrollContainers = [
+        document.getElementById('chat-feed'), // L'onglet Communauté
+        mainContent,                          // L'onglet Simulateur
+        profileWrapper                        // L'onglet Profil
+    ];
 
-            if (isHorizontalSwipe === null) {
-                // Il faut que le geste soit nettement plus horizontal que vertical (facteur 1.5)
-                if (Math.abs(deltaX) > Math.abs(deltaY) * 1.5) { 
-                    isHorizontalSwipe = true;
-                } else {
-                    isHorizontalSwipe = false;
-                    isSwiping = false;
-                    return;
-                }
+    function showBars() {
+        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
+        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, 0, 0)', 'important');
+        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, 0, 0)', 'important');
+    }
+
+    function hideBars() {
+        if (activeBottomNav) activeBottomNav.style.setProperty('transform', 'translate3d(0, 150%, 0)', 'important');
+        if (topBar) topBar.style.setProperty('transform', 'translate3d(0, -150%, 0)', 'important');
+        if (topLogo) topLogo.style.setProperty('transform', 'translate3d(-50%, -150%, 0)', 'important');
+    }
+
+    scrollContainers.forEach((container, index) => {
+        if (!container) return;
+        container.addEventListener('scroll', () => {
+            // Seul l'onglet affiché a le droit d'agir sur les barres
+            if (currentTabIndex !== index) return;
+            if (document.body.classList.contains('mobile-composer-open')) return;
+
+            let currentY = container.scrollTop;
+            if (currentY <= 0) currentY = 0;
+
+            // Si on descend (et qu'on a passé 60px)
+            if (currentY > lastScrollY[index] && currentY > 60) {
+                hideBars();
+            } 
+            // Si on remonte
+            else if (currentY < lastScrollY[index]) {
+                showBars();
             }
+            
+            lastScrollY[index] = currentY;
+        }, { passive: true });
+    });
 
-            if (!isHorizontalSwipe) return;
+    // ---------------------------------------------------------
+    // MÉCANIQUE DE GLISSEMENT (TOUCHER)
+    // ---------------------------------------------------------
+    let startX = 0, startY = 0, currentX = 0;
+    let isSwiping = false, isHorizontalSwipe = null;
+    const swipeThreshold = window.innerWidth * 0.15;
 
-            // Effet élastique sur les bords (premier et dernier onglet)
-            if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === panels.length - 1 && deltaX < 0)) {
-                const resist = deltaX * 0.25;
-                panels.forEach(p => { if (p) { p.style.transition = 'none'; p.style.transform = `translate3d(calc(${-currentTabIndex * 100}vw + ${resist}px), 0, 0)`; } });
+    document.addEventListener('touchstart', (e) => {
+        if (window.innerWidth > 768) return;
+        if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || 
+            e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || 
+            e.target.closest('.maps-grid') || e.target.closest('.chart-card') || 
+            e.target.closest('.data-table-card')) return;
+
+        let el = e.target;
+        while (el && el !== document.body) {
+            if (el.scrollWidth > el.clientWidth && !el.classList.contains('page-wrapper')) return;
+            el = el.parentElement;
+        }
+
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+        isHorizontalSwipe = null;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+
+        currentX = e.touches[0].clientX;
+        const deltaX = currentX - startX;
+        const deltaY = e.touches[0].clientY - startY;
+
+        if (isHorizontalSwipe === null) {
+            if (Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+                isHorizontalSwipe = true;
+            } else {
+                isHorizontalSwipe = false;
+                isSwiping = false;
                 return;
             }
+        }
 
-            // Pousse les onglets avec le doigt
-            panels.forEach(p => { if (p) { p.style.transition = 'none'; p.style.transform = `translate3d(calc(${-currentTabIndex * 100}vw + ${deltaX}px), 0, 0)`; } });
-        }, { passive: true });
+        if (!isHorizontalSwipe) return;
 
-        document.addEventListener('touchend', (e) => {
-            if (!isSwiping || !isHorizontalSwipe) return;
-            isSwiping = false;
+        if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === panels.length - 1 && deltaX < 0)) {
+            const resistDelta = deltaX * 0.25;
+            panels.forEach(group => {
+                group.forEach(p => {
+                    if (p) {
+                        p.style.transition = 'none';
+                        p.style.transform = `translate3d(calc(${-currentTabIndex * 100}vw + ${resistDelta}px), 0, 0)`;
+                    }
+                });
+            });
+            return;
+        }
 
-            const deltaX = currentX - startX;
-            const threshold = window.innerWidth * 0.15; // 15% de l'écran pour valider
-
-            // Changement d'onglet validé
-            if (Math.abs(deltaX) > threshold) {
-                if (deltaX < 0 && currentTabIndex < panels.length - 1) currentTabIndex++; 
-                else if (deltaX > 0 && currentTabIndex > 0) currentTabIndex--; 
-            }
-            
-            animateToTab(currentTabIndex);
+        panels.forEach(group => {
+            group.forEach(p => {
+                if (p) {
+                    p.style.transition = 'none';
+                    p.style.transform = `translate3d(calc(${-currentTabIndex * 100}vw + ${deltaX}px), 0, 0)`;
+                }
+            });
         });
+    }, { passive: true });
 
-    }, 100); // 100ms de délai au lancement
+    document.addEventListener('touchend', (e) => {
+        if (!isSwiping || !isHorizontalSwipe) return;
+        isSwiping = false;
+
+        const deltaX = currentX - startX;
+        if (Math.abs(deltaX) > swipeThreshold) {
+            if (deltaX < 0 && currentTabIndex < panels.length - 1) currentTabIndex++; 
+            else if (deltaX > 0 && currentTabIndex > 0) currentTabIndex--; 
+        }
+        animateToTab(currentTabIndex);
+    });
 })();
-
 
 </script>
 <div id="mobile-menu-backdrop" onclick="closeAllMobileMenus()"></div>
