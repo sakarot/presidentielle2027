@@ -1216,6 +1216,7 @@ textarea#post-text {
   body.mobile-composer-open .bottom-nav {
     transform: translateY(100%) !important;
   }
+  
 
   /* ── Ajustement du panneau texte puisqu'il n'y a plus de nav ── */
   body.mobile-composer-open .community-footer {
@@ -1424,6 +1425,15 @@ textarea#post-text {
 }
 
 @media (max-width: 768px) {
+
+.bottom-nav {
+        background: color-mix(in srgb, var(--bg) 80%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 50;
+        /* AJOUTEZ CETTE LIGNE POUR SAFARI : */
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+    }
 
 .map-container {
         height: auto !important; /* Enlève la hauteur fixe qui causait le trou en haut */
@@ -7227,23 +7237,24 @@ window.prepareMainReply = function(postId, commentId, pseudo) {
 
 // --- GESTION DU SCROLL MOBILE ET ANIMATIONS (AU DOIGT) ---
 (function initMobileScroll() {
-    let lastScrollY = 0;
+    let lastScrollY = window.scrollY || 0;
     let topBarOffset = 0;
     let bottomBarOffset = 0;
     let ticking = false;
+
+    // VITESSE D'ANIMATION (0.4 = beaucoup plus lent et doux que le doigt)
+    const SCROLL_SPEED = 0.4;
 
     function updateBars() {
         const topBar = document.getElementById('mobile-feed-header');
         const bottomBar = document.querySelector('.bottom-nav');
         const topLogo = document.getElementById('mobile-top-logo');
         
-        // On désactive les transitions CSS pour que le mouvement soit immédiat et lié au doigt
         if (topBar) {
             topBar.style.setProperty('transition', 'none', 'important');
             topBar.style.setProperty('transform', `translateY(${topBarOffset}px)`, 'important');
         }
         
-        // Pareil pour le logo central flottant
         if (topLogo) {
             topLogo.style.setProperty('transition', 'none', 'important');
             topLogo.style.setProperty('transform', `translateX(-50%) translateY(${topBarOffset}px)`, 'important');
@@ -7251,12 +7262,12 @@ window.prepareMainReply = function(postId, commentId, pseudo) {
 
         if (bottomBar) {
             if (document.body.classList.contains('mobile-composer-open')) {
-                // Rétablit la transition fluide quand la modale de publication s'ouvre
                 bottomBar.style.setProperty('transition', 'transform 0.3s ease-in-out', 'important');
                 bottomBar.style.setProperty('transform', 'translateY(100%)', 'important');
             } else {
                 bottomBar.style.setProperty('transition', 'none', 'important');
-                bottomBar.style.setProperty('transform', `translateY(${bottomBarOffset}px)`, 'important');
+                // Utilisation de translate3d pour forcer l'accélération matérielle (Evite les bugs Safari)
+                bottomBar.style.setProperty('transform', `translate3d(0, ${bottomBarOffset}px, 0)`, 'important');
             }
         }
         ticking = false;
@@ -7264,44 +7275,33 @@ window.prepareMainReply = function(postId, commentId, pseudo) {
 
     function handleScroll(e) {
         if (window.innerWidth > 768) return;
-        
-        // Bloque le calcul si le module de publication est ouvert (pour éviter les bugs)
         if (document.body.classList.contains('mobile-composer-open')) return;
 
         let currentScrollY = window.scrollY;
         if (e.target && e.target.scrollTop !== undefined) {
             currentScrollY = e.target.scrollTop;
         }
-        
-        if (currentScrollY < 0) return; // Ignore le scroll négatif (rebond iOS)
+        if (currentScrollY < 0) currentScrollY = 0;
 
         const topBar = document.getElementById('mobile-feed-header');
         const bottomBar = document.querySelector('.bottom-nav');
         
-        // Récupère dynamiquement la hauteur réelle de vos barres (environ 60px)
         const topBarHeight = topBar ? topBar.offsetHeight : 60;
-        const bottomBarHeight = bottomBar ? bottomBar.offsetHeight : 58;
+        const bottomBarHeight = bottomBar ? bottomBar.offsetHeight + (parseInt(window.getComputedStyle(bottomBar).paddingBottom) || 0) : 80;
 
-        // Tout en haut : on réaffiche tout proprement
         if (currentScrollY <= 0) {
-            topBarOffset = 0;
-            bottomBarOffset = 0;
+            topBarOffset = 0; bottomBarOffset = 0;
             lastScrollY = currentScrollY;
-            if (!ticking) {
-                window.requestAnimationFrame(updateBars);
-                ticking = true;
-            }
+            if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
             return;
         }
 
-        // On calcule la distance parcourue par le doigt
-        const deltaY = currentScrollY - lastScrollY;
+        // Application du ralentisseur
+        const deltaY = (currentScrollY - lastScrollY) * SCROLL_SPEED;
         
-        topBarOffset -= deltaY; // Va vers le haut en scrollant vers le bas
-        bottomBarOffset += deltaY; // Va vers le bas en scrollant vers le bas
+        topBarOffset -= deltaY; 
+        bottomBarOffset += deltaY; 
 
-        // On borne (clamp) le décalage pour que la barre ne disparaisse pas "trop loin" dans le vide :
-        // Le maximum visible est 0, et le maximum caché est la hauteur de la barre elle-même.
         if (topBarOffset > 0) topBarOffset = 0;
         if (topBarOffset < -topBarHeight) topBarOffset = -topBarHeight;
         
@@ -7310,32 +7310,23 @@ window.prepareMainReply = function(postId, commentId, pseudo) {
 
         lastScrollY = currentScrollY;
 
-        if (!ticking) {
-            window.requestAnimationFrame(updateBars);
-            ticking = true;
-        }
+        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
     }
 
     const chatFeed = document.getElementById('chat-feed');
     if (chatFeed) chatFeed.addEventListener('scroll', handleScroll, { passive: true });
-    
     const mainContent = document.getElementById('mainContent');
     if (mainContent) mainContent.addEventListener('scroll', handleScroll, { passive: true });
-    
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Expose une fonction globale pour forcer l'affichage (ex: quand on ferme la modale de post)
     window.resetNavBars = function() {
-        topBarOffset = 0;
-        bottomBarOffset = 0;
-        lastScrollY = 0; 
-        if (!ticking) {
-            window.requestAnimationFrame(updateBars);
-            ticking = true;
-        }
+        topBarOffset = 0; bottomBarOffset = 0; lastScrollY = 0; 
+        if (!ticking) { window.requestAnimationFrame(updateBars); ticking = true; }
     };
+
+    // FORCE L'AFFICHAGE COMPLET AU CHARGEMENT (Règle le bug Safari du premier lancement)
+    setTimeout(window.resetNavBars, 150);
 })();
-// --- GESTION DU FOND SOMBRE DES MENUS ---
 
 // 1. Affiche le fond (uniquement sur mobile)
 window.showMenuBackdrop = function() {
@@ -7883,6 +7874,117 @@ window.buildProfileCommentNodeHtml = function(c, allComments, cacheKey, isRoot, 
     html += `</div>`;
     return html;
 };
+
+// --- GESTION DU SWIPE (GLISSEMENT) POUR CHANGER D'ONGLET ---
+(function initSwipeTabs() {
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let isSwiping = false;
+    let isHorizontalSwipe = null;
+    const swipeThreshold = 80; // Distance en pixels pour valider le changement
+    const tabs = ['community', 'simulator', 'profile'];
+    let currentTabIndex = 0;
+
+    function getActiveContainer() {
+        if (document.body.classList.contains('mobile-show-profile')) return document.getElementById('mobile-profile-section');
+        if (document.body.classList.contains('mobile-show-sim')) return document.getElementById('mainContent');
+        return document.getElementById('communitySidebar');
+    }
+
+    document.addEventListener('touchstart', (e) => {
+        if (window.innerWidth > 768) return;
+        
+        // Bloque le swipe si on est dans un menu, sur un slider, sur une carte géographique ou si on crée un post
+        if (e.target.closest('.user-dropdown') || e.target.closest('.friends-dropdown') || e.target.closest('input[type=range]') || document.body.classList.contains('mobile-composer-open') || e.target.closest('.maps-grid') || e.target.closest('.chart-card')) return;
+
+        // Bloque le swipe si l'élément touché possède son propre scroll horizontal (comme le tableau de données)
+        let el = e.target;
+        while (el && el !== document.body) {
+            if (el.scrollWidth > el.clientWidth && !el.classList.contains('page-wrapper')) return;
+            el = el.parentElement;
+        }
+
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+        isHorizontalSwipe = null; // On ne sait pas encore l'axe principal du geste
+        
+        // Détection de l'onglet de départ
+        if (document.body.classList.contains('mobile-show-profile')) currentTabIndex = 2;
+        else if (document.body.classList.contains('mobile-show-sim')) currentTabIndex = 1;
+        else currentTabIndex = 0;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+        
+        currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const deltaX = currentX - startX;
+        const deltaY = currentY - startY;
+
+        // Calcule si l'utilisateur glisse horizontalement ou verticalement
+        if (isHorizontalSwipe === null) {
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                isHorizontalSwipe = true;
+            } else {
+                isHorizontalSwipe = false;
+                isSwiping = false; // Abandon, on laisse le navigateur scroller verticalement
+                return;
+            }
+        }
+
+        if (!isHorizontalSwipe) return;
+
+        // Bloque l'étirement excessif aux extrémités (pas d'onglet avant le premier ni après le dernier)
+        if ((currentTabIndex === 0 && deltaX > 0) || (currentTabIndex === tabs.length - 1 && deltaX < 0)) return;
+
+        // Mouvement de translation progressif sous le doigt
+        const container = getActiveContainer();
+        if (container) {
+            container.style.transition = 'none';
+            container.style.transform = `translateX(${deltaX}px)`;
+            container.style.opacity = 1 - (Math.abs(deltaX) / (window.innerWidth * 1.2)); // S'efface légèrement
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (!isSwiping || !isHorizontalSwipe) return;
+        isSwiping = false;
+        
+        const deltaX = currentX - startX;
+        const container = getActiveContainer();
+
+        if (container) {
+            container.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // On remet l'animation pour finir la glissade
+            
+            if (Math.abs(deltaX) > swipeThreshold) {
+                // Changement d'onglet validé
+                if (deltaX < 0 && currentTabIndex < tabs.length - 1) {
+                    container.style.transform = `translateX(-100vw)`; // On le chasse vers la gauche
+                    container.style.opacity = 0;
+                    setTimeout(() => {
+                        container.style.transform = ''; container.style.opacity = '';
+                        document.querySelector(`.bottom-nav button[data-tab="${tabs[currentTabIndex + 1]}"]`).click();
+                    }, 250);
+                } else if (deltaX > 0 && currentTabIndex > 0) {
+                    container.style.transform = `translateX(100vw)`; // On le chasse vers la droite
+                    container.style.opacity = 0;
+                    setTimeout(() => {
+                        container.style.transform = ''; container.style.opacity = '';
+                        document.querySelector(`.bottom-nav button[data-tab="${tabs[currentTabIndex - 1]}"]`).click();
+                    }, 250);
+                } else {
+                    container.style.transform = 'translateX(0)'; container.style.opacity = 1;
+                }
+            } else {
+                // Geste trop court -> On rebondit à la position initiale
+                container.style.transform = 'translateX(0)'; container.style.opacity = 1;
+            }
+        }
+    });
+})();
 
 </script>
 <div id="mobile-menu-backdrop" onclick="closeAllMobileMenus()"></div>
