@@ -2006,7 +2006,13 @@ body.light-mode #mobile-feed-header {
 
     /* Forcer l'affichage de l'intérieur du profil */
     body.twitter-swipe-enabled #mobile-profile-section { display: flex !important; flex-direction: column; width: 100% !important; background: transparent !important; border: none !important; padding: 0 !important; margin: 0 !important; }
-
+	body.twitter-swipe-enabled {
+    /* 1. Coupe l'effet élastique (rebond) horizontal sur iOS */
+    overscroll-behavior-x: none !important; 
+    
+    /* 2. Safari ignorera ses propres gestes horizontaux sur cet élément */
+    touch-action: pan-y !important; 
+}
 
     body.twitter-swipe-enabled .site-header { display: none !important; }
 
@@ -8430,6 +8436,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 if (el.scrollWidth > el.clientWidth && !el.classList.contains('page-wrapper')) return;
                 el = el.parentElement;
             }
+			
+			if (touch.clientX < 30 || touch.clientX > window.innerWidth - 30) return;
 
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
