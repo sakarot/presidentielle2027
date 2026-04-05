@@ -2340,43 +2340,6 @@ body.mobile-show-questions #communitySidebar { display: none !important; }
 	    <div id="profile-posts-tab" style="display: flex; flex-direction: column; gap: 8px;"></div>
     <div id="profile-replies-tab" style="display: none; flex-direction: column; gap: 8px;"></div>
 </div>
-<div id="mobile-questions-section" class="main-content" style="display: none; padding-top: 70px; height: 100dvh; overflow-y: auto;">
-    <div style="padding: 20px; text-align: center; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 80vh; justify-content: center;">
-        
-        <div id="q-intro" style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
-            <h2 style="font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text);">Découvre ton orientation politique</h2>
-            <p style="color: var(--text-dim); font-size: 14px;">Réponds à ces questions pour obtenir ton badge politique ainsi que d'éventuels badges bonus !</p>
-            <button class="minimal-gif-btn2" style="font-size: 16px; padding: 12px 24px; border-radius: 24px;" onclick="startQuiz()">Commencer le test</button>
-        </div>
-
-        <div id="q-container" style="display: none; flex-direction: column; width: 100%; gap: 24px;">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); font-family: 'Space Mono', monospace;">
-                <span id="q-progress">Question 1/117</span>
-                <span id="q-axis">Axe</span>
-            </div>
-            
-            <h3 id="q-text" style="font-size: 18px; line-height: 1.4; color: var(--text); min-height: 80px; display: flex; align-items: center; justify-content: center;">Texte de la question</h3>
-            
-            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <button class="quiz-btn q-strong-agree" onclick="answerQuestion(2)">Tout à fait d'accord</button>
-                <button class="quiz-btn q-agree" onclick="answerQuestion(1)">D'accord</button>
-                <button class="quiz-btn q-neutral" onclick="answerQuestion(0)">Neutre / Ne se prononce pas</button>
-                <button class="quiz-btn q-disagree" onclick="answerQuestion(-1)">Pas d'accord</button>
-                <button class="quiz-btn q-strong-disagree" onclick="answerQuestion(-2)">Pas du tout d'accord</button>
-            </div>
-        </div>
-
-        <div id="q-result" style="display: none; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
-            <h2 style="font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text);">Tes Badges !</h2>
-            <div id="q-badges-display" style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0;"></div>
-            <p style="color: var(--text-dim); font-size: 13px;">Ils sont désormais visibles à côté de ton pseudo.</p>
-            <button class="minimal-gif-btn2" onclick="saveBadgesToProfile()">Sauvegarder & Continuer</button>
-            <div id="q-save-msg" style="font-size: 12px; color: var(--EELV); display: none;">Sauvegardé avec succès !</div>
-        </div>
-
-    </div>
-</div>
-
       </div>
 
  <div class="controls-panel">
@@ -2506,6 +2469,44 @@ body.mobile-show-questions #communitySidebar { display: none !important; }
 
     </div> 
   </div> 
+
+<div id="mobile-questions-section" class="main-content" style="display: none; padding-top: 70px; height: 100dvh; overflow-y: auto;">
+    <div style="padding: 20px; text-align: center; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 80vh; justify-content: center;">
+        
+        <div id="q-intro" style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+            <h2 style="font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text);">Découvre ton orientation politique</h2>
+            <p style="color: var(--text-dim); font-size: 14px;">Réponds à ces questions pour obtenir ton badge politique ainsi que d'éventuels badges bonus !</p>
+            <button class="minimal-gif-btn2" style="font-size: 16px; padding: 12px 24px; border-radius: 24px;" onclick="startQuiz()">Commencer le test</button>
+        </div>
+
+        <div id="q-container" style="display: none; flex-direction: column; width: 100%; gap: 24px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); font-family: 'Space Mono', monospace;">
+                <span id="q-progress">Question 1/117</span>
+                <span id="q-axis">Axe</span>
+            </div>
+            
+            <h3 id="q-text" style="font-size: 18px; line-height: 1.4; color: var(--text); min-height: 80px; display: flex; align-items: center; justify-content: center;">Texte de la question</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                <button class="quiz-btn q-strong-agree" onclick="answerQuestion(2)">Tout à fait d'accord</button>
+                <button class="quiz-btn q-agree" onclick="answerQuestion(1)">D'accord</button>
+                <button class="quiz-btn q-neutral" onclick="answerQuestion(0)">Neutre / Ne se prononce pas</button>
+                <button class="quiz-btn q-disagree" onclick="answerQuestion(-1)">Pas d'accord</button>
+                <button class="quiz-btn q-strong-disagree" onclick="answerQuestion(-2)">Pas du tout d'accord</button>
+            </div>
+        </div>
+
+        <div id="q-result" style="display: none; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
+            <h2 style="font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text);">Tes Badges !</h2>
+            <div id="q-badges-display" style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0;"></div>
+            <p style="color: var(--text-dim); font-size: 13px;">Ils sont désormais visibles à côté de ton pseudo.</p>
+            <button class="minimal-gif-btn2" onclick="saveBadgesToProfile()">Sauvegarder & Continuer</button>
+            <div id="q-save-msg" style="font-size: 12px; color: var(--EELV); display: none;">Sauvegardé avec succès !</div>
+        </div>
+
+    </div>
+</div>
+
 	
   <aside class="community-sidebar" id="communitySidebar">
       
@@ -7307,96 +7308,91 @@ window.seekAudio = function(e, id) {
     if (progressEl) progressEl.style.width = (percent * 100) + '%';
 };
 
-// ── Navigation mobile à 3 onglets (Communauté, Simulateur, Profil) ──
+// ── Navigation mobile à 4 onglets (Communauté, Simulateur, Profil, Questions) ──
 (function() {
-  function initMobileNav() {
-    const btnCom = document.querySelector('.bottom-nav button[data-tab="community"]');
-    const btnSim = document.querySelector('.bottom-nav button[data-tab="simulator"]');
-    const btnProf = document.querySelector('.bottom-nav button[data-tab="profile"]');
-    if (!btnCom || !btnSim || !btnProf) return;
+    function initMobileNav() {
+        const btnCom = document.querySelector('.bottom-nav button[data-tab="community"]');
+        const btnSim = document.querySelector('.bottom-nav button[data-tab="simulator"]');
+        const btnProf = document.querySelector('.bottom-nav button[data-tab="profile"]');
+        const btnQuest = document.querySelector('.bottom-nav button[data-tab="questions"]');
 
-    function switchTab(tabName) {
-      document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
-      btnCom.classList.remove('active');
-      btnSim.classList.remove('active');
-      btnProf.classList.remove('active');
+        if (!btnCom || !btnSim || !btnProf || !btnQuest) return;
 
-      const mobileSort = document.getElementById('mobileFeedSortSelect');
+        function switchTab(tabName) {
+            // On retire toutes les classes
+            document.body.classList.remove('mobile-show-sim', 'mobile-show-profile', 'mobile-show-questions');
+            btnCom.classList.remove('active');
+            btnSim.classList.remove('active');
+            btnProf.classList.remove('active');
+            btnQuest.classList.remove('active');
 
-      if (tabName === 'simulator') {
-        document.body.classList.add('mobile-show-sim');
-        btnSim.classList.add('active');
-        document.getElementById('mobile-top-title').innerText = "L'Araignée";
-        
-        /* -- CORRECTION TRI (Cache tout) -- */
-        if(mobileSort) {
-            if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
-                mobileSort.parentNode.style.display = 'none';
-            } else {
-                mobileSort.style.display = 'none';
+            const mobileSort = document.getElementById('mobileFeedSortSelect');
+
+            if (tabName === 'questions') {
+                document.body.classList.add('mobile-show-questions');
+                btnQuest.classList.add('active');
+                document.getElementById('mobile-top-title').innerText = "L'Araignée - Profiling";
+                if(mobileSort) mobileSort.style.display = 'none';
+                if(mobileSort && mobileSort.parentNode.classList.contains('custom-select-wrapper')) mobileSort.parentNode.style.display = 'none';
+            } 
+            else if (tabName === 'simulator') {
+                document.body.classList.add('mobile-show-sim');
+                btnSim.classList.add('active');
+                document.getElementById('mobile-top-title').innerText = "L'Araignée";
+                if(mobileSort) mobileSort.style.display = 'none';
+                if(mobileSort && mobileSort.parentNode.classList.contains('custom-select-wrapper')) mobileSort.parentNode.style.display = 'none';
+                document.getElementById('mainContent')?.scrollTo(0, 0);
+                setTimeout(() => { if (typeof renderMaps === 'function') renderMaps(); }, 50);
+            } 
+            else if (tabName === 'profile') {
+                document.body.classList.add('mobile-show-profile');
+                btnProf.classList.add('active');
+                document.getElementById('mobile-top-title').innerText = "L'Araignée";
+                if (typeof switchProfileTab === 'function') switchProfileTab('posts');
+                if(mobileSort) mobileSort.style.display = 'none';
+                if(mobileSort && mobileSort.parentNode.classList.contains('custom-select-wrapper')) mobileSort.parentNode.style.display = 'none';
+                document.getElementById('mainContent')?.scrollTo(0, 0);
+            } 
+            else {
+                // Communauté par défaut
+                btnCom.classList.add('active');
+                document.getElementById('mobile-top-title').innerText = "L'Araignée";
+                if(mobileSort) {
+                    if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
+                        mobileSort.parentNode.style.display = 'inline-block';
+                        mobileSort.style.display = 'none'; 
+                    } else {
+                        mobileSort.style.display = 'block';
+                    }
+                }
+                document.getElementById('chat-feed')?.scrollTo(0, 0);
             }
         }
-        
-        document.getElementById('mainContent')?.scrollTo(0, 0);
-        setTimeout(() => { if (typeof renderMaps === 'function') renderMaps(); }, 50);
-      } 
-      else if (tabName === 'profile') {
-        document.body.classList.add('mobile-show-profile');
-        btnProf.classList.add('active');
-        document.getElementById('mobile-top-title').innerText = "L'Araignée";
-		if (typeof switchProfileTab === 'function') switchProfileTab('posts');
-        
-        /* -- CORRECTION TRI (Cache tout) -- */
-        if(mobileSort) {
-            if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
-                mobileSort.parentNode.style.display = 'none';
-            } else {
-                mobileSort.style.display = 'none';
-            }
-        }
-        
-        document.getElementById('mainContent')?.scrollTo(0, 0);
-      } 
-      else { 
-        btnCom.classList.add('active');
-        document.getElementById('mobile-top-title').innerText = "L'Araignée";
-        
-        /* -- CORRECTION TRI (N'affiche QUE le menu custom s'il existe) -- */
-        if(mobileSort) {
-            if(mobileSort.parentNode.classList.contains('custom-select-wrapper')) {
-                mobileSort.parentNode.style.display = 'inline-block';
-                mobileSort.style.display = 'none'; /* Garde le natif caché ! */
-            } else {
-                mobileSort.style.display = 'block';
-            }
-        }
-        
-        document.getElementById('chat-feed')?.scrollTo(0, 0);
-      }
+
+        // On attache les clics
+        btnCom.addEventListener('click', () => switchTab('community'));
+        btnSim.addEventListener('click', () => switchTab('simulator'));
+        btnProf.addEventListener('click', () => switchTab('profile'));
+        btnQuest.addEventListener('click', () => switchTab('questions'));
+
+        // Par défaut sur mobile : Communauté
+        if (window.innerWidth <= 768) switchTab('community');
     }
+    
+    document.addEventListener('DOMContentLoaded', initMobileNav);
 
-    // On attache les clics
-    btnCom.addEventListener('click', () => switchTab('community'));
-    btnSim.addEventListener('click', () => switchTab('simulator'));
-    btnProf.addEventListener('click', () => switchTab('profile'));
-
-    // Par défaut sur mobile : Communauté
-    if (window.innerWidth <= 768) switchTab('community');
-  }
-
-  document.addEventListener('DOMContentLoaded', initMobileNav);
-  
-let _resizeTimer;
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-      document.body.classList.remove('mobile-show-sim', 'mobile-show-profile');
-    }
-    clearTimeout(_resizeTimer);
-    _resizeTimer = setTimeout(() => {
-      if (typeof renderMaps === 'function') renderMaps();
-    }, 200);
-  });
+    let _resizeTimer;
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            document.body.classList.remove('mobile-show-sim', 'mobile-show-profile', 'mobile-show-questions');
+        }
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(() => {
+            if (typeof renderMaps === 'function') renderMaps();
+        }, 200);
+    });
 })();
+
 
 window.openMobileComposer = function() {
     window.mainReplyTarget = null;
@@ -8538,29 +8534,6 @@ window.saveBadgesToProfile = function() {
         }, 1500);
     });
 };
-
-// --- MODIFICATION DE LA NAVIGATION MOBILE ---
-// Pour ajouter la gestion du nouvel onglet "questions"
-document.addEventListener('DOMContentLoaded', () => {
-    const navBtns = document.querySelectorAll('.bottom-nav button');
-    
-    navBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const tabName = btn.getAttribute('data-tab');
-            
-            // Retirer toutes les classes actives
-            document.body.classList.remove('mobile-show-sim', 'mobile-show-profile', 'mobile-show-questions');
-            navBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            if (tabName === 'questions') {
-                document.body.classList.add('mobile-show-questions');
-                document.getElementById('mobile-top-title').innerText = "L'Araignée - Profiling";
-            } 
-            // (La logique existante pour 'simulator', 'profile' et 'community' prend le relais pour les autres)
-        });
-    });
-});
 
 window.generateBadgesHtml = function(badgesArray) {
     if (!badgesArray || badgesArray.length === 0) return '';
