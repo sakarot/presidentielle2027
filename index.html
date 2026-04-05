@@ -7866,10 +7866,6 @@ const colorStyle = c.userColor ? `color: ${c.userColor} !important;` : '';
             replyIndicator = `<span class="reply-indicator">en réponse à <span class="mention-link" style="pointer-events:none;">@${parentComment.pseudo}</span></span>`;
         }
     }
-	let badgesHtml = '';
-if (c.badges && c.badges.length > 0) {
-    badgesHtml = c.badges.map(b => BADGE_ICONS[b] || '').join('');
-}
 
     let html = `<div class="comment-node-wrapper" style="${isRoot ? 'margin-bottom: 12px;' : ''}">`;
     html += `
