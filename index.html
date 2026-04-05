@@ -2056,6 +2056,44 @@ body.twitter-swipe-enabled #communityFooter {
 }
 }
 
+/* --- QUESTIONNAIRE --- */
+.quiz-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.quiz-btn:active { transform: scale(0.98); }
+.q-strong-agree { border-left: 4px solid var(--EELV); }
+.q-agree { border-left: 4px solid color-mix(in srgb, var(--EELV) 50%, transparent); }
+.q-neutral { border-left: 4px solid var(--text-dim); }
+.q-disagree { border-left: 4px solid color-mix(in srgb, var(--LFI) 50%, transparent); }
+.q-strong-disagree { border-left: 4px solid var(--LFI); }
+
+/* --- BADGES (Affichage à côté du pseudo) --- */
+.user-badge-svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    margin-right: 4px;
+    vertical-align: text-bottom;
+    display: inline-block;
+    color: var(--accent); /* Couleur par défaut */
+}
+
+/* Gérer l'affichage de l'onglet questions */
+body.mobile-show-questions #mobile-questions-section { display: block !important; }
+body.mobile-show-questions .site-header, 
+body.mobile-show-questions #mobile-profile-section,
+body.mobile-show-questions #mainContent,
+body.mobile-show-questions #communitySidebar { display: none !important; }
+
 
 </style>
 </head>
@@ -2302,6 +2340,43 @@ body.twitter-swipe-enabled #communityFooter {
 	    <div id="profile-posts-tab" style="display: flex; flex-direction: column; gap: 8px;"></div>
     <div id="profile-replies-tab" style="display: none; flex-direction: column; gap: 8px;"></div>
 </div>
+<div id="mobile-questions-section" class="main-content" style="display: none; padding-top: 70px; height: 100dvh; overflow-y: auto;">
+    <div style="padding: 20px; text-align: center; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 80vh; justify-content: center;">
+        
+        <div id="q-intro" style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+            <h2 style="font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text);">Découvre ton orientation politique</h2>
+            <p style="color: var(--text-dim); font-size: 14px;">Réponds à ces questions pour obtenir ton badge politique ainsi que d'éventuels badges bonus !</p>
+            <button class="minimal-gif-btn2" style="font-size: 16px; padding: 12px 24px; border-radius: 24px;" onclick="startQuiz()">Commencer le test</button>
+        </div>
+
+        <div id="q-container" style="display: none; flex-direction: column; width: 100%; gap: 24px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); font-family: 'Space Mono', monospace;">
+                <span id="q-progress">Question 1/117</span>
+                <span id="q-axis">Axe</span>
+            </div>
+            
+            <h3 id="q-text" style="font-size: 18px; line-height: 1.4; color: var(--text); min-height: 80px; display: flex; align-items: center; justify-content: center;">Texte de la question</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                <button class="quiz-btn q-strong-agree" onclick="answerQuestion(2)">Tout à fait d'accord</button>
+                <button class="quiz-btn q-agree" onclick="answerQuestion(1)">D'accord</button>
+                <button class="quiz-btn q-neutral" onclick="answerQuestion(0)">Neutre / Ne se prononce pas</button>
+                <button class="quiz-btn q-disagree" onclick="answerQuestion(-1)">Pas d'accord</button>
+                <button class="quiz-btn q-strong-disagree" onclick="answerQuestion(-2)">Pas du tout d'accord</button>
+            </div>
+        </div>
+
+        <div id="q-result" style="display: none; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
+            <h2 style="font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text);">Tes Badges !</h2>
+            <div id="q-badges-display" style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0;"></div>
+            <p style="color: var(--text-dim); font-size: 13px;">Ils sont désormais visibles à côté de ton pseudo.</p>
+            <button class="minimal-gif-btn2" onclick="saveBadgesToProfile()">Sauvegarder & Continuer</button>
+            <div id="q-save-msg" style="font-size: 12px; color: var(--EELV); display: none;">Sauvegardé avec succès !</div>
+        </div>
+
+    </div>
+</div>
+
       </div>
 
  <div class="controls-panel">
@@ -2586,6 +2661,10 @@ body.twitter-swipe-enabled #communityFooter {
         </div>
         <div id="post-error-msg" style="color: #ff4d4d; font-size: 11px; margin-top: 8px; display: none; font-weight: bold; text-align: right;"></div>
         </div> </div> </div> <nav class="bottom-nav">
+                <button data-tab="questions">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2c0-2.25 3-2.5 3-5 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z"/></svg>
+        Questions
+    </button>
         <button data-tab="community" class="active">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
           Communauté
@@ -8203,6 +8282,298 @@ const swipeThreshold = window.innerWidth * 0.08;
         animateToTab(currentTabIndex);
     });
 })();
+
+// --- DICTIONNAIRE DES BADGES SVGs MINIMALISTES ---
+const BADGE_ICONS = {
+    'anarchisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 4l-5 14h2l1.5-4.5h3L15 18h2L12 4z" fill="currentColor"/><path d="M8.5 13.5h7" stroke="currentColor" stroke-width="2"/></svg>',
+    'capitalisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2C8 2 6 5 6 9v3c0 4 3 10 6 10s6-6 6-10V9c0-4-2-7-6-7zm-1 4h2v2h2v2h-2v2h2v2h-2v2h-2v-2H9v-2h2v-2H9v-2h2V6z" fill="currentColor"/></svg>',
+    'communisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M5.5 16L4 17.5 5.5 19 7 17.5 5.5 16zM19.5 4L18 5.5 21 8.5 19.5 10l-6-6L12 5.5 13.5 7 10 10.5c-2.5-1.5-6-.5-7.5 2 1 0 2.5.5 3.5 1.5-1-1-2.5-1.5-3.5-1.5-1.5 2.5-.5 6 2 7.5l2-2c-.5-1.5 0-3.5 1.5-4.5L11.5 15c1.5 1 3.5.5 4.5-1.5l2 2c2.5-1.5 3.5-5 2-7.5-1-1-2.5-1.5-3.5-1.5 1-1 2.5-1.5 3.5-1.5L19.5 4z" fill="currentColor"/></svg>',
+    'complotisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2L2 20h20L12 2zm0 8c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" fill="currentColor"/></svg>',
+    'conservatisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M3 17.25V21h3.75L17.81 10.19l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>',
+    'constructivisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/></svg>',
+    'écologie': '<svg viewBox="0 0 24 24" class="user-badge-svg" style="color:var(--EELV)"><path d="M17 5.92L9 2v18H7v-1.73c-1.79.35-3 .99-3 1.73 0 1.1 2.69 2 6 2s6-.9 6-2c0-.99-2.16-1.81-5-1.97V8.98l6-3.06z" fill="currentColor"/></svg>',
+    'essentialisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/></svg>',
+    'feminisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2a6 6 0 0 0-6 6c0 3.03 2.25 5.56 5.14 5.95V16H9v2h2.14v4h1.72v-4H15v-2h-2.14v-2.05C15.75 13.56 18 11.03 18 8a6 6 0 0 0-6-6zm0 10a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-3a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="currentColor"/></svg>',
+    'internationalisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="currentColor"/></svg>',
+    'monarchisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M5 16h14v2H5zm14-9l-3.5 4L12 4l-3.5 7L5 7v7h14V7z" fill="currentColor"/></svg>',
+    'nationalisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" fill="currentColor"/></svg>',
+    'pragmatisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 3c-4.42 0-8 3.13-8 7 0 1.83.78 3.5 2.08 4.76L6 19l3.41-1.81A8.44 8.44 0 0 0 12 17c4.42 0 8-3.13 8-7s-3.58-7-8-7z" fill="currentColor"/></svg>',
+    'production': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" fill="currentColor"/></svg>',
+    'progressisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34a.996.996 0 0 0-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 0 0 0-1.41z" fill="currentColor"/></svg>',
+    'justice punitive': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M14 6l3-3 5 5-3 3-5-5zM3 21l3 3 10-10-6-6L3 21z" fill="currentColor"/></svg>',
+    'reforme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/></svg>',
+    'régulation': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="currentColor"/></svg>',
+    'justice réhabilitative': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/></svg>',
+    'religion': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>',
+    'révolution': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" fill="currentColor"/></svg>',
+    'veganisme': '<svg viewBox="0 0 24 24" class="user-badge-svg"><path d="M12 2c2.75 0 5 2.25 5 5v1.26c1.1.25 2 .99 2 2.14v3.1c0 1.22-1.02 2.2-2.25 2.2a2.25 2.25 0 0 1-2.25-2.2v-1.12l-1.39 3.01C12.59 16.53 11.53 17 10.37 17H8.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h1.87c.39 0 .74-.16.94-.43l2.19-4.75V10.4c0-.28.22-.5.5-.5s.5.22.5.5v3.1h2v-3.1c0-.41-.34-.75-.75-.75s-.75.34-.75.75v1.27l-2.02-4.39C13.25 6.64 12.65 6.5 12 6.5s-1.25.14-1.74.33l1.88 4.09H11.4l-2.31-5.01C8.28 6.09 7.5 6.59 7 7.27V5c0-2.75 2.25-5 5-5z" fill="currentColor"/></svg>'
+};
+
+// --- DONNÉES DU QUIZ ---
+const QUESTIONS_DB = [
+    {id: 1, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "On ne naît pas femme, on le devient."},
+    {id: 2, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "Les différences de traitement et de qualité de vie dans notre société montrent que le racisme y est encore omniprésent."},
+    {id: 3, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "Les sciences, y compris la chimie et la biologie, ne sont pas absolues et sont conditionnées par notre société."},
+    {id: 4, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "Les catégories « femme » et « homme » sont des constructions sociales qu'il convient de dépasser."},
+    {id: 5, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "Personne n'est par nature prédisposé à la criminalité."},
+    {id: 6, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "L'orientation sexuelle est une construction sociale."},
+    {id: 7, axe: "Constructivisme / Essentialisme", ext1: "constructivisme", ext2: "essentialisme", q: "Les inégalités sociales entre les groupes ethniques ne s'expliquent pas par la biologie."},
+    {id: 8, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "Les rôles sociaux des femmes et des hommes s'expliquent en partie par des différences biologiques."},
+    {id: 9, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "Les différences hormonales expliquent certaines différences de caractère entre les femmes et les hommes."},
+    {id: 10, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "Les agressions sexuelles sont en partie causées par les pulsions naturelles des hommes."},
+    {id: 11, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "Les personnes transgenres ne seront jamais véritablement du genre auquel elles s'identifient."},
+    {id: 12, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "Les membres d'une nation ou d'une culture possèdent des caractéristiques immuables qui les définissent."},
+    {id: 13, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "Biologiquement, l'être humain est conçu pour l'hétérosexualité."},
+    {id: 14, axe: "Constructivisme / Essentialisme", ext1: "essentialisme", ext2: "constructivisme", q: "L'égoïsme est le moteur principal de l'espèce humaine, quel que soit le contexte."},
+    
+    {id: 15, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Les frontières doivent, à terme, être abolies."},
+    {id: 16, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Il faut défendre ses idéaux, même si cela implique de trahir son pays."},
+    {id: 17, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Mon pays doit payer pour les dommages causés par les crimes qu'il a commis à l'étranger."},
+    {id: 18, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Si deux pays ont des normes économiques, sociales et environnementales similaires, le libre-échange entre eux n'a aucun impact négatif."},
+    {id: 19, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Le chauvinisme lors des compétitions sportives est inacceptable."},
+    {id: 20, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Je me sens autant concerné(e) par le sort des habitants de mon pays que par celui des étrangers."},
+    {id: 21, axe: "Internationalisme / Nationalisme", ext1: "internationalisme", ext2: "nationalisme", q: "Les étrangers résidant dans mon pays devraient avoir les mêmes droits politiques que les citoyens nationaux."},
+    {id: 22, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "Les citoyens doivent toujours avoir la priorité sur les étrangers."},
+    {id: 23, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "Les valeurs de mon pays sont supérieures à celles des autres."},
+    {id: 24, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "Le multiculturalisme est une menace pour notre société."},
+    {id: 25, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "Un bon citoyen est avant tout un patriote."},
+    {id: 26, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "Il est légitime qu'un pays intervienne militairement pour défendre ses intérêts économiques."},
+    {id: 27, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "L'enseignement de l'Histoire est indispensable pour forger un sentiment d'appartenance nationale."},
+    {id: 28, axe: "Internationalisme / Nationalisme", ext1: "nationalisme", ext2: "internationalisme", q: "Les résultats de la recherche publique de mon pays ne devraient pas être partagés avec les autres pays."},
+
+    {id: 29, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "Personne ne devrait pouvoir s'enrichir par la simple possession d'une entreprise, d'un logement ou de terres."},
+    {id: 30, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "Le travail salarié est une forme de vol du travailleur par l'employeur."},
+    {id: 31, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "Il est primordial que la santé reste un service public."},
+    {id: 32, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "L'énergie et les infrastructures de transport doivent relever du secteur public."},
+    {id: 33, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "Les brevets sur les inventions ne devraient pas exister."},
+    {id: 34, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "Il faut organiser des assemblées citoyennes pour répartir la production en fonction des besoins de chacun."},
+    {id: 35, axe: "Communisme / Capitalisme", ext1: "communisme", ext2: "capitalisme", q: "Le marché du travail est une forme d'esclavage pour les travailleurs."},
+    {id: 36, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "La recherche du profit individuel est un moteur sain pour l'économie."},
+    {id: 37, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "C'est le mérite personnel qui justifie les différences de richesse entre les individus."},
+    {id: 38, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "L'existence d'écoles et d'universités privées ne pose aucun problème."},
+    {id: 39, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "Les délocalisations et la sous-traitance sont des maux nécessaires pour rester compétitif."},
+    {id: 40, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "Il est tout à fait acceptable qu'il y ait des riches et des pauvres."},
+    {id: 41, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "Il est normal que certains secteurs industriels soient entièrement privatisés."},
+    {id: 42, axe: "Communisme / Capitalisme", ext1: "capitalisme", ext2: "communisme", q: "Les banques doivent rester dans le secteur privé."},
+
+    {id: 43, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "Les hauts revenus et le capital doivent être fortement taxés pour redistribuer les richesses."},
+    {id: 44, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "L'âge légal de départ à la retraite devrait être abaissé."},
+    {id: 45, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "Les licenciements devraient être interdits, sauf pour faute grave ou motif impérieux."},
+    {id: 46, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "Un salaire minimum garanti est nécessaire pour permettre à tout travailleur de vivre dignement."},
+    {id: 47, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "L'État doit intervenir pour empêcher la formation de monopoles privés."},
+    {id: 48, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "Les dettes publiques (États, régions, communes) ne doivent pas obligatoirement être remboursées."},
+    {id: 49, axe: "Régulation / Laissez-faire", ext1: "régulation", ext2: "capitalisme", q: "L'État doit subventionner certains secteurs économiques ou certains types d'emplois."},
+    {id: 50, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "L'économie de marché fonctionne mieux lorsqu'elle n'est soumise à aucune régulation."},
+    {id: 51, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "Aujourd'hui, un employé est totalement libre de ses choix lorsqu'il signe un contrat de travail."},
+    {id: 52, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "Il faut alléger le droit du travail et supprimer des réglementations pour encourager les embauches."},
+    {id: 53, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "La durée légale maximale du temps de travail hebdomadaire devrait être augmentée."},
+    {id: 54, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "Les normes environnementales doivent être dictées par les choix des consommateurs, non par l'État."},
+    {id: 55, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "Les aides sociales ont pour effet de décourager les gens de travailler."},
+    {id: 56, axe: "Régulation / Laissez-faire", ext1: "capitalisme", ext2: "régulation", q: "Les entreprises publiques doivent être gérées comme des entreprises privées et soumises aux lois du marché."},
+
+    {id: 57, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "Les traditions culturelles et sociétales doivent être remises en question."},
+    {id: 58, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "Cela ne me dérange pas que d'autres langues deviennent officielles en plus (ou à la place) de la langue de mon pays."},
+    {id: 59, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "L'institution du mariage devrait être abolie."},
+    {id: 60, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "L'arrivée d'étrangers est une véritable richesse pour notre culture."},
+    {id: 61, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "L'influence des religions dans la société devrait être réduite."},
+    {id: 62, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "Une langue appartient à ceux qui la parlent, et non aux académiciens qui en fixent les règles."},
+    {id: 63, axe: "Progressisme / Conservatisme", ext1: "progressisme", ext2: "conservatisme", q: "L'euthanasie volontaire devrait être légalisée."},
+    {id: 64, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "Les couples homosexuels ne devraient pas avoir les mêmes droits que les hétérosexuels (mariage, adoption, filiation)."},
+    {id: 65, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "Dans certains cas d'une extrême gravité, la peine de mort est justifiée."},
+    {id: 66, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "Le progrès technologique ne devrait pas bouleverser la société trop rapidement."},
+    {id: 67, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "Le rôle principal de l'école est de transmettre nos valeurs, nos traditions et les savoirs fondamentaux."},
+    {id: 68, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "Le recours à l'avortement devrait être strictement limité à des cas très spécifiques."},
+    {id: 69, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "L'objectif premier d'un couple est de fonder une famille et d'avoir des enfants."},
+    {id: 70, axe: "Progressisme / Conservatisme", ext1: "conservatisme", ext2: "progressisme", q: "L'abstinence devrait être privilégiée à la contraception afin de préserver la nature véritable de l'acte sexuel."},
+
+    {id: 71, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "Il est inacceptable que les activités humaines provoquent l'extinction d'espèces animales ou végétales."},
+    {id: 72, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "Les OGM devraient être interdits, à l'exception stricte de la recherche médicale."},
+    {id: 73, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "La lutte contre le réchauffement climatique doit être une priorité absolue."},
+    {id: 74, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "Nous devons modifier nos habitudes alimentaires pour réduire notre impact sur la nature."},
+    {id: 75, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "Il faut soutenir une agriculture qui préserve la biodiversité, même si ses rendements sont inférieurs."},
+    {id: 76, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "Protéger les espaces naturels est plus important que de créer des emplois."},
+    {id: 77, axe: "Écologie / Productivisme", ext1: "écologie", ext2: "production", q: "La seule façon de réduire efficacement nos déchets est de diminuer notre production."},
+    {id: 78, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "La colonisation de l'espace est la meilleure solution pour pallier l'épuisement des ressources terrestres."},
+    {id: 79, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "Il est légitime de modifier durablement la nature et les écosystèmes pour améliorer notre confort de vie."},
+    {id: 80, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "Il faut investir massivement dans la recherche pour augmenter notre productivité technologique et industrielle."},
+    {id: 81, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "Le transhumanisme est une avancée positive, car il permettra d'augmenter les capacités humaines."},
+    {id: 82, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "L'énergie nucléaire, lorsqu'elle est bien maîtrisée, est une excellente source d'énergie."},
+    {id: 83, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "L'exploitation continue des énergies fossiles reste indispensable."},
+    {id: 84, axe: "Écologie / Productivisme", ext1: "production", ext2: "écologie", q: "Maintenir une forte croissance économique doit être l'un des principaux objectifs de l'État."},
+
+    {id: 85, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "L'institution carcérale et les prisons devraient être supprimées."},
+    {id: 86, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "Il est injuste d'imposer des peines minimales automatiques pour les délits ou les crimes."},
+    {id: 87, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "La société doit accompagner activement la réinsertion des personnes sortant de prison."},
+    {id: 88, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "La justice doit toujours prendre en compte le contexte social et le passé du condamné pour adapter sa peine."},
+    {id: 89, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "Les conditions de vie et de détention dans les prisons doivent être considérablement améliorées."},
+    {id: 90, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "Le fichage des citoyens doit être strictement encadré et le croisement des bases de données informatiques interdit."},
+    {id: 91, axe: "Justice Réhabilitative / Punitive", ext1: "justice réhabilitative", ext2: "justice punitive", q: "Le droit à l'anonymat absolu sur Internet doit être garanti."},
+    {id: 92, axe: "Justice Réhabilitative / Punitive", ext1: "justice punitive", ext2: "justice réhabilitative", q: "La fonction première de la justice est de punir sévèrement ceux qui enfreignent la loi."},
+    {id: 93, axe: "Justice Réhabilitative / Punitive", ext1: "justice punitive", ext2: "justice réhabilitative", q: "Tous les agents de police devraient porter une arme à feu lors de leurs patrouilles."},
+    {id: 94, axe: "Justice Réhabilitative / Punitive", ext1: "justice punitive", ext2: "justice réhabilitative", q: "Il est normal de sacrifier certaines libertés individuelles pour mieux nous protéger du terrorisme."},
+    {id: 95, axe: "Justice Réhabilitative / Punitive", ext1: "justice punitive", ext2: "justice réhabilitative", q: "L'ordre public et l'autorité de l'État doivent être respectés en toutes circonstances."},
+    {id: 96, axe: "Justice Réhabilitative / Punitive", ext1: "justice punitive", ext2: "justice réhabilitative", q: "Les peines de prison très lourdes sont efficaces car elles dissuadent les criminels de passer à l'acte."},
+    {id: 97, axe: "Justice Réhabilitative / Punitive", ext1: "justice punitive", ext2: "justice réhabilitative", q: "Il vaut mieux incarcérer préventivement une personne jugée dangereuse plutôt que de risquer qu'elle commette un crime."},
+
+    {id: 98, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "La grève générale est le meilleur moyen d'obtenir de nouveaux droits sociaux."},
+    {id: 99, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "Le recours à la lutte armée est parfois l'unique solution dans un pays."},
+    {id: 100, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "Une insurrection populaire est indispensable pour transformer la société en profondeur."},
+    {id: 101, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "Militer au sein des partis politiques traditionnels ne sert à rien pour changer réellement les choses."},
+    {id: 102, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "Le système électoral actuel est conçu pour empêcher toute véritable remise en cause du pouvoir."},
+    {id: 103, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "Le piratage informatique (hacktivisme) est une arme légitime dans la lutte politique."},
+    {id: 104, axe: "Révolution / Réformisme", ext1: "révolution", ext2: "reforme", q: "Le sabotage de biens ou d'infrastructures est une méthode d'action légitime dans certains cas."},
+    {id: 105, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "Les militants politiques doivent toujours agir dans le respect le plus strict de la loi."},
+    {id: 106, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "L'Histoire montre que les révolutions finissent toujours par engendrer de nouveaux drames."},
+    {id: 107, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "Renverser brutalement le système est contre-productif ; il faut le transformer de l'intérieur, étape par étape."},
+    {id: 108, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "L'usage de la violence physique contre des personnes n'est jamais une solution politique productive."},
+    {id: 109, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "Les mouvements sociaux doivent toujours se désolidariser publiquement des éléments violents."},
+    {id: 110, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "Il est indispensable de savoir faire des compromis avec ses adversaires politiques pour faire avancer ses idées."},
+    {id: 111, axe: "Révolution / Réformisme", ext1: "reforme", ext2: "révolution", q: "C'est en changeant nos modes de vie individuels que nous transformerons la société à grande échelle."},
+
+    // Badges Bonus
+    {id: 112, axe: "Bonus", badge: "religion", q: "Missionnaire : J'estime qu'il est de mon devoir de répandre ma religion le plus largement possible."},
+    {id: 113, axe: "Bonus", badge: "complotisme", q: "Complotiste : Le monde est secrètement dirigé par un petit groupe d'individus qui tirent les ficelles."},
+    {id: 114, axe: "Bonus", badge: "pragmatisme", q: "Pragmatique : Une bonne décision politique doit être basée sur le pragmatisme plutôt que sur une idéologie."},
+    {id: 115, axe: "Bonus", badge: "monarchisme", q: "Monarchiste : Le rétablissement de la royauté est nécessaire pour unir le pays et garantir notre souveraineté."},
+    {id: 116, axe: "Bonus", badge: "veganisme", q: "Végane : L'être humain n'a aucun droit de tuer ou d'exploiter les animaux."},
+    {id: 117, axe: "Bonus", badge: "anarchisme", q: "Anarchiste : L'État et toute forme de gouvernement centralisé doivent être purement et simplement abolis."}
+];
+
+let currentQIndex = 0;
+let userScores = {}; // Points accumulés pour chaque extrême (ex: "constructivisme": 4)
+let earnedBadges = []; // Badges finaux
+
+window.startQuiz = function() {
+    if (!currentUser) {
+        alert("Connecte-toi pour passer le test et sauvegarder tes badges !");
+        return;
+    }
+    currentQIndex = 0;
+    userScores = {};
+    earnedBadges = [];
+    document.getElementById('q-intro').style.display = 'none';
+    document.getElementById('q-container').style.display = 'flex';
+    showQuestion();
+};
+
+window.showQuestion = function() {
+    if (currentQIndex >= QUESTIONS_DB.length) {
+        finishQuiz();
+        return;
+    }
+    const qData = QUESTIONS_DB[currentQIndex];
+    document.getElementById('q-progress').innerText = `Question ${currentQIndex + 1}/${QUESTIONS_DB.length}`;
+    document.getElementById('q-axis').innerText = qData.axe;
+    document.getElementById('q-text').innerText = `« ${qData.q} »`;
+};
+
+window.answerQuestion = function(score) {
+    const qData = QUESTIONS_DB[currentQIndex];
+    
+    if (qData.axe === "Bonus") {
+        // Bonus: seulement si d'accord (> 0)
+        if (score > 0) {
+            if (!earnedBadges.includes(qData.badge)) {
+                earnedBadges.push(qData.badge);
+            }
+        }
+    } else {
+        // Score positif va vers ext1, négatif vers ext2
+        if (score > 0) {
+            userScores[qData.ext1] = (userScores[qData.ext1] || 0) + score;
+        } else if (score < 0) {
+            userScores[qData.ext2] = (userScores[qData.ext2] || 0) + Math.abs(score);
+        }
+    }
+    
+    currentQIndex++;
+    showQuestion();
+};
+
+window.finishQuiz = function() {
+    document.getElementById('q-container').style.display = 'none';
+    document.getElementById('q-result').style.display = 'flex';
+
+    // Trouver le badge principal (celui avec le plus haut score)
+    let mainBadge = null;
+    let maxScore = -1;
+    for (const [badge, score] of Object.entries(userScores)) {
+        if (score > maxScore) {
+            maxScore = score;
+            mainBadge = badge;
+        }
+    }
+    
+    if (mainBadge && !earnedBadges.includes(mainBadge)) {
+        // Ajoute le badge principal en premier
+        earnedBadges.unshift(mainBadge);
+    }
+
+    // Affichage des badges gagnés
+    const displayEl = document.getElementById('q-badges-display');
+    displayEl.innerHTML = '';
+    earnedBadges.forEach(b => {
+        const svg = BADGE_ICONS[b] || '';
+        displayEl.innerHTML += `<div style="display:flex; flex-direction:column; align-items:center; gap:8px; background:var(--surface2); padding: 12px; border-radius:12px; border:1px solid var(--border);">
+            <div style="width: 40px; height: 40px; color: var(--text);">${svg.replace('class="user-badge-svg"', 'style="width:100%;height:100%;fill:currentColor;"')}</div>
+            <span style="font-size:11px; text-transform:uppercase; font-family:'Space Mono', monospace;">${b}</span>
+        </div>`;
+    });
+};
+
+window.saveBadgesToProfile = function() {
+    if (!currentUser) return;
+    
+    // Sauvegarde dans Firestore
+    db.collection("users").doc(currentUser.uid).set({
+        badges: earnedBadges
+    }, { merge: true }).then(() => {
+        document.getElementById('q-save-msg').style.display = 'block';
+        // Cache le message et retourne sur l'onglet Profil après 2 secondes
+        setTimeout(() => {
+            document.querySelector('.bottom-nav button[data-tab="profile"]').click();
+            document.getElementById('q-save-msg').style.display = 'none';
+            document.getElementById('q-result').style.display = 'none';
+            document.getElementById('q-intro').style.display = 'flex'; // Reset pour plus tard
+        }, 1500);
+    });
+};
+
+// --- MODIFICATION DE LA NAVIGATION MOBILE ---
+// Pour ajouter la gestion du nouvel onglet "questions"
+document.addEventListener('DOMContentLoaded', () => {
+    const navBtns = document.querySelectorAll('.bottom-nav button');
+    
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tabName = btn.getAttribute('data-tab');
+            
+            // Retirer toutes les classes actives
+            document.body.classList.remove('mobile-show-sim', 'mobile-show-profile', 'mobile-show-questions');
+            navBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (tabName === 'questions') {
+                document.body.classList.add('mobile-show-questions');
+                document.getElementById('mobile-top-title').innerText = "L'Araignée - Profiling";
+            } 
+            // (La logique existante pour 'simulator', 'profile' et 'community' prend le relais pour les autres)
+        });
+    });
+});
+
+window.generateBadgesHtml = function(badgesArray) {
+    if (!badgesArray || badgesArray.length === 0) return '';
+    let html = '<span style="display:inline-flex; align-items:center; margin-right:6px;">';
+    badgesArray.forEach(b => {
+        if (BADGE_ICONS[b]) {
+            html += BADGE_ICONS[b];
+        }
+    });
+    html += '</span>';
+    return html;
+};
+
 
 </script>
 <div id="mobile-menu-backdrop" onclick="closeAllMobileMenus()"></div>
